@@ -79,14 +79,24 @@ document.addEventListener('DOMContentLoaded', function () {
                     // Procesar la respuesta del servidor y actualizar la tabla de cursos
                     var courses = response.listCurse; // Obtener la lista de cursos de la respuesta
                     var programs = response.listPrograms;
-                    
+                    console.log(programs);
+
+                    // Verifica si programas están definidos antes de usarlos
+                    if (programs.length > 0) {
+                        // Solo tomamos el primer programa para mostrar su facultad y nombre
+                        var program = programs[0]; // Aquí obtén el programa que necesitas, dependiendo de tu lógica
+                        console.log(program);
+                    } else {
+                        console.error('No se encontraron programas.');
+                        return; // Sal de la función si no hay programas
+                    }
+
                     var tableCourses = $('#tableCourses');
                     tableCourses.empty();
-                    console.log(courses.component.studyField)
+
                     // Verificar si se encontraron cursos en la respuesta
                     if (courses.length > 0) {
                         courses.forEach(function (course) {
-                            var program = programs.find(p => p.id === course.id_program);
                             var row = `
                             <tr>
                                 <td class="text-center">
@@ -95,14 +105,14 @@ document.addEventListener('DOMContentLoaded', function () {
                                         <i class="fas fa-check-circle"></i>
                                     </button>
                                 </td>
-                                <td>${programs.faculty ? programs.faculty.name_faculty : 'Sin Facultad'}</td>
-                                <td>${programs.name_program}</td>
-                                <td>${course.component.studyField.name_study_field}</td>
-                                <td>${course.component.name_component}</td>
-                                <td>${course.name_curse}</td>
-                                <td>${course.semester.name_semester}</td>
+                                <td>${capitalizeText(program.faculty.name_faculty)}</td>
+                                <td>${capitalizeText(program.name_program)}</td>
+                                <td>${capitalizeText(course.component.study_field.name_study_field)}</td>
+                                <td>${capitalizeText(course.component.name_component)}</td>
+                                <td>${capitalizeText(course.name_course)}</td>
+                                <td>${capitalizeText(course.semester.name_semester)}</td>
                                 <td>${course.credit}</td>
-                                <td>${course.courseType.name_course_type}</td>
+                                <td>${capitalizeText(course.course_type.name_course_type)}</td>
                             </tr>
                         `;
                             tableCourses.append(row);
@@ -154,7 +164,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function tableFieldStudy(component) {
+    function tableComponent(component) {
+
+        console.log('componente id', component)
 
         // Realizar la petición AJAX
         $.ajax({
@@ -164,9 +176,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 component: component
             },
             success: function (response) {
+
                 // Procesar la respuesta del servidor y actualizar la tabla de cursos
                 var classroomPlans = response.classroomPlan; // Obtener la lista de cursos de la respuesta
 
+                console.log
                 var bodyComponent = $('#bodyComponent');
                 bodyComponent.empty();
 
@@ -175,12 +189,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     classroomPlans.forEach(function (classroom) {
                         var row = `
                         <tr>                
-                            <td>${capitalizeText(classroom.course.name_curse)}</td>
-                            <td>${capitalizeText(classroom.course.component.field_study.name_field_study)}</td>
-                            <td>${capitalizeText(classroom.course.component.name_component)}</td>
-                            <td>${capitalizeText(classroom.course.semester.name_semester)}</td>
-                            <td>${classroom.course.credit}</td>
-                            <td>${capitalizeText(classroom.course.type_course.name_type_course)}</td>
+                            <td>${capitalizeText(classroom.courses.component.study_field.name_study_field)}</td>
+                            <td>${capitalizeText(classroom.courses.component.name_component)}</td>
+                            <td>${capitalizeText(classroom.courses.name_course)}</td>
+                            <td>${capitalizeText(classroom.courses.semester.name_semester)}</td>
+                            <td>${classroom.courses.credit}</td>
+                            <td>${capitalizeText(classroom.courses.course_type.name_course_type)}</td>
                         </tr>
                     `;
                         bodyComponent.append(row);
@@ -202,17 +216,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Función para mostrar la información del curso
     function visualizeInfoCourse(response) {
-        console.log(response);  // Verificar el contenido del objeto
+
+        var programs = response.program;
+        var courses = response.course; // Obtener la lista de cursos de la respuesta
+
+        // Verifica si programas están definidos antes de usarlos
+        if (programs.length > 0 && courses.length > 0) {
+            // Solo tomamos el primer programa para mostrar su facultad y nombre
+            var program = programs[0]; // Aquí obtén el programa que necesitas, dependiendo de tu lógica
+            var course = courses[0]; // Aquí obtén el programa que necesitas, dependiendo de tu lógica
+        } else {
+            console.error('No se encontraron programas.');
+            return; // Sal de la función si no hay programas
+        }
 
         // Actualizar los campos en el área #course-info
-        $('#nameFaculty').text(capitalizeText(response.curse.program.faculti.name_faculty));
-        $('#nameProgram').text(capitalizeText(response.curse.program.name_program));
-        $('#nameField').text(capitalizeText(response.curse.component.field_study.name_field_study));
-        $('#nameComponent').text(capitalizeText(response.curse.component.name_component));
-        $('#nameCourse').text(capitalizeText(response.curse.name_curse));
-        $('#nameSemester').text(capitalizeText(response.curse.semester.name_semester));
-        $('#nameCredits').text(response.curse.credit);
-        $('#nameCourseType').text(capitalizeText(response.curse.type_course.name_type_course));
+        $('#nameFaculty').text(capitalizeText(program.faculty.name_faculty));
+        $('#nameProgram').text(capitalizeText(program.name_program));
+        $('#nameField').text(capitalizeText(course.component.study_field.name_study_field));
+        $('#nameComponent').text(capitalizeText(course.component.name_component));
+        $('#nameCourse').text(capitalizeText(course.name_course));
+        $('#nameSemester').text(capitalizeText(course.semester.name_semester));
+        $('#nameCredits').text(course.credit);
+        $('#nameCourseType').text(capitalizeText(course.course_type.name_course_type));
 
     }
 
@@ -235,11 +261,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 cursoId: cursoId
             },
             success: function (response) {
-                component = response.curse.id_component;
-                console.log('componente', component);
 
-                tableFieldStudy(component);
+                component = response.course[0].id_component;
+                console.log('Pofin', component);
+
                 visualizeInfoCourse(response);
+                tableComponent(component);
 
             },
             // Función que se ejecuta en caso de error en la solicitud
@@ -259,16 +286,12 @@ document.addEventListener('DOMContentLoaded', function () {
         *
     */
 
-    document.getElementById('pillSelectProgram').addEventListener('change', function () {
-
-        // OBTIENE EL VALOR DEL SEMESTRE SELECCIONADO
-        program = this.options[this.selectedIndex].value;
-        console.log('programa: ', program)
-
-    });
-
     // Escuchar el click en el botón de confirmación del modal
     document.getElementById('filterCourse').addEventListener('click', function () {
+        // Obtener el valor del programa seleccionado en el momento del click
+        var program = document.getElementById('pillSelectProgram').value;
+        console.log(program)
+        // Llamar a la función tableFiltersCourse con el programa actual
         tableFiltersCourse(program);
     });
 

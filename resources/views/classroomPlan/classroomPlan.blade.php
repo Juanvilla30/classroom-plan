@@ -41,7 +41,8 @@
                 <select class="form-control input-pill" id="pillSelectProgram" name="program" required="required">
                     <option disabled selected value="">Seleccione un programa</option>
                     @foreach ($programs as $program)
-                    <option value="{{ $program->id }}">{{ $program->name_program }}
+                    <option value="{{ $program->id }}">
+                        {{ ucfirst(strtolower($program->name_program)) }}
                     </option>
                     @endforeach
                 </select>
@@ -67,9 +68,9 @@
                     id="tableFieldStudy">
                     <thead>
                         <tr>
-                            <th scope="col">Curso</th>
                             <th scope="col">Campo</th>
                             <th scope="col">Componente</th>
+                            <th scope="col">Curso</th>
                             <th scope="col">Semestre</th>
                             <th scope="col">Creditos</th>
                             <th scope="col">Tipo de curso</th>

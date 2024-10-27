@@ -17,7 +17,7 @@ return new class extends Migration
             $table->timestamps();
 
             // Llaves foraneas
-            $table->unsignedBigInteger('id_topics');
+            $table->unsignedBigInteger('id_topics')->nullable();
             $table->foreign('id_topics')->references('id')->on('topics');
 
         });
