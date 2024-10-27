@@ -31,7 +31,7 @@ return new class extends Migration
             $table->foreign('id_course_type')->references('id')->on('course_types');
 
             $table->unsignedBigInteger('id_role')->nullable(); // Corrección en el nombre del campo
-            $table->foreign('id_role')->references('id')->on('roles');
+            $table->foreign('id_role')->references('id')->on('users');
         });
     }
 

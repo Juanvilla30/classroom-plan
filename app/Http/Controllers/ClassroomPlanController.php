@@ -30,24 +30,42 @@ class ClassroomPlanController extends Controller
         // Obtener el programa de los datos de la solicitud
         $program = $request->input('programs');
 
-        // Consultar los IDs de los cursos asociados al programa especificado
+        // Consultar los registros de relación de programa y curso
         $listCurseIds = ProgramCourseRelationship::where('id_program', $program)
             ->orderBy('id') // Ordenar los resultados por ID
-            ->pluck('id_course'); // Obtener solo los IDs de cursos
-        
-        // Consultar los cursos asociados al programa especificado
-        $listCurse = Course::where('id', $listCurseIds)
-            ->with([                
+            ->get(['id_course', 'id_program']); // Obtener solo los IDs de curso y programa
+
+        // Extraer los IDs de curso y programa de los resultados obtenidos
+        $courseIds = $listCurseIds->pluck('id_course')->toArray();
+        $programIds = $listCurseIds->pluck('id_program')->unique()->toArray();
+
+        // Consultar los programas asociados
+        $listPrograms = Program::whereIn('id', $programIds)
+            ->with([
+                'faculty',
+            ])->orderBy('id')
+            ->get();
+
+        //dd($listPrograms);
+
+        // Consultar los cursos asociados
+        $listCurse = Course::whereIn('id', $courseIds)
+            ->with([
                 'component.studyField', // Cargar la relación con el campo de estudio del componente
-                'semester', // Cargar la relación con el semestre
-                'courseType' // Cargar la relación con el tipo de curso
-            ])->orderBy('id') // Ordenar los resultados por ID
-            ->get(); // Paginación según el número de filas por página
+                'semester',             // Cargar la relación con el semestre
+                'courseType'            // Cargar la relación con el tipo de curso
+            ])->orderBy('id')
+            ->get();
+
+        //dd($listCurse);
 
         // Verificar si se encontraron cursos
-        if ($listCurse) {
+        if ($listCurse || $listPrograms) {
             // Devolver la lista de cursos como respuesta en formato JSON
-            return response()->json(['listCurse' => $listCurse]);
+            return response()->json([
+                'listCurse' => $listCurse,
+                'listPrograms' => $listPrograms,
+            ]);
         } else {
             // Enviar una respuesta de error si no se encontraron cursos
             return response()->json(['error' => 'Cursos no encontrados'], 404);

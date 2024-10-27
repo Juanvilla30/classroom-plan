@@ -78,13 +78,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     // Procesar la respuesta del servidor y actualizar la tabla de cursos
                     var courses = response.listCurse; // Obtener la lista de cursos de la respuesta
-
+                    var programs = response.listPrograms;
+                    
                     var tableCourses = $('#tableCourses');
                     tableCourses.empty();
-
+                    console.log(courses.component.studyField)
                     // Verificar si se encontraron cursos en la respuesta
                     if (courses.length > 0) {
                         courses.forEach(function (course) {
+                            var program = programs.find(p => p.id === course.id_program);
                             var row = `
                             <tr>
                                 <td class="text-center">
@@ -93,14 +95,14 @@ document.addEventListener('DOMContentLoaded', function () {
                                         <i class="fas fa-check-circle"></i>
                                     </button>
                                 </td>
-                                <td>${capitalizeText(course.program.faculti.name_faculty)}</td>
-                                <td>${capitalizeText(course.program.name_program)}</td>
-                                <td>${capitalizeText(course.component.studyField.name_study_field)}</td>
-                                <td>${capitalizeText(course.component.name_component)}</td>
-                                <td>${capitalizeText(course.name_curse)}</td>
-                                <td>${capitalizeText(course.semester.name_semester)}</td>
+                                <td>${programs.faculty ? programs.faculty.name_faculty : 'Sin Facultad'}</td>
+                                <td>${programs.name_program}</td>
+                                <td>${course.component.studyField.name_study_field}</td>
+                                <td>${course.component.name_component}</td>
+                                <td>${course.name_curse}</td>
+                                <td>${course.semester.name_semester}</td>
                                 <td>${course.credit}</td>
-                                <td>${capitalizeText(course.courseType.name_course_type)}</td>
+                                <td>${course.courseType.name_course_type}</td>
                             </tr>
                         `;
                             tableCourses.append(row);
