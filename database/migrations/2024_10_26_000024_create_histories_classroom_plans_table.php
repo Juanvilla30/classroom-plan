@@ -11,10 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('roles', function (Blueprint $table) {
+        Schema::create('histories_classroom_plans', function (Blueprint $table) {
             $table->id();
-            $table->string('name_role');
             $table->timestamps();
+
+            // Llaves foraneas
+            $table->unsignedBigInteger('id_classroom_plan');
+            $table->foreign('id_classroom_plan')->references('id')->on('classroom_plans');
+
         });
     }
 
@@ -23,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('histories_classroom_plans');
     }
 };

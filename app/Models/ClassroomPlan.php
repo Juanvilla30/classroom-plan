@@ -9,55 +9,56 @@ class ClassroomPlan extends Model
 {
     use HasFactory;
 
-    protected $table = 'classroom_plan';
+    protected $table = 'classroom_plans';
 
     protected $fillable = [
         'id_course',
-        'id_profile_competition_ra',
+        'id_assignment_evaluation',
+        'id_learning_result',
         'id_general_objective',
         'id_specific_objective',
         'id_general_reference',
         'id_institutional_reference',
-        'id_assignment_evaluation',
-        'id_update_histories',
-        'id_status',
+        'id_state',
     ];
 
-    public function course()
+    public function courses()
     {
         return $this->belongsTo(Course::class, 'id_course');
     }
-    public function profile_competition_ra()
-    {
-        return $this->belongsTo(Profile_competition_ra::class, 'id_profile_competition_ra');
-    }
-    public function general_objective()
-    {
-        return $this->belongsTo(General_objective::class, 'id_general_objective');
-    }
-    public function specific_objective()
-    {
-        return $this->belongsTo(Specific_objective::class, 'id_specific_objective');
-    }
-    public function general_reference()
-    {
-        return $this->belongsTo(General_reference::class, 'id_general_reference');
-    }
-    public function institutional_reference()
-    {
-        return $this->belongsTo(Institucional_reference::class, 'id_institutional_reference');
-    }
-    public function evaluations()
+
+    public function assignmentEvaluation()
     {
         return $this->belongsTo(AssignmentEvaluation::class, 'id_assignment_evaluation');
     }
-    public function update_histories()
+
+    public function learningResult()
     {
-        return $this->belongsTo(Update_history::class, 'id_update_histories');
+        return $this->belongsTo(LearningResult::class, 'id_learning_result');
     }
 
-    public function revision()
+    public function generalObjective()
     {
-        return $this->belongsTo(RevisionModel::class, 'id_status');
+        return $this->belongsTo(GeneralObjective::class, 'id_general_objective');
+    }
+
+    public function specificObjective()
+    {
+        return $this->belongsTo(SpecificObjective::class, 'id_specific_objective');
+    }
+
+    public function generalReference()
+    {
+        return $this->belongsTo(GeneralReference::class, 'id_general_reference');
+    }
+
+    public function institutionalReference()
+    {
+        return $this->belongsTo(InstitutionalReference::class, 'id_institutional_reference');
+    }
+
+    public function state()
+    {
+        return $this->belongsTo(State::class, 'id_state');
     }
 }

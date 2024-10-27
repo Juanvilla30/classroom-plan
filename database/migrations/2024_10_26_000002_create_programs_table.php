@@ -11,23 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
-
-            // Campos de tabla
+        Schema::create('programs', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('last_name');
-            $table->integer('phone');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
+            $table->integer('code_program');
+            $table->string('name_program');
+            $table->integer('anio');
+            $table->string('program_type');
+            $table->string('degree_type');
             $table->timestamps();
 
             // Llaves foraneas
             $table->unsignedBigInteger('id_role');
             $table->foreign('id_role')->references('id')->on('roles');
-
+            
+            $table->unsignedBigInteger('id_faculty');
+            $table->foreign('id_faculty')->references('id')->on('faculties');
         });
     }
 
@@ -36,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('programs');
     }
 };

@@ -13,11 +13,11 @@ class Component extends Model
 
     protected $fillable = [
         'name_component',
-        'id_field_study',
+        'id_study_field',
     ];
 
-    public function field_study()
+    public function studyField()
     {
-        return $this->belongsTo(Field_study::class, 'id_field_study');
+        return $this->belongsTo(StudyField::class, 'id_study_field');
     }
 }

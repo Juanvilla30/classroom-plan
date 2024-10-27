@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log({ name, last_name, email, password, phone, idRol }); //verificacion de valores
 
             if (name && last_name && phone && email && password && idRol) {
-                fetch("/user", {
+                fetch("/user/create", {
                     method: "POST",
                     headers: {
                         Accept: "application/json",
@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         email: email,
                         password: password,
                         phone: phone,
-                        id_rol: idRol,
+                        id_role: idRol,
                     }),
                 })
                     .then((response) => response.json())

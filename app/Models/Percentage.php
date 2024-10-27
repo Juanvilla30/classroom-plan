@@ -9,7 +9,11 @@ class Percentage extends Model
 {
     use HasFactory;
 
+    protected $table = 'percentages';
+
     protected $fillable = [
         'name_percentage',
+        'number_percentage',
     ];
+
 }

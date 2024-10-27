@@ -15,13 +15,4 @@ class AssignmentEvaluation extends Model
         'id_evaluation',
         'id_percentage',
     ];
-    
-    public function evaluations()
-    {
-        return $this->belongsTo(Evaluation::class, 'id_evaluation');
-    }
-    public function percentages()
-    {
-        return $this->belongsTo(Percentage::class, 'id_percentage');
-    }
 }

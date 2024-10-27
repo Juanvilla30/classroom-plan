@@ -12,12 +12,22 @@ class Program extends Model
     protected $table = 'programs';
 
     protected $fillable = [
+        'code_program',
         'name_program',
-        'id_faculties',
+        'anio',
+        'program_type',
+        'degree_type',
+        'id_rol',
+        'id_faculty',
     ];
 
-    public function faculti()
+    public function role()
     {
-        return $this->belongsTo(Faculty::class, 'id_faculties');
+        return $this->belongsTo(Role::class, 'id_rol');
+    }
+
+    public function faculty()
+    {
+        return $this->belongsTo(Faculty::class, 'id_faculty');
     }
 }

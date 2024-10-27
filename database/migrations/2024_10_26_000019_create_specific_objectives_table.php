@@ -11,10 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('roles', function (Blueprint $table) {
+        Schema::create('specific_objectives', function (Blueprint $table) {
             $table->id();
-            $table->string('name_role');
+            $table->text('name_specific_objective');
             $table->timestamps();
+
+            // Llaves foraneas
+            $table->unsignedBigInteger('id_topics');
+            $table->foreign('id_topics')->references('id')->on('topics');
+
         });
     }
 
@@ -23,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('specific_objectives');
     }
 };

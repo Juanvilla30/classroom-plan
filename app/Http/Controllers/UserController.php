@@ -7,14 +7,14 @@ use App\Models\User;
 use Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\models\rol;
+use App\Models\Role;
 
 class UserController extends Controller
 {
     public function index()
     {
         $users = User::all();
-        $roles = Rol::orderBy('id')->get();
+        $roles = Role::orderBy('id')->get();
         return view('user.user', compact('users', 'roles'));
     }
 
@@ -27,7 +27,7 @@ class UserController extends Controller
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|string|max:255',
             'phone' => 'required|string|max:10',
-            'id_rol' => 'required|integer'
+            'id_role' => 'required|integer'
         ]);
         if ($validator->fails()) {
             return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
@@ -39,7 +39,7 @@ class UserController extends Controller
             'email' => $request->input('email'),
             'password' => bcrypt($request->input('password')),
             'phone' => $request->input('phone'),
-            'id_rol' => $request->input('id_rol'),
+            'id_role' => $request->input('id_role'),
         ]);
         return response()->json(['success' => true, 'message' => 'Usuario creado'], 200);
     }

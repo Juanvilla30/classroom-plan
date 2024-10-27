@@ -5,14 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Modality extends Model
+class StudyField extends Model
 {
     use HasFactory;
 
-    protected $table = 'modalities';
+    protected $table = 'study_fields';
 
     protected $fillable = [
-        'name_modality',
+        'name_study_field',
     ];
-
 }

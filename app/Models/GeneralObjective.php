@@ -5,14 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Modality extends Model
+class GeneralObjective extends Model
 {
     use HasFactory;
 
-    protected $table = 'modalities';
+    protected $table = 'general_objectives';
 
     protected $fillable = [
-        'name_modality',
+        'name_general_objective',
     ];
-
 }

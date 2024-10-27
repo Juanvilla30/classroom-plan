@@ -11,10 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('roles', function (Blueprint $table) {
+        Schema::create('components', function (Blueprint $table) {
             $table->id();
-            $table->string('name_role');
+            $table->string('name_component');
             $table->timestamps();
+
+            // Llaves foraneas
+            $table->unsignedBigInteger('id_study_field');
+            $table->foreign('id_study_field')->references('id')->on('study_fields');
         });
     }
 
@@ -23,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('components');
     }
 };

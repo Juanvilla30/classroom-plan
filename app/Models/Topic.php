@@ -9,7 +9,7 @@ class Topic extends Model
 {
     use HasFactory;
 
-    protected $table = 'specific_objectives';
+    protected $table = 'topics';
 
     protected $fillable = [
         'name_topic',

@@ -6,6 +6,7 @@ use App\Models\ClassroomPlan;
 use App\Models\Course;
 use App\Models\Evaluation;
 use App\Models\Program;
+use App\Models\ProgramCourseRelationship;
 use App\Models\Rol;
 use App\Models\Semester;
 use Illuminate\Http\Request;
@@ -29,13 +30,17 @@ class ClassroomPlanController extends Controller
         // Obtener el programa de los datos de la solicitud
         $program = $request->input('programs');
 
+        // Consultar los IDs de los cursos asociados al programa especificado
+        $listCurseIds = ProgramCourseRelationship::where('id_program', $program)
+            ->orderBy('id') // Ordenar los resultados por ID
+            ->pluck('id_course'); // Obtener solo los IDs de cursos
+        
         // Consultar los cursos asociados al programa especificado
-        $listCurse = Course::where('id_program', $program)
-            ->with([
-                'program.faculti', // Cargar la relación con la facultad del programa
-                'component.field_study', // Cargar la relación con el campo de estudio del componente
+        $listCurse = Course::where('id', $listCurseIds)
+            ->with([                
+                'component.studyField', // Cargar la relación con el campo de estudio del componente
                 'semester', // Cargar la relación con el semestre
-                'type_course' // Cargar la relación con el tipo de curso
+                'courseType' // Cargar la relación con el tipo de curso
             ])->orderBy('id') // Ordenar los resultados por ID
             ->get(); // Paginación según el número de filas por página
 

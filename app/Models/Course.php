@@ -12,38 +12,37 @@ class Course extends Model
     protected $table = 'courses';
 
     protected $fillable = [
-        'name_curse',
+        'name_course',
         'credit',
-        'id_modalitie',
-        'id_program',
+        'id_modality',
         'id_component',
         'id_semester',
-        'id_type_course',
-        'id_rol',
+        'id_course_type',
+        'id_role',
     ];
 
-    public function modalitie()
+    public function modality()
     {
-        return $this->belongsTo(Modality::class, 'id_modalitie');
+        return $this->belongsTo(Modality::class, 'id_modality');
     }
-    public function program()
-    {
-        return $this->belongsTo(Program::class, 'id_program');
-    }
+
     public function component()
     {
         return $this->belongsTo(Component::class, 'id_component');
     }
+
     public function semester()
     {
         return $this->belongsTo(Semester::class, 'id_semester');
     }
-    public function type_course()
+
+    public function courseType()
     {
-        return $this->belongsTo(Type_course::class, 'id_type_course');
+        return $this->belongsTo(CourseType::class, 'id_course_type');
     }
-    public function rol()
+
+    public function role()
     {
-        return $this->belongsTo(Rol::class, 'id_rol');
+        return $this->belongsTo(Role::class, 'id_role');
     }
 }

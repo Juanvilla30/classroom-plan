@@ -14,11 +14,11 @@ class Evaluation extends Model
     protected $fillable = [
         'name_evaluation',
         'description',
-        'id_type_course',
+        'id_course_type',
     ];
 
-    public function type_course()
+    public function courseType()
     {
-        return $this->belongsTo(Type_course::class, 'id_type_course');
+        return $this->belongsTo(CourseType::class, 'id_course_type');
     }
 }

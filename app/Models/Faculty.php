@@ -12,6 +12,7 @@ class Faculty extends Model
     protected $table = 'faculties';
 
     protected $fillable = [
+        'code_faculty',
         'name_faculty',
     ];
 }
