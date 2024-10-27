@@ -87,7 +87,7 @@
     <!-- End Card -->
 
     <!-- Card Info -->
-    <div class="card">
+    <div class="card">  
         <div class="card-body">
 
             <h4 class="card-title font-weight-bold text-primary">Información de curso</h4>
@@ -142,13 +142,52 @@
                     </div>
                 </div>
             </div>
+            <div class="form-group">
+                <label>Resultado de aprendizaje:</label>
+                <p id="nameRA"></p>
+            </div>
 
         </div>
     </div>
     <!-- End Card -->
 
+    <!-- Card RA -->
+    <div class="card" id="card-1" style="display:block;">
+        <div class="card-body">
+
+            <h4 class="card-title font-weight-bold text-primary">Resultados de aprendizaje</h4>
+
+            <div class="form-group">
+                <label for="pillSelectRA">Resultado de prendizaje</label>
+                <select class="form-control input-pill" id="pillSelectRA" disabled>
+                    <option disabled selected value="">Seleccione el resultado de prendizaje</option>
+                    @foreach ($programs as $program)
+                    <option value="{{ $program->id }}">
+                        {{ ucfirst(strtolower($program->name_program)) }}
+                    </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="exampleFormControlTextarea1">Descripción</label>
+                <textarea class="form-control" id="textareaDescriptionRA" rows="5" readonly>
+
+                </textarea>
+            </div>
+
+            <button type="button" class="btn btn-primary btn-lg btn-block" style="margin-top: 10px;"
+                id="confirmationEmptyRA">
+                Guardar
+            </button>
+
+        </div>
+
+    </div>
+    <!-- End Card -->
+
     <!-- Card Objective -->
-    <div class="card" id="card-1" style="display: block;">
+    <div class="card" id="card-2" style="display:none;">
         <div class="card-body">
 
             <h4 class="card-title font-weight-bold text-primary">Objetivo general</h4>
@@ -169,7 +208,7 @@
     <!-- End Card -->
 
     <!-- Card Specific Objective -->
-    <div class="card" id="card-2" style="display:none;">
+    <div class="card" id="card-3" style="display:none;">
         <div class="card-body">
 
             <h4 class="card-title font-weight-bold text-primary">Objetivos especificos</h4>
@@ -199,7 +238,7 @@
     <!-- End Card -->
 
     <!-- Card Specific Objective #1 -->
-    <div class="card" id="card-3" style="display:none;">
+    <div class="card" id="card-4" style="display:none;">
         <div class="card-body">
 
             <h4 class="card-title font-weight-bold text-primary">Temas</h4>
@@ -271,7 +310,7 @@
     <!-- End Card -->
 
     <!-- Card Specific Objective #2 -->
-    <div class="card" id="card-4" style="display:none;">
+    <div class="card" id="card-5" style="display:none;">
         <div class="card-body">
 
             <h4 class="card-title font-weight-bold text-primary">Temas</h4>
@@ -343,7 +382,7 @@
     <!-- End Card -->
 
     <!-- Card Specific Objective #3 -->
-    <div class="card" id="card-5" style="display:none;">
+    <div class="card" id="card-6" style="display:none;">
         <div class="card-body">
 
             <h4 class="card-title font-weight-bold text-primary">Temas</h4>
@@ -421,7 +460,7 @@
     <!-- End Card -->
 
     <!-- Card Evaluations -->
-    <div class="card" id="card-6" style="display:none;">
+    <div class="card" id="card-7" style="display:none;">
         <div class="card-body">
 
             <h4 class="card-title font-weight-bold text-primary" style="margin-bottom: 10px;">Evaluaciones</h4>
@@ -501,7 +540,7 @@
     <!-- End Card -->
 
     <!-- Card References -->
-    <div class="card" id="card-7" style="display:none;">
+    <div class="card" id="card-8" style="display:none;">
         <div class="card-body">
 
             <h4 class="card-title font-weight-bold text-primary" style="margin-bottom: 10px;">Referencias</h4>

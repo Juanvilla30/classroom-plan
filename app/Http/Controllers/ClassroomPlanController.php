@@ -7,7 +7,6 @@ use App\Models\Course;
 use App\Models\Evaluation;
 use App\Models\Program;
 use App\Models\ProgramCourseRelationship;
-use App\Models\Rol;
 use App\Models\Semester;
 use Illuminate\Http\Request;
 

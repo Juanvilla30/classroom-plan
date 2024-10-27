@@ -6,17 +6,6 @@ $.ajaxSetup({
 });
 
 document.addEventListener('DOMContentLoaded', function () {
-
-    /*
-        *
-        * VARIABLES
-        *
-    */
-
-    var program; // DECLARA UNA VARIABLE PARA ALMACENAR EL SELECCIONADO
-    var cursoId;
-    var component;
-
     /*
         *
         * ARREGLOS
@@ -24,11 +13,21 @@ document.addEventListener('DOMContentLoaded', function () {
     */
 
     // Arreglo con los IDs de las cards
-    const cards = ['card-1', 'card-2', 'card-3', 'card-4', 'card-5', 'card-6', 'card-7'];
+    const cards = ['card-1', 'card-2', 'card-3', 'card-4', 'card-5', 'card-6', 'card-7', 'card-8'];
 
     // Inicialmente mostrar la primera card
     let currentCardIndex = 0;
     document.getElementById(cards[currentCardIndex]).style.display = 'block';
+
+    /*
+        *
+        * VARIABLES
+        *
+    */
+
+    var program;
+    var cursoId;
+    var component;
 
     /*
         *
@@ -79,13 +78,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     // Procesar la respuesta del servidor y actualizar la tabla de cursos
                     var courses = response.listCurse; // Obtener la lista de cursos de la respuesta
                     var programs = response.listPrograms;
-                    console.log(programs);
 
                     // Verifica si programas están definidos antes de usarlos
                     if (programs.length > 0) {
                         // Solo tomamos el primer programa para mostrar su facultad y nombre
                         var program = programs[0]; // Aquí obtén el programa que necesitas, dependiendo de tu lógica
-                        console.log(program);
                     } else {
                         console.error('No se encontraron programas.');
                         return; // Sal de la función si no hay programas
@@ -146,6 +143,18 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // Función para habilitar o deshabilitar el select según el valor de 'prueba'
+    function selectRA(program) {
+
+        const selectElement = document.getElementById('pillSelectRA');
+        if (program.trim() === '') {
+            selectElement.disabled = true;
+        } else {
+            selectElement.disabled = false;
+        }
+
+    }
+
     // Función genérica para validar campos vacíos y mostrar alerta o modal
     function validate(fields, alertMessage) {
         let hasEmptyField = fields.some(field => document.getElementById(field).value.trim() === "");
@@ -165,8 +174,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function tableComponent(component) {
-
-        console.log('componente id', component)
 
         // Realizar la petición AJAX
         $.ajax({
@@ -251,7 +258,6 @@ document.addEventListener('DOMContentLoaded', function () {
     $('#multi-filter-select').on('click', '.courseSelect', function () {
         // OBTIENE EL VALOR DEL SEMESTRE SELECCIONADO
         cursoId = $(this).data('id');
-        console.log('course: ', cursoId)
 
         // Realizar la petición AJAX
         $.ajax({
@@ -263,7 +269,6 @@ document.addEventListener('DOMContentLoaded', function () {
             success: function (response) {
 
                 component = response.course[0].id_component;
-                console.log('Pofin', component);
 
                 visualizeInfoCourse(response);
                 tableComponent(component);
@@ -289,10 +294,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // Escuchar el click en el botón de confirmación del modal
     document.getElementById('filterCourse').addEventListener('click', function () {
         // Obtener el valor del programa seleccionado en el momento del click
-        var program = document.getElementById('pillSelectProgram').value;
-        console.log(program)
+        program = document.getElementById('pillSelectProgram').value;
         // Llamar a la función tableFiltersCourse con el programa actual
         tableFiltersCourse(program);
+        selectRA(program);
     });
 
     // Escuchar el click en el botón de confirmación del modal
@@ -304,6 +309,12 @@ document.addEventListener('DOMContentLoaded', function () {
         $('#modalConfirmation').modal('hide');
     });
 
+    // Escuchar el click en los botones y validar los campos correspondientes
+    document.getElementById('confirmationEmptyRA').addEventListener('click', function () {
+        // Mostrar el modal si no hay campos vacíos
+        $('#modalConfirmation').modal('show');
+    });
+    
     // Escuchar el click en los botones y validar los campos correspondientes
     document.getElementById('confirmationEmptyOne').addEventListener('click', function () {
         validate(
@@ -317,7 +328,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Imprimir en consola
         console.log(contentObjective)
     });
-
+    
     document.getElementById('confirmationEmptyTwo').addEventListener('click', function () {
         validate(
             ['textAreaSpecificOne', 'textAreaSpecificTwo', 'textAreaSpecificThree'],

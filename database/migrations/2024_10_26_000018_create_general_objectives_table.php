@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('general_objectives', function (Blueprint $table) {
             $table->id();
             $table->text('name_general_objective');
+            $table->text('description_general_objective');
             $table->timestamps();
         });
     }

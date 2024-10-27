@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('competences', function (Blueprint $table) {
             $table->id();
             $table->text('name_competence');
+            $table->text('description_competence');
             $table->timestamps();
 
             // Llaves foraneas

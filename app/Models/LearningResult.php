@@ -13,6 +13,7 @@ class LearningResult extends Model
 
     protected $fillable = [
         'name_learning_result',
+        'description_learning_result',
         'id_competence',
     ];
 

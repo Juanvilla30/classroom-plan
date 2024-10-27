@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('learning_results', function (Blueprint $table) {
             $table->id();
             $table->text('name_learning_result');
+            $table->text('description_learning_result');            
             $table->timestamps();
 
             // Llaves foraneas

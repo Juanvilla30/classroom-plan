@@ -13,6 +13,7 @@ class SpecificObjective extends Model
 
     protected $fillable = [
         'name_specific_objective',
+        'description_specific_objective',
         'id_topics',
     ];
 

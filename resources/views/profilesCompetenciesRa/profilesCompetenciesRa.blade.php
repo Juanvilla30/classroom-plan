@@ -30,7 +30,7 @@
     </div>
     <!-- End Breadcumb Header -->
 
-    <!-- Card 1 -->
+    <!-- Card Profile -->
     <div class="card" id="card-1" style="display: block;">
         <div class="card-body">
 
@@ -39,23 +39,20 @@
             <!-- Forms -->
             <form>
                 <div class="form-group">
-                    <label for="pillSelect">Seleccionar facultad</label>
+                    <label for="pillSelectFaculty">Seleccionar facultad</label>
                     <select class="form-control input-pill" id="pillSelectFaculty">
                         <option disabled selected value="">Seleccione una facultad</option>
                         @foreach ($facultys as $faculty)
-                        <option value="{{ $faculty->id }}">{{ $faculty->name_faculty }}
+                        <option value="{{ $faculty->id }}">{{ ucfirst(strtolower($faculty->name_faculty)) }}
                         </option>
                         @endforeach
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="pillSelect">Seleccionar programa</label>
-                    <select class="form-control input-pill" id="pillSelectProgram">
+                    <label for="pillSelectProgram">Seleccionar programa</label>
+                    <select class="form-control input-pill" id="pillSelectProgram" disabled>
                         <option disabled selected value="">Seleccione un programa</option>
-                        @foreach ($programs as $program)
-                        <option value="{{ $program->id }}">{{ $program->name_program }}
-                        </option>
-                        @endforeach
+                        
                     </select>
                 </div>
                 <div class="form-group">
@@ -71,9 +68,9 @@
 
         </div>
     </div>
-    <!-- End Card 1 -->
+    <!-- End Card -->
 
-    <!-- Card 2 -->
+    <!-- Card Competencies -->
     <div class="card" id="card-2" style="display:none;">
         <div class="card-body">
 
@@ -98,9 +95,9 @@
 
         </div>
     </div>
-    <!-- End Card 2 -->
+    <!-- End Card -->
 
-    <!-- Card 3 -->
+    <!-- Card RA #1 -->
     <div class="card" id="card-3" style="display:none;">
         <div class="card-body">
 
@@ -141,6 +138,25 @@
             </form>
             <!-- End Forms -->
 
+            <!-- Forms -->
+            <form>
+                <button type="button" class="btn btn-primary btn-lg btn-block" style="margin-top: 10px;"
+                    id="confirmationEmptyThree">
+                    Guardar
+                </button>
+            </form>
+            <!-- End Forms -->
+
+        </div>
+    </div>
+    <!-- End Card -->
+
+    <!-- Card RA #2 -->
+    <div class="card" id="card-4" style="display:none;">
+        <div class="card-body">
+
+            <h4 class="card-title font-weight-bold text-primary" style="margin-bottom: 10px;">Asignación de resultados de aprendizaje</h4>
+
             <!-- Accordion -->
             <div class="accordion accordion-secondary">
                 <div class="card">
@@ -173,7 +189,7 @@
                     <textarea class="form-control" id="textAreaRaFour" rows="8"></textarea>
                 </div>
                 <button type="button" class="btn btn-primary btn-lg btn-block" style="margin-top: 10px;"
-                    id="confirmationEmptyThree">
+                    id="confirmationEmptyFour">
                     Guardar
                 </button>
             </form>
@@ -181,7 +197,7 @@
 
         </div>
     </div>
-    <!-- End Card 3 -->
+    <!-- End Card -->
 
     <!-- Modal -->
     <div class="modal fade" id="modalConfirmation" tabindex="-1" role="dialog"

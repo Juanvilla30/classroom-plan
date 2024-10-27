@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('profiles_egress', function (Blueprint $table) {
             $table->id();
             $table->text('name_profile_egres');
+            $table->text('description_profile_egres');
             $table->timestamps();
 
             // Llaves foraneas

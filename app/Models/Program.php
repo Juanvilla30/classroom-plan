@@ -17,7 +17,7 @@ class Program extends Model
         'anio',
         'program_type',
         'degree_type',
-        'id_rol',
+        'id_role',
         'id_faculty',
     ];
 

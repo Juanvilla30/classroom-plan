@@ -13,6 +13,7 @@ class Competence extends Model
 
     protected $fillable = [
         'name_competence',
+        'description_competence',
         'id_profile_egres',
     ];
 

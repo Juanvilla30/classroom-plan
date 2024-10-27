@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('specific_objectives', function (Blueprint $table) {
             $table->id();
             $table->text('name_specific_objective');
+            $table->text('description_specific_objective');
             $table->timestamps();
 
             // Llaves foraneas

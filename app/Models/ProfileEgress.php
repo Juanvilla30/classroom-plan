@@ -13,6 +13,7 @@ class ProfileEgress extends Model
 
     protected $fillable = [
         'name_profile_egres',
+        'description_profile_egres',
         'id_program',
     ];
 

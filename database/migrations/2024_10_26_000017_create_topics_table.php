@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('topics', function (Blueprint $table) {
             $table->id();
             $table->text('name_topic');
+            $table->text('description_topic');
             $table->timestamps();
         });
     }

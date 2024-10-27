@@ -13,5 +13,6 @@ class GeneralObjective extends Model
 
     protected $fillable = [
         'name_general_objective',
+        'description_general_objective',
     ];
 }

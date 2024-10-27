@@ -13,5 +13,6 @@ class InstitutionalReference extends Model
 
     protected $fillable = [
         'name_institutional_reference',
+        'description_institutional_reference',
     ];
 }

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('institutional_references', function (Blueprint $table) {
             $table->id();
             $table->text('name_institutional_reference');
+            $table->text('description_institutional_reference');
             $table->timestamps();
         });
     }

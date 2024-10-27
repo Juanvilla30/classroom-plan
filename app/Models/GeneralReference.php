@@ -13,5 +13,6 @@ class GeneralReference extends Model
 
     protected $fillable = [
         'name_general_references',
+        'description_general_references',
     ];
 }
