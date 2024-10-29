@@ -106,7 +106,7 @@
             <!-- Accordion -->
             <div class="accordion accordion-secondary">
                 <div class="card">
-                    <div class="card-header" id="headingOne" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    <div class="card-header" id="contentCompetitionOne" data-toggle="collapse" data-target="#contCompeOne" aria-expanded="true" aria-controls="contCompeOne">
                         <div class="span-icon" style="color: #2B7FEA;">
                             <div class="flaticon-box-1"></div>
                         </div>
@@ -116,9 +116,9 @@
                         <div class="span-mode"></div>
                     </div>
 
-                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                    <div id="contCompeOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
                         <div class="card-body">
-                            Aqui va el texto
+                            
                         </div>
                     </div>
                 </div>
@@ -160,7 +160,7 @@
             <!-- Accordion -->
             <div class="accordion accordion-secondary">
                 <div class="card">
-                    <div class="card-header collapsed" id="headingTwo" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    <div class="card-header collapsed" id="headingTwo" data-toggle="collapse" data-target="#contCompeTwo" aria-expanded="false" aria-controls="contCompeTwo">
                         <div class="span-icon" style="color: #2B7FEA;">
                             <div class="flaticon-box-1"></div>
                         </div>
@@ -169,9 +169,9 @@
                         </div>
                         <div class="span-mode"></div>
                     </div>
-                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                    <div id="contCompeTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
                         <div class="card-body">
-                            Aqui va el texto
+                            
                         </div>
                     </div>
                 </div>

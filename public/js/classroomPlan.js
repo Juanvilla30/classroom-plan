@@ -5,6 +5,16 @@ $.ajaxSetup({
     }
 });
 
+/*
+    *
+    * VARIABLES
+    *
+*/
+
+let program;
+let cursoId;
+let component;
+
 document.addEventListener('DOMContentLoaded', function () {
     /*
         *
@@ -18,16 +28,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // Inicialmente mostrar la primera card
     let currentCardIndex = 0;
     document.getElementById(cards[currentCardIndex]).style.display = 'block';
-
-    /*
-        *
-        * VARIABLES
-        *
-    */
-
-    var program;
-    var cursoId;
-    var component;
 
     /*
         *
@@ -314,7 +314,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Mostrar el modal si no hay campos vacíos
         $('#modalConfirmation').modal('show');
     });
-    
+
     // Escuchar el click en los botones y validar los campos correspondientes
     document.getElementById('confirmationEmptyOne').addEventListener('click', function () {
         validate(
@@ -328,7 +328,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Imprimir en consola
         console.log(contentObjective)
     });
-    
+
     document.getElementById('confirmationEmptyTwo').addEventListener('click', function () {
         validate(
             ['textAreaSpecificOne', 'textAreaSpecificTwo', 'textAreaSpecificThree'],
