@@ -1,0 +1,6 @@
+.custom-card-border {
+    border: 2px solid #007bff; /* Cambia #007bff al color que prefieras */
+    border-radius: 8px; /* Ajusta el radio de los bordes si deseas */
+    padding: 15px; /* Opcional: agregar padding si el borde se ve demasiado cerca del contenido */
+    margin-bottom: 10px;
+}

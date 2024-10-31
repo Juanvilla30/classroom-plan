@@ -139,5 +139,4 @@ class UserController extends Controller
         ];
         return response()->json($data, 200);
     }
-
 }
