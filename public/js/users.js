@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const password = document.getElementById("addPassword").value;
             const phone = document.getElementById("addPhone").value;
             const idRol = document.getElementById("addRole").value;
+            const verfemail = "@uniatonoma.edu.co";
             const csrfToken = document
                 .querySelector('meta[name="csrf-token"]')
                 .getAttribute("content");
@@ -41,8 +42,9 @@ document.addEventListener("DOMContentLoaded", function () {
                                 text: "Se ha creado un nuevo usuario",
                                 confirmButtonColor: "#3085d6",
                                 confirmButtonText: "Entendido",
+                            }).then(() => {
+                                location.reload();
                             });
-                            location.reload();
                         } else {
                             Swal.fire({
                                 icon: "error Toast",
@@ -61,8 +63,6 @@ document.addEventListener("DOMContentLoaded", function () {
                             "Error al procesar la solicitud: " + error.message
                         );
                     });
-            } else {
-                alert("Por favor complete todos los campos");
             }
         });
 });
@@ -99,7 +99,8 @@ async function reloadModal(id) {
         document.getElementById("updateEmail").value = user.email;
         document.getElementById("updatePassword").value = user.password;
         document.getElementById("updatePhone").value = user.phone;
-        document.getElementById("updateRole").value = user.id_rol;
+        document.getElementById("updateRole").value = user.id_role;
+        console.log("rol", user.id_role);
 
         // Mostrar el modal
         document.getElementById("ModalUpdate").style.display = "block";
@@ -109,3 +110,129 @@ async function reloadModal(id) {
 }
 
 //delete
+let userIdToDelete = null;
+
+// Función para asignar el ID del usuario al hacer clic en el botón de eliminación
+function setUserId(id) {
+    userIdToDelete = id; // Guardamos el ID del usuario en una variable
+}
+
+// Al hacer clic en el botón de confirmación del modal
+document.getElementById("btnDelete").addEventListener("click", function () {
+    if (userIdToDelete) {
+        deleteUser(userIdToDelete); // Llamamos a la función deleteUser con el ID almacenado
+        $("#exampleModalCenter").modal("hide"); // Cerramos el modal después de eliminar
+    }
+});
+
+// Función para eliminar el usuario mediante una solicitud HTTP DELETE
+async function deleteUser(id) {
+    try {
+        const response = await fetch(`/user/${id}`, {
+            method: "DELETE", // Método DELETE para eliminar
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": document
+                    .querySelector('meta[name="csrf-token"]')
+                    .getAttribute("content"),
+            },
+        });
+
+        // Maneja la respuesta en función del código de estado
+        if (response.ok) {
+            // Verifica si la respuesta es 2xx
+            console.log("Usuario eliminado con éxito");
+
+            Swal.fire({
+                icon: "success",
+                title: "Eliminación exitosa",
+                text: "El usuario ha sido eliminado correctamente.",
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "Entendido",
+            }).then(() => {
+                location.reload(); // Recarga la página después de la confirmación
+            });
+        } else {
+            // Si no es un código 2xx, tratamos de procesar la respuesta como JSON y manejamos posibles errores
+            const data = await response.json();
+            throw new Error(`Error: ${data.message || "Error desconocido"}`);
+        }
+    } catch (error) {
+        console.error("Error al eliminar el usuario:", error);
+        Swal.fire({
+            icon: "error",
+            title: "Advertencia",
+            text: "No se ha podido eliminar el usuario",
+            confirmButtonColor: "#3085d6",
+            confirmButtonText: "Entendido",
+        }).then(() => {
+            location.reload();
+        });
+    }
+}
+//end delete
+
+//update
+document;
+document.addEventListener("DOMContentLoaded", function () {
+    document
+        .getElementById("btn-update")
+        ?.addEventListener("click", async function () {
+            const id = this.getAttribute("data-user-id");
+
+            if (!id) {
+                console.log("el id no es null", id);
+                return;
+            }
+
+            try {
+                const response = await fetch(`/user/${id}`, {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": document
+                            .querySelector('meta[name="csrf-token"]')
+                            .getAttribute("content"),
+                    },
+                    body: JSON.stringify({
+                        name: document.getElementById("updateName").value,
+                        last_name:
+                            document.getElementById("updateLastName").value,
+                        phone: document.getElementById("updatePhone").value,
+                        email: document.getElementById("updateEmail").value,
+                        password:
+                            document.getElementById("updatePassword").value,
+                        id_role: document.getElementById("updateRole").value,
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(
+                        `Error en la solicitud: ${response.status}`
+                    );
+                }
+                const data = await response.json();
+                console.log("datos llegados para actualizar", data);
+                Swal.fire({
+                    icon: "success",
+                    title: "Actualización exitosa",
+                    text: "El usuario ha sido actualizado correctamente.",
+                    confirmButtonColor: "#3085d6",
+                    confirmButtonText: "Entendido",
+                }).then(() => {
+                    location.reload();
+                });
+            } catch (error) {
+                console.log("error", error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Advertencia",
+                    text: "No se ha podido actualizar el usuario",
+                    confirmButtonColor: "#3085d6",
+                    confirmButtonText: "Entendido",
+                }).then(() => {
+                    location.reload();
+                });
+            }
+        });
+});

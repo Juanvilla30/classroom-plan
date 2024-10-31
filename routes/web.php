@@ -65,7 +65,8 @@ Route::get('/list-classroom-plan', [ListClassroomPlanController::class, 'index']
 Route::get('/user', [UserController::class, 'index'])->name('user');  
 Route::post('/user/create', [UserController::class, 'store']);  
 Route::get('/user/{id}', [UserController::class, 'show']);  
-Route::delete('/user/{id}', [UserController::class, 'destroy']); 
+Route::delete('/user/{id}', [UserController::class, 'destroy']);
+Route::patch('/user/{id}', [UserController::class, 'update']);
 Route::get('/ListUsers', [ListUsersController::class, 'index'])->name('ListUsers');
 
 //Routes document

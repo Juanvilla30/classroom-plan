@@ -79,11 +79,11 @@
                         </td>
                         <td>
                             <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
-                                data-target="#ModalUpdate" onclick="reloadModal({{  $user->id }})">
+                                data-target="#ModalUpdate" onclick="reloadModal({{ $user->id }})" id="btnmodal-update">
                                 <i class="fas fa-pencil-alt"></i>
                             </button>
                             <button type="button" class="btn btn-danger btn-sm" data-toggle="modal"
-                                data-target="#exampleModalCenter">
+                                data-target="#exampleModalCenter" onclick="setUserId({{ $user->id}})">
                                 <i class="fas fa-times"></i>
                             </button>
                         </td>
@@ -231,9 +231,8 @@
                                     <div class="form-group form-group-default">
                                         <label>Rol</label>
                                         <select id="updateRole" class="form-control" required>
-                                            <option value="">Seleccionar Rol</option>
                                             @foreach ($roles as $rol)
-                                            <option value="{{ $rol->id }}">{{ $rol->rol }}</option>
+                                            <option value="{{ $rol->id }}">{{ $rol->name_role }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -242,7 +241,9 @@
                         </form>
                     </div>
                     <div class="modal-footer no-bd">
-                        <button type="button" class="btn btn-primary">Actualizar</button>
+                        <input type="hidden" id="userId">
+                        <button type="button" class="btn btn-primary" id="btn-update"
+                            id="btn-update" data-user-id="{{$user->id}}">Actualizar</button>
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
                     </div>
                 </div>
@@ -262,12 +263,12 @@
                         </button>
                     </div>
                     <div class="modal-body">¿Desea eliminar este usuario?
-                        <input type="hidden" id="idEliminar"  value="">
+                        <input type="hidden" id="idEliminar" value="">
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary"
-                            data-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Eliminar</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal"
+                            id="btnDelete">Eliminar</button>
                     </div>
                 </div>
             </div>
