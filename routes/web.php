@@ -32,11 +32,12 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 // Rutas de Create profiles_competencies_ra
 Route::get('/profiles-competencies-ra', [ProfilesCompetenciesRaController::class, 'index'])->name('profilesCompetenciesRa');
+Route::post('/profiles-competencies-ra/validate-profile', [ProfilesCompetenciesRaController::class, 'validateProfile'])->name('validateProfile');
 Route::post('/profiles-competencies-ra/faculty-program', [ProfilesCompetenciesRaController::class, 'filtersFacultyProgram'])->name('filtersFacultyProgram');
 Route::post('/profiles-competencies-ra/name-program', [ProfilesCompetenciesRaController::class, 'nameProgram'])->name('nameProgram');
 Route::post('/profiles-competencies-ra/save-profile', [ProfilesCompetenciesRaController::class, 'saveProfile'])->name('saveProfile');
-Route::post('/profiles-competencies-ra/save-competition', [ProfilesCompetenciesRaController::class, 'saveCompetition'])->name('saveCompetition');
-Route::post('/profiles-competencies-ra/save-ra', [ProfilesCompetenciesRaController::class, 'saveRA'])->name('saveRA');
+Route::put('/profiles-competencies-ra/save-competition', [ProfilesCompetenciesRaController::class, 'saveCompetition'])->name('saveCompetition');
+Route::put('/profiles-competencies-ra/save-ra', [ProfilesCompetenciesRaController::class, 'saveRA'])->name('saveRA');
 
 // Rutas de View profiles_competencies_ra
 Route::get('/view-profiles-competencies-ra/{id}', [ViewProfilesCompetenciesRaController::class, 'index'])->name('viewProfilesCompetenciesRa');
@@ -49,10 +50,16 @@ Route::delete('/list-profiles/delete-profile', [ListProfilesCompetenciesRaContro
 
 // Rutas de plan de aula
 Route::get('/classroom-plan', [ClassroomPlanController::class, 'index'])->name('classroomPlan');
-Route::get('/list-classroom-plan', [ListClassroomPlanController::class, 'index'])->name('listClassroomPlan');
+Route::post('/classroom-plan/faculty-program', [ClassroomPlanController::class, 'filtersFacultyProgram'])->name('filtersFacultyProgram');
+Route::post('/classroom-plan/learning-program', [ClassroomPlanController::class, 'filtersLearningProgram'])->name('filtersLearningProgram');
 Route::post('/classroom-plan/visualize-info-course', [ClassroomPlanController::class, 'visualizeCourse'])->name('visualizeInfoCourse');
 Route::post('/classroom-plan/filters-course', [ClassroomPlanController::class, 'filtersAssignCourse'])->name('filtersAssignCourse');
 Route::post('/classroom-plan/list-courses', [ClassroomPlanController::class, 'listCourses'])->name('listCourses');
+Route::post('/classroom-plan/Learning-result', [ClassroomPlanController::class, 'viewLearning'])->name('viewLearning');
+Route::post('/classroom-plan/validate-classroom-plans', [ClassroomPlanController::class, 'validateClassroomPlans'])->name('validateClassroomPlans');
+
+// Rutas de listado de plan de aula
+Route::get('/list-classroom-plan', [ListClassroomPlanController::class, 'index'])->name('listClassroomPlan');
 
 // Rutas user
 Route::get('/user', [UserController::class, 'index'])->name('user');  
