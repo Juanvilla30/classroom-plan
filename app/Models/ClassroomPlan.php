@@ -17,8 +17,7 @@ class ClassroomPlan extends Model
         'id_learning_result',
         'id_general_objective',
         'id_specific_objective',
-        'id_general_reference',
-        'id_institutional_reference',
+        'id_reference',
         'id_state',
     ];
 
@@ -49,12 +48,7 @@ class ClassroomPlan extends Model
 
     public function generalReference()
     {
-        return $this->belongsTo(GeneralReference::class, 'id_general_reference');
-    }
-
-    public function institutionalReference()
-    {
-        return $this->belongsTo(InstitutionalReference::class, 'id_institutional_reference');
+        return $this->belongsTo(Reference::class, 'id_reference');
     }
 
     public function state()

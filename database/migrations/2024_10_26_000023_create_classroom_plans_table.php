@@ -31,11 +31,8 @@ return new class extends Migration
             $table->unsignedBigInteger('id_specific_objective')->nullable();
             $table->foreign('id_specific_objective')->references('id')->on('specific_objectives');
 
-            $table->unsignedBigInteger('id_general_reference')->nullable();
-            $table->foreign('id_general_reference')->references('id')->on('general_references');
-
-            $table->unsignedBigInteger('id_institutional_reference')->nullable();
-            $table->foreign('id_institutional_reference')->references('id')->on('institutional_references');
+            $table->unsignedBigInteger('id_reference')->nullable();
+            $table->foreign('id_reference')->references('id')->on('references');
 
             $table->unsignedBigInteger('id_state');
             $table->foreign('id_state')->references('id')->on('states');

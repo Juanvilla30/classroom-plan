@@ -100,7 +100,10 @@
                     </textarea>
                 </div>
                 @php
-                $rA1 = $learningResults[$competencia1->id]->firstWhere('name_learning_result', 'Resultados de aprendizaje #1');
+                    // Asegúrate de que $competencia1 no sea nulo y que su id exista en $learningResults
+                    $rA1 = isset($competencia1) && isset($learningResults[$competencia1->id])
+                    ? $learningResults[$competencia1->id]->firstWhere('name_learning_result', 'Resultados de aprendizaje #1')
+                    : null;
                 @endphp
                 <div class="form-group">
                     <label for="exampleFormControlTextarea1">Resultado de aprendizaje #1</label>
@@ -110,7 +113,10 @@
                     </textarea>
                 </div>
                 @php
-                $rA2 = $learningResults[$competencia1->id]->firstWhere('name_learning_result', 'Resultados de aprendizaje #2');
+                    // Asegúrate de que $competencia1 no sea nulo y que su id exista en $learningResults
+                    $rA2 = isset($competencia1) && isset($learningResults[$competencia1->id])
+                    ? $learningResults[$competencia1->id]->firstWhere('name_learning_result', 'Resultados de aprendizaje #2')
+                    : null;
                 @endphp
                 <div class="form-group">
                     <label for="exampleFormControlTextarea1">Resultado de aprendizaje #2</label>
@@ -145,7 +151,10 @@
                     </textarea>
                 </div>
                 @php
-                $rA3 = $learningResults[$competencia1->id]->firstWhere('name_learning_result', 'Resultados de aprendizaje #3');
+                    // Asegúrate de que $competencia1 no sea nulo y que su id exista en $learningResults
+                    $rA3 = isset($competencia1) && isset($learningResults[$competencia1->id])
+                    ? $learningResults[$competencia1->id]->firstWhere('name_learning_result', 'Resultados de aprendizaje #3')
+                    : null;
                 @endphp
                 <div class="form-group">
                     <label for="exampleFormControlTextarea1">Resultado de aprendizaje #3</label>
@@ -155,7 +164,10 @@
                     </textarea>
                 </div>
                 @php
-                $rA4 = $learningResults[$competencia1->id]->firstWhere('name_learning_result', 'Resultados de aprendizaje #4');
+                    // Asegúrate de que $competencia1 no sea nulo y que su id exista en $learningResults
+                    $rA4 = isset($competencia1) && isset($learningResults[$competencia1->id])
+                    ? $learningResults[$competencia1->id]->firstWhere('name_learning_result', 'Resultados de aprendizaje #4')
+                    : null;
                 @endphp
                 <div class="form-group">
                     <label for="exampleFormControlTextarea1">Resultado de aprendizaje #4</label>
@@ -164,7 +176,7 @@
                     @endif
                     </textarea>
                 </div>
-                <button type="button" class="btn btn-primary btn-lg btn-block btn-block d-none" id="saveUpdateProfile">Guardar</button>
+                <button type="button" class="btn btn-primary btn-lg btn-block d-none" id="saveUpdateProfile">Guardar</button>
             </form>
             <!-- End Forms -->
 

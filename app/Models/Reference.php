@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class InstitutionalReference extends Model
+class Reference extends Model
 {
     use HasFactory;
 
-    protected $table = 'institutional_references';
+    protected $table = 'references';
 
     protected $fillable = [
-        'name_institutional_reference',
-        'description_institutional_reference',
+        'name_reference',
+        'link_reference',
     ];
 }

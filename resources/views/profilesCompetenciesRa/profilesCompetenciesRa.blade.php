@@ -32,9 +32,12 @@
 
     <!-- Card Profile -->
     <div class="card" id="card-1" style="display: block;">
-        <div class="card-body">
 
-            <h4 class="card-title font-weight-bold text-primary">Asignación de perfil de egreso</h4>
+        <div class="card-header">
+            <h5 class="card-title font-weight-bold text-primary" >Asignación de perfil de egreso</h5>
+        </div>
+
+        <div class="card-body">
 
             <!-- Forms -->
             <form>
@@ -52,17 +55,15 @@
                     <label for="pillSelectProgram">Seleccionar programa</label>
                     <select class="form-control input-pill" id="pillSelectProgram" disabled>
                         <option disabled selected value="">Seleccione un programa</option>
-                        
+
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="exampleFormControlTextarea1">Perfil de egreso</label>
-                    <textarea class="form-control" id="textAreaProfile" rows="8" required></textarea>
+                    <textarea class="form-control readonlyField" id="textAreaProfile" rows="8" readonly></textarea>
                 </div>
-                <button type="button" class="btn btn-primary btn-lg btn-block" style="margin-top: 10px;"
-                    id="confirmationEmptyOne"> 
-                    Guardar
-                </button>
+                <button type="button" class="btn btn-primary btn-lg btn-block savePCRA d-none" id="confirmationEmptyOne">Guardar</button>
+                <button type="button" class="btn btn-primary btn-lg btn-block nextCard d-none">Siguiente</button>
             </form>
             <!-- End Forms -->
 
@@ -72,24 +73,28 @@
 
     <!-- Card Competencies -->
     <div class="card" id="card-2" style="display:none;">
-        <div class="card-body">
 
-            <h4 class="card-title font-weight-bold text-primary">Asignación de competencias</h4>
+        <div class="card-header">
+            <h5 class="card-title font-weight-bold text-primary" >Asignación de competencias</h5>
+        </div>
+
+        <div class="card-body">
 
             <!-- Forms -->
             <form>
                 <div class="form-group">
                     <label for="exampleFormControlTextarea1">Competencia 1</label>
-                    <textarea class="form-control" id="textAreaCompetitionOne" rows="6"></textarea>
+                    <textarea class="form-control readonlyField" id="textAreaCompetitionOne" rows="6"></textarea>
                 </div>
                 <div class="form-group">
                     <label for="exampleFormControlTextarea1">Competencia 2</label>
-                    <textarea class="form-control" id="textAreaCompetitionTwo" rows="6"></textarea>
+                    <textarea class="form-control readonlyField" id="textAreaCompetitionTwo" rows="6"></textarea>
                 </div>
-                <button type="button" class="btn btn-primary btn-lg btn-block" style="margin-top: 10px;"
+                <button type="button" class="btn btn-primary btn-lg btn-block savePCRA d-none" style="margin-top: 10px;"
                     id="confirmationEmptyTwo">
                     Guardar
                 </button>
+                <button type="button" class="btn btn-primary btn-lg btn-block nextCard d-none">Siguiente</button>
             </form>
             <!-- End Forms -->
 
@@ -99,9 +104,12 @@
 
     <!-- Card RA #1 -->
     <div class="card" id="card-3" style="display:none;">
-        <div class="card-body">
 
-            <h4 class="card-title font-weight-bold text-primary" style="margin-bottom: 10px;">Asignación de resultados de aprendizaje</h4>
+        <div class="card-header">
+            <h5 class="card-title font-weight-bold text-primary" >Asignación de resultados de aprendizaje</h5>
+        </div>
+
+        <div class="card-body">
 
             <!-- Accordion -->
             <div class="accordion accordion-secondary">
@@ -118,7 +126,7 @@
 
                     <div id="contCompeOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
                         <div class="card-body">
-                            
+
                         </div>
                     </div>
                 </div>
@@ -129,21 +137,22 @@
             <form>
                 <div class="form-group">
                     <label for="exampleFormControlTextarea1">Resultado de aprendizaje #1</label>
-                    <textarea class="form-control" id="textAreaRaOne" rows="8"></textarea>
+                    <textarea class="form-control readonlyField" id="textAreaRaOne" rows="8"></textarea>
                 </div>
                 <div class="form-group">
                     <label for="exampleFormControlTextarea1">Resultado de aprendizaje #2</label>
-                    <textarea class="form-control" id="textAreaRaTwo" rows="8"></textarea>
+                    <textarea class="form-control readonlyField" id="textAreaRaTwo" rows="8"></textarea>
                 </div>
             </form>
             <!-- End Forms -->
 
             <!-- Forms -->
             <form>
-                <button type="button" class="btn btn-primary btn-lg btn-block" style="margin-top: 10px;"
+                <button type="button" class="btn btn-primary btn-lg btn-block savePCRA d-none" style="margin-top: 10px;"
                     id="confirmationEmptyThree">
                     Guardar
                 </button>
+                <button type="button" class="btn btn-primary btn-lg btn-block nextCard d-none">Siguiente</button>
             </form>
             <!-- End Forms -->
 
@@ -153,9 +162,12 @@
 
     <!-- Card RA #2 -->
     <div class="card" id="card-4" style="display:none;">
-        <div class="card-body">
 
-            <h4 class="card-title font-weight-bold text-primary" style="margin-bottom: 10px;">Asignación de resultados de aprendizaje</h4>
+        <div class="card-header">
+            <h5 class="card-title font-weight-bold text-primary" >Asignación de resultados de aprendizaje</h5>
+        </div>
+
+        <div class="card-body">
 
             <!-- Accordion -->
             <div class="accordion accordion-secondary">
@@ -171,7 +183,7 @@
                     </div>
                     <div id="contCompeTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
                         <div class="card-body">
-                            
+
                         </div>
                     </div>
                 </div>
@@ -182,16 +194,17 @@
             <form>
                 <div class="form-group">
                     <label for="exampleFormControlTextarea1">Resultado de aprendizaje #3</label>
-                    <textarea class="form-control" id="textAreaRaThree" rows="8"></textarea>
+                    <textarea class="form-control readonlyField" id="textAreaRaThree" rows="8"></textarea>
                 </div>
                 <div class="form-group">
                     <label for="exampleFormControlTextarea1">Resultado de aprendizaje #4</label>
-                    <textarea class="form-control" id="textAreaRaFour" rows="8"></textarea>
+                    <textarea class="form-control readonlyField" id="textAreaRaFour" rows="8"></textarea>
                 </div>
-                <button type="button" class="btn btn-primary btn-lg btn-block" style="margin-top: 10px;"
+                <button type="button" class="btn btn-primary btn-lg btn-block savePCRA d-none" style="margin-top: 10px;"
                     id="confirmationEmptyFour">
                     Guardar
                 </button>
+                <button type="button" class="btn btn-primary btn-lg btn-block nextCard d-none">Siguiente</button>
             </form>
             <!-- End Forms -->
 

@@ -14,9 +14,18 @@ $.ajaxSetup({
 let faculty;
 let program;
 let nameProfile;
-let profileId;
-let competitionsOne;
-let competitionsTwo;
+let profileIds;
+
+let competenceId0;
+let competenceId1;
+
+let rAIdsOne;
+let rAIdsTwo;
+let rAIdsThree;
+let rAIdsFour;
+
+let competitionsIdOne;
+let competitionsIdTwo;
 
 document.addEventListener("DOMContentLoaded", function () {
     /*
@@ -55,8 +64,21 @@ document.addEventListener("DOMContentLoaded", function () {
             // Mostrar la siguiente card
             document.getElementById(cards[currentCardIndex]).style.display = 'block';
         } else {
-            // Recargar la página cuando llegues a la última card
-            location.reload();
+            Swal.fire({
+                icon: 'success',
+                title: 'Exito',
+                text: 'Se ha creado correctamente el el perfil de egreso',
+                confirmButtonColor: '#1269DB',
+                confirmButtonText: 'Entendido'
+            }).then((result) => {
+                // Si el usuario confirma la acción
+                if (result.isConfirmed) {
+                    // Recargar la página cuando llegues a la última card
+                    location.reload();
+                } else {
+                    console.log('Eliminacion cancelada por el usuario'); // Mensaje en consola si el usuario cancela la acción
+                }
+            });
         }
     }
 
@@ -166,98 +188,100 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function saveProfile(nameProfile, profile, program) {
+        const competitions = ['Competencias #1', 'Competencias #2'];
+        const competitionContent = 'No se asignó ninguna competencia.';
+
+        const learningResults = [
+            'Resultados de aprendizaje #1',
+            'Resultados de aprendizaje #2',
+            'Resultados de aprendizaje #3',
+            'Resultados de aprendizaje #4'
+        ];
+        const learningResultContent = 'No se asignó ningún resultado de aprendizaje.';
 
         return new Promise((resolve, reject) => {
-            // Realizar una solicitud AJAX para obtener los cursos según los parámetros proporcionados
             $.ajax({
-                url: '/profiles-competencies-ra/save-profile', // URL 
-                method: 'POST', // Método de la solicitud: POST
+                url: '/profiles-competencies-ra/save-profile',
+                method: 'POST',
                 data: {
-                    nameProfile: nameProfile,
-                    profile: profile,
-                    program: program,
+                    nameProfile,
+                    profile,
+                    program,
+                    nameCompetitionOne: competitions[0],
+                    nameCompetitionTwo: competitions[1],
+                    competitionOne: competitionContent,
+                    competitionTwo: competitionContent,
+                    nameRaOne: learningResults[0],
+                    nameRaTwo: learningResults[1],
+                    nameRaThree: learningResults[2],
+                    nameRaFour: learningResults[3],
+                    contentRaOne: learningResultContent,
+                    contentRaTwo: learningResultContent,
+                    contentRaThree: learningResultContent,
+                    contentRaFour: learningResultContent,
                 },
-                // Función que se ejecuta en caso de éxito en la solicitud
                 success: function (response) {
-
+                    // Asignar los IDs a las variables
                     var profileId = response.profileCreate.id;
+                    var competitionIds = response.createdCompetitions.map(comp => comp.id); // Suponiendo que es un array
+                    var rAIds = response.createdResults.map(result => result.id); // Suponiendo que es un array
 
-                    resolve(profileId);
+                    // Pasar las variables al resolver
+                    resolve({ profileId, competitionIds, rAIds });
                 },
-                // Función que se ejecuta en caso de error en la solicitud
                 error: function (xhr, status, error) {
-                    // Imprimir mensajes de error en la consola
-                    console.error('Error al eliminar el grupo:', xhr);
-                    console.error('Estado:', status);
-                    console.error('Error:', error);
-                    console.error('Respuesta del servidor:', xhr.responseText);
-
-                    // Rechazamos la promesa en caso de error
+                    console.error('Error:', xhr, status, error, xhr.responseText);
                     reject(error);
-
-                    // Mostrar un mensaje de error en la tabla en caso de error en la solicitud
                     $('#cursoTableBody').html('<tr><td colspan="6">Ocurrió un error al buscar los cursos. Inténtalo de nuevo.</td></tr>');
                 }
             });
         });
-
     }
 
-    function saveCompetition(competitionOne, competitionTwo, profileId) {
-
+    function saveCompetition(competenceId0, competenceId1, competitionOne, competitionTwo, profileId) {
         var nameCompetitionOne = 'Competencias #1';
         var nameCompetitionTwo = 'Competencias #2';
 
         return new Promise((resolve, reject) => {
-            // Realizar una solicitud AJAX para obtener los cursos según los parámetros proporcionados
+            // Realizar una solicitud AJAX para actualizar las competencias
             $.ajax({
-                url: '/profiles-competencies-ra/save-competition', // URL 
-                method: 'POST', // Método de la solicitud: POST
+                url: '/profiles-competencies-ra/save-competition',
+                method: 'PUT',
                 data: {
                     nameCompetitionOne: nameCompetitionOne,
                     nameCompetitionTwo: nameCompetitionTwo,
                     competitionOne: competitionOne,
                     competitionTwo: competitionTwo,
                     profileId: profileId,
+                    competenceId0: competenceId0,  // Enviar ID de competencia 1
+                    competenceId1: competenceId1,   // Enviar ID de competencia 2
                 },
-                // Función que se ejecuta en caso de éxito en la solicitud
                 success: function (response) {
-                    if (Array.isArray(response.competitionCreate) && response.competitionCreate.length > 0) {
-                        // Extrae los IDs de cada competencia creada
-                        const competitionIds = response.competitionCreate.map(competition => competition);
+                    if (Array.isArray(response.competitionUpdate) && response.competitionUpdate.length > 0) {
+                        const competitionIds = response.competitionUpdate.map(competition => competition.id);
                         resolve(competitionIds);
                     } else {
-                        reject('Competencias no fueron creadas correctamente.');
+                        reject('Competencias no fueron actualizadas correctamente.');
                     }
                 },
-                // Función que se ejecuta en caso de error en la solicitud
                 error: function (xhr, status, error) {
-                    // Imprimir mensajes de error en la consola
-                    console.error('Error al eliminar el grupo:', xhr);
-                    console.error('Estado:', status);
                     console.error('Error:', error);
-                    console.error('Respuesta del servidor:', xhr.responseText);
-
-                    // Rechazamos la promesa en caso de error
                     reject(error);
-
-                    // Mostrar un mensaje de error en la tabla en caso de error en la solicitud
-                    $('#cursoTableBody').html('<tr><td colspan="6">Ocurrió un error al buscar los cursos. Inténtalo de nuevo.</td></tr>');
                 }
             });
         });
-
     }
 
-    function saveRA(nameRaOne, nameRaTwo, contentRaOne, contentRaTwo, competitions) {
+    function saveRA(rAIdsOne, rAIdsTwo, nameRaOne, nameRaTwo, contentRaOne, contentRaTwo, competitions) {
 
-        console.log(contentRaOne, contentRaTwo)
         return new Promise((resolve, reject) => {
             // Realizar una solicitud AJAX para obtener los cursos según los parámetros proporcionados
             $.ajax({
                 url: '/profiles-competencies-ra/save-ra', // URL 
-                method: 'POST', // Método de la solicitud: POST
+                method: 'PUT', // Método de la solicitud: POST
                 data: {
+                    rAIdsOne: rAIdsOne,
+                    rAIdsTwo: rAIdsTwo,
                     nameRaOne: nameRaOne,
                     nameRaTwo: nameRaTwo,
                     contentRaOne: contentRaOne,
@@ -287,121 +311,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
-    /*
-        *
-        * Event Listener
-        *
-    */
-
-    document.getElementById('pillSelectFaculty').addEventListener('change', function () {
-        faculty = this.options[this.selectedIndex].value;
-        selectProgram(faculty);
-    });
-
-    document.getElementById('pillSelectProgram').addEventListener('change', function () {
-        program = this.options[this.selectedIndex].value;
-        getNameProgram(program).then(response => {
-            nameProfile = response;
-        })
-            .catch(error => {
-                console.error("Error en la solicitud AJAX:", error);
-            });
-
-    });
-
-    // Escuchar el click en el botón de confirmación del modal
-    document.getElementById('confirmationEmptyOne').addEventListener('click', function () {
-
-        // Capturar el contenido del textarea
-        var contentProfile = document.getElementById('textAreaProfile').value;
-
-        if (contentProfile.trim() === "" || faculty.trim() === "" || program.trim() === "") {
-            // Mostrar alerta si está vacío
-            Swal.fire({
-                icon: 'warning',
-                title: 'Advertencia',
-                text: 'Hay campos que no pueden estar vacío. por favor completa para continuar',
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'Entendido'
-            });
-        } else {
-            // Si no está vacío, mostrar el modal
-            $('#modalConfirmation').modal('show');
-        }
-
-    });
-
-    // Escuchar el click en el botón de confirmación del modal
-    document.getElementById('confirmationEmptyTwo').addEventListener('click', function () {
-
-        //Competencias
-        var contentCompetitionOne = document.getElementById('textAreaCompetitionOne').value;
-        var contentCompetitionTwo = document.getElementById('textAreaCompetitionTwo').value;
-
-        if (contentCompetitionOne.trim() === "" || contentCompetitionTwo.trim() === "") {
-            // Mostrar alerta si está vacío
-            Swal.fire({
-                icon: 'warning',
-                title: 'Advertencia',
-                text: 'Los campos de competencias no pueden estar vacíos.',
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'Entendido'
-            });
-        } else {
-            // Si no está vacío, mostrar el modal
-            $('#modalConfirmation').modal('show');
-            // Establecer el contenido en el acordeón
-        }
-
-    });
-
-    // Escuchar el click en el botón de confirmación del modal
-    document.getElementById('confirmationEmptyThree').addEventListener('click', function () {
-
-        //Resultados de aprendizaje
-        var contentRaOne = document.getElementById('textAreaRaOne').value;
-        var contentRaTwo = document.getElementById('textAreaRaTwo').value;
-
-        if (contentRaOne.trim() === "" || contentRaTwo.trim() === "") {
-            // Mostrar alerta si está vacío
-            Swal.fire({
-                icon: 'warning',
-                title: 'Advertencia',
-                text: 'Los campo de resultados de aprendizaje no pueden estar vacíos.',
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'Entendido'
-            });
-        } else {
-            // Si no está vacío, mostrar el modal
-            $('#modalConfirmation').modal('show');
-        }
-
-    });
-
-    // Escuchar el click en el botón de confirmación del modal
-    document.getElementById('confirmationEmptyFour').addEventListener('click', function () {
-
-        var contentRaThree = document.getElementById('textAreaRaThree').value;
-        var contentRaFour = document.getElementById('textAreaRaFour').value;
-
-        if (contentRaThree.trim() === "" || contentRaFour.trim() === "") {
-            // Mostrar alerta si está vacío
-            Swal.fire({
-                icon: 'warning',
-                title: 'Advertencia',
-                text: 'Los campo de resultados de aprendizaje no pueden estar vacíos.',
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'Entendido'
-            });
-        } else {
-            // Si no está vacío, mostrar el modal
-            $('#modalConfirmation').modal('show');
-        }
-
-    });
-
-    // Escuchar el click en el botón de confirmación del modal
-    document.getElementById('confirm-button').addEventListener('click', function () {
+    function confirmButton() {
         // Cambiar a la siguiente card
         showNextCard();
 
@@ -430,23 +340,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Guardar el perfil si el contenido no está vacío
         if (contentProfile.trim() !== '') {
-            saveProfile(nameProfile, contentProfile, program).then(response => {
-                profileId = response; // Suponiendo que 'response' es el ID del perfil guardado
-                contentProfile = ''; // Limpiar el contenido después de guardarlo
+            saveProfile(nameProfile, contentProfile, program)
+                .then(({ profileId, competitionIds, rAIds }) => { // Desestructuración de la respuesta
 
-                // Reiniciar el formulario después de guardar
-                resetForm();
-            })
+                    competenceId0 = competitionIds[0]; // Asegúrate de que response sea un array
+                    competenceId1 = competitionIds[1]; // También debe ser un array
+                    profileIds = profileId;
+                    rAIdsOne = rAIds[0];
+                    rAIdsTwo = rAIds[1];
+                    rAIdsThree = rAIds[2];
+                    rAIdsFour = rAIds[3];
+
+                    // Asignar el ID del perfil guardado
+                    contentProfile = ''; // Limpiar el contenido después de guardarlo
+
+                    // Reiniciar el formulario después de guardar
+                    resetForm();
+                })
                 .catch(error => {
                     console.error("Error en la solicitud AJAX:", error);
                 });
         }
 
-        // Guardar competencias si no están vacías
         if (contentCompetitionOne.trim() !== '' && contentCompetitionTwo.trim() !== '') {
-            saveCompetition(contentCompetitionOne, contentCompetitionTwo, profileId).then(response => {
-                competitionsOne = response[0].id; // Asegúrate de que response sea un array
-                competitionsTwo = response[1].id; // También debe ser un array
+            saveCompetition(competenceId0, competenceId1, contentCompetitionOne, contentCompetitionTwo, profileIds).then(response => {
                 contentCompetitionOne = ''; // Limpiar después de guardar
                 contentCompetitionTwo = '';
 
@@ -458,11 +375,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
         }
 
-        // Guardar resultados de aprendizaje #1
         if (contentRaOne.trim() !== '' && contentRaTwo.trim() !== '') {
             var nameRaOne = 'Resultados de aprendizaje #1';
             var nameRaTwo = 'Resultados de aprendizaje #2';
-            saveRA(nameRaOne, nameRaTwo, contentRaOne, contentRaTwo, competitionsOne).then(() => {
+            saveRA(rAIdsOne, rAIdsTwo, nameRaOne, nameRaTwo, contentRaOne, contentRaTwo, competenceId0).then(() => {
                 contentRaOne = ''; // Limpiar después de guardar
                 contentRaTwo = '';
             }).catch(error => {
@@ -473,11 +389,10 @@ document.addEventListener("DOMContentLoaded", function () {
             resetForm();
         }
 
-        // Guardar resultados de aprendizaje #2
         if (contentRaThree.trim() !== '' && contentRaFour.trim() !== '') {
             var nameRaThree = 'Resultados de aprendizaje #3';
             var nameRaFour = 'Resultados de aprendizaje #4';
-            saveRA(nameRaThree, nameRaFour, contentRaThree, contentRaFour, competitionsTwo).then(() => {
+            saveRA(rAIdsThree, rAIdsFour, nameRaThree, nameRaFour, contentRaThree, contentRaFour, competenceId1).then(() => {
                 contentRaThree = ''; // Limpiar después de guardar
                 contentRaFour = '';
             }).catch(error => {
@@ -486,8 +401,195 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Reiniciar el formulario después de guardar
             resetForm();
-        }
 
+        }
+    }
+
+    function validate(fields, alertMessage) {
+        let hasEmptyField = fields.some(field => document.getElementById(field).value.trim() === "");
+
+        if (hasEmptyField) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Advertencia',
+                text: alertMessage,
+                confirmButtonColor: '#1269DB',
+                confirmButtonText: 'Entendido'
+            });
+        } else {
+            // Mostrar el modal si no hay campos vacíos
+            $('#modalConfirmation').modal('show');
+        }
+    }
+
+    function validateProfile(programId) {
+        $.ajax({
+            url: '/profiles-competencies-ra/validate-profile', // URL 
+            method: 'POST', // Método de la solicitud: POST
+            data: {
+                programId: programId,
+            },
+            // Función que se ejecuta en caso de éxito en la solicitud
+            success: function (response) {
+
+                if (response.confirm == 'perfil no encontrado') {
+
+                    // Seleccionar todos los elementos con la clase 'readonlyField' y vaciar su contenido
+                    document.querySelectorAll('.readonlyField').forEach(function (textarea) {
+                        textarea.value = '';
+                    });
+
+                    // Seleccionar todos los elementos con la clase 'nextCard' y quitar la clase 'd-none' de cada uno
+                    document.querySelectorAll('.savePCRA').forEach(function (button) {
+                        button.classList.remove('d-none');
+                    });
+
+                    document.querySelectorAll('.readonlyField').forEach(function (element) {
+                        element.removeAttribute('readonly');
+                    });
+
+                    // Seleccionar todos los elementos con la clase 'nextCard' y añadir la clase 'd-none' a cada uno
+                    document.querySelectorAll('.nextCard').forEach(function (button) {
+                        button.classList.add('d-none');
+                    });
+
+                } else {
+
+                    var profileCont = response.profileId[0].description_profile_egres;
+                    var competenceCont = response.competencesId;
+                    var learningCont = response.learningResultsId;
+
+                    // Seleccionar todos los elementos con la clase 'readonlyField' y vaciar su contenido
+                    document.querySelectorAll('.readonlyField').forEach(function (textarea) {
+                        textarea.value = '';
+                    });
+
+                    // Seleccionar todos los elementos con la clase 'nextCard' y quitar la clase 'd-none' de cada uno
+                    document.querySelectorAll('.nextCard').forEach(function (button) {
+                        button.classList.remove('d-none');
+                    });
+
+                    document.querySelectorAll('.readonlyField').forEach(function (element) {
+                        element.setAttribute('readonly', true);
+                    });
+
+                    // Seleccionar todos los elementos con la clase 'nextCard' y añadir la clase 'd-none' a cada uno
+                    document.querySelectorAll('.savePCRA').forEach(function (button) {
+                        button.classList.add('d-none');
+                    });
+
+                    // Seleccionar el textarea por su id y asignar el contenido de 'prueba'
+                    document.getElementById('textAreaProfile').value = profileCont;
+
+                    // Llenar los textarea para competencias
+                    competenceCont.forEach(function (competence) {
+                        if (competence.name_competence === 'Competencias #1') {
+                            document.getElementById('textAreaCompetitionOne').value = competence.description_competence;
+                            document.querySelector('#contCompeOne .card-body').innerText = competence.description_competence;
+                        } else if (competence.name_competence === 'Competencias #2') { // Asegúrate de tener Competencias #2
+                            document.getElementById('textAreaCompetitionTwo').value = competence.description_competence;
+                            document.querySelector('#contCompeTwo .card-body').innerText = competence.description_competence;
+                        }
+                    });
+
+                    // Llenar los textarea para resultados de aprendizaje
+                    Object.keys(learningCont).forEach(function (competenceId) {
+                        // Obtener los resultados de aprendizaje para el ID de competencia actual
+                        var results = learningCont[competenceId];
+
+                        results.forEach(function (learningResult) {
+                            if (learningResult.name_learning_result === 'Resultados de aprendizaje #1') {
+                                document.getElementById('textAreaRaOne').value = learningResult.description_learning_result;
+                            } else if (learningResult.name_learning_result === 'Resultados de aprendizaje #2') {
+                                document.getElementById('textAreaRaTwo').value = learningResult.description_learning_result;
+                            } else if (learningResult.name_learning_result === 'Resultados de aprendizaje #3') {
+                                document.getElementById('textAreaRaThree').value = learningResult.description_learning_result;
+                            } else if (learningResult.name_learning_result === 'Resultados de aprendizaje #4') {
+                                document.getElementById('textAreaRaFour').value = learningResult.description_learning_result;
+                            }
+                        });
+                    });
+
+                }
+            },
+            // Función que se ejecuta en caso de error en la solicitud
+            error: function (xhr, status, error) {
+                // Imprimir mensajes de error en la consola
+                console.error('Error al eliminar el grupo:', xhr);
+                console.error('Estado:', status);
+                console.error('Error:', error);
+                console.error('Respuesta del servidor:', xhr.responseText);
+            }
+        });
+    }
+
+    /*
+        *
+        * Event Listener
+        *
+    */
+
+    document.getElementById('pillSelectFaculty').addEventListener('change', function () {
+        faculty = this.options[this.selectedIndex].value;
+        selectProgram(faculty);
+    });
+
+    document.getElementById('pillSelectProgram').addEventListener('change', function () {
+        program = this.options[this.selectedIndex].value;
+        validateProfile(program);
+        getNameProgram(program).then(response => {
+            nameProfile = response;
+        })
+            .catch(error => {
+                console.error("Error en la solicitud AJAX:", error);
+            });
+
+    });
+
+    // Escuchar el click en el botón de confirmación del modal
+    document.getElementById('confirmationEmptyOne').addEventListener('click', function () {
+        validate(
+            ['textAreaProfile'],
+            'El campo de perfil de egreso no pueden estar vacíos.'
+        );
+    });
+
+    // Escuchar el click en el botón de confirmación del modal
+    document.getElementById('confirmationEmptyTwo').addEventListener('click', function () {
+        validate(
+            ['textAreaCompetitionOne', 'textAreaCompetitionTwo'],
+            'Los campo de competencias no pueden estar vacíos.'
+        );
+    });
+
+    // Escuchar el click en el botón de confirmación del modal
+    document.getElementById('confirmationEmptyThree').addEventListener('click', function () {
+        validate(
+            ['textAreaRaOne', 'textAreaRaTwo'],
+            'Los campo de resultados de aprendizaje no pueden estar vacíos.'
+        );
+    });
+
+    // Escuchar el click en el botón de confirmación del modal
+    document.getElementById('confirmationEmptyFour').addEventListener('click', function () {
+        validate(
+            ['textAreaRaThree', 'textAreaRaFour'],
+            'Los campo de resultados de aprendizaje no pueden estar vacíos.'
+        );
+    });
+
+    // Escuchar el click en el botón de confirmación del modal
+    document.getElementById('confirm-button').addEventListener('click', function () {
+        confirmButton();
+    });
+
+    // Seleccionar todos los elementos con la clase 'nextCard' y agregar el evento click
+    document.querySelectorAll('.nextCard').forEach(function (button) {
+        button.addEventListener('click', function () {
+            console.log('confirmar');
+            // Cambiar a la siguiente card
+            showNextCard();
+        });
     });
 
 }); 

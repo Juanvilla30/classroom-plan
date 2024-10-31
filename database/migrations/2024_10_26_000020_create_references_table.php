@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('institutional_references', function (Blueprint $table) {
+        Schema::create('references', function (Blueprint $table) {
             $table->id();
-            $table->text('name_institutional_reference');
-            $table->text('description_institutional_reference');
+            $table->string('name_reference');
+            $table->string('link_reference');
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('institutional_references');
+        Schema::dropIfExists('references');
     }
 };

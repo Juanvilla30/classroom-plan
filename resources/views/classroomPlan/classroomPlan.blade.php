@@ -32,25 +32,38 @@
 
     <!-- Card Select-->
     <div class="card">
+
+        <div class="card-header">
+            <h5 class="card-title font-weight-bold text-primary">Seleccion de curso</h5>
+        </div>
+
         <div class="card-body">
 
-            <h4 class="card-title font-weight-bold text-primary" style="margin-bottom: 10px;">Seleccion de curso</h4>
+            <!-- Forms -->
+            <form>
+                <div class="form-group">
+                    <label for="pillSelectFaculty">Seleccionar facultad</label>
+                    <select class="form-control input-pill" id="pillSelectFaculty">
+                        <option disabled selected value="">Seleccione una facultad</option>
+                        @foreach ($facultys as $faculty)
+                        <option value="{{ $faculty->id }}">{{ ucfirst(strtolower($faculty->name_faculty)) }}
+                        </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="pillSelectProgram">Seleccionar programa</label>
+                    <select class="form-control input-pill" id="pillSelectProgram" disabled>
+                        <option disabled selected value="">Seleccione un programa</option>
 
-            <div class="form-group">
-                <label for="pillSelect">Seleccione programa</label>
-                <select class="form-control input-pill" id="pillSelectProgram" name="program" required="required">
-                    <option disabled selected value="">Seleccione un programa</option>
-                    @foreach ($programs as $program)
-                    <option value="{{ $program->id }}">
-                        {{ ucfirst(strtolower($program->name_program)) }}
-                    </option>
-                    @endforeach
-                </select>
-            </div>
+                    </select>
+                </div>
 
-            <button type="button" class="btn btn-primary btn-lg btn-block" id="filterCourse">
-                Seleccione el curso
-            </button>
+                <button type="button" class="btn btn-primary btn-lg btn-block" style="margin-top: 20px;" id="filterCourse">
+                    Seleccione el curso
+                </button>
+            </form>
+            <!-- End Forms -->
 
         </div>
     </div>
@@ -58,9 +71,12 @@
 
     <!-- Card List-->
     <div class="card">
-        <div class="card-body">
 
-            <h4 class="card-title font-weight-bold text-primary" style="margin-bottom: 10px;">Listado de curso</h4>
+        <div class="card-header">
+            <h5 class="card-title font-weight-bold text-primary">Listado de curso</h5>
+        </div>
+
+        <div class="card-body">
 
             <!-- Table -->
             <div class="table-responsive">
@@ -87,10 +103,13 @@
     <!-- End Card -->
 
     <!-- Card Info -->
-    <div class="card">  
-        <div class="card-body">
+    <div class="card">
 
-            <h4 class="card-title font-weight-bold text-primary">Información de curso</h4>
+        <div class="card-header">
+            <h5 class="card-title font-weight-bold text-primary">Información de curso</h5>
+        </div>
+
+        <div class="card-body">
 
             <div class="row">
                 <div class="col-sm-12 col-md-6">
@@ -142,10 +161,6 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group">
-                <label>Resultado de aprendizaje:</label>
-                <p id="nameRA"></p>
-            </div>
 
         </div>
     </div>
@@ -153,34 +168,34 @@
 
     <!-- Card RA -->
     <div class="card" id="card-1" style="display:block;">
+
+        <div class="card-header">
+            <h5 class="card-title font-weight-bold text-primary">Resultados de aprendizaje</h5>
+        </div>
+
         <div class="card-body">
+            <form>
+                <div class="form-group">
+                    <div class="form-group">
+                        <label for="pillSelectLearning">Seleccionar resultado de aprendizaje</label>
+                        <select class="form-control input-pill" id="pillSelectLearning" disabled>
+                            <option disabled selected value="">Seleccione un resultado de aprendizaje</option>
 
-            <h4 class="card-title font-weight-bold text-primary">Resultados de aprendizaje</h4>
+                        </select>
+                    </div>
+                </div>
 
-            <div class="form-group">
-                <label for="pillSelectRA">Resultado de prendizaje</label>
-                <select class="form-control input-pill" id="pillSelectRA" disabled>
-                    <option disabled selected value="">Seleccione el resultado de prendizaje</option>
-                    @foreach ($programs as $program)
-                    <option value="{{ $program->id }}">
-                        {{ ucfirst(strtolower($program->name_program)) }}
-                    </option>
-                    @endforeach
-                </select>
-            </div>
+                <div class="form-group">
+                    <label for="exampleFormControlTextarea1">Descripción</label>
+                    <textarea class="form-control" id="textareaDescriptionRA" rows="10" readonly></textarea>
+                </div>
 
-            <div class="form-group">
-                <label for="exampleFormControlTextarea1">Descripción</label>
-                <textarea class="form-control" id="textareaDescriptionRA" rows="5" readonly>
-
-                </textarea>
-            </div>
-
-            <button type="button" class="btn btn-primary btn-lg btn-block" style="margin-top: 10px;"
-                id="confirmationEmptyRA">
-                Guardar
-            </button>
-
+                <button type="button" class="btn btn-primary btn-lg btn-block confirmationSave d-none" style="margin-top: 10px;"
+                    data-confirmation="1">
+                    Guardar
+                </button>
+                <button type="button" class="btn btn-primary btn-lg btn-block nextCard d-none">Siguiente</button>
+            </form>
         </div>
 
     </div>
@@ -188,19 +203,24 @@
 
     <!-- Card Objective -->
     <div class="card" id="card-2" style="display:none;">
+
+        <div class="card-header">
+            <h5 class="card-title font-weight-bold text-primary">Objetivo general</h5>
+        </div>
+
         <div class="card-body">
+            <form>
+                <div style="margin-top: 10px;">
+                    <label>Ingrese objetivo general:</label>
+                    <textarea class="form-control readonlyCheck" id="textAreaObjective" rows="10" readonly></textarea>
+                </div>
 
-            <h4 class="card-title font-weight-bold text-primary">Objetivo general</h4>
-
-            <div style="margin-top: 10px;">
-                <label>Ingrese objetivo general:</label>
-                <textarea class="form-control" id="textAreaObjective" rows="10"></textarea>
-            </div>
-
-            <button type="button" class="btn btn-primary btn-lg btn-block" style="margin-top: 10px;"
-                id="confirmationEmptyOne">
-                Guardar
-            </button>
+                <button type="button" class="btn btn-primary btn-lg btn-block confirmationSave d-none" style="margin-top: 10px;"
+                    data-confirmation="2">
+                    Guardar
+                </button>
+                <button type="button" class="btn btn-primary btn-lg btn-block nextCard d-none">Siguiente</button>
+            </form>
 
         </div>
 
@@ -209,29 +229,35 @@
 
     <!-- Card Specific Objective -->
     <div class="card" id="card-3" style="display:none;">
+
+        <div class="card-header">
+            <h5 class="card-title font-weight-bold text-primary">Objetivos especificos</h5>
+        </div>
+
         <div class="card-body">
 
-            <h4 class="card-title font-weight-bold text-primary">Objetivos especificos</h4>
+            <form>
+                <div style="margin-top: 10px;">
+                    <label>Ingrese objetivo especifico #1</label>
+                    <textarea class="form-control readonlyCheck" id="textAreaSpecificOne" rows="6"></textarea>
+                </div>
 
-            <div style="margin-top: 10px;">
-                <label>Ingrese objetivo especifico #1</label>
-                <textarea class="form-control" id="textAreaSpecificOne" rows="6"></textarea>
-            </div>
+                <div style="margin-top: 10px;">
+                    <label>Ingrese objetivo especifico #2</label>
+                    <textarea class="form-control readonlyCheck" id="textAreaSpecificTwo readonlyCheck" rows="6"></textarea>
+                </div>
 
-            <div style="margin-top: 10px;">
-                <label>Ingrese objetivo especifico #2</label>
-                <textarea class="form-control" id="textAreaSpecificTwo" rows="6"></textarea>
-            </div>
+                <div style="margin-top: 10px;">
+                    <label>Ingrese objetivo especifico #3</label>
+                    <textarea class="form-control readonlyCheck" id="textAreaSpecificThree readonlyCheck" rows="6"></textarea>
+                </div>
 
-            <div style="margin-top: 10px;">
-                <label>Ingrese objetivo especifico #3</label>
-                <textarea class="form-control" id="textAreaSpecificThree" rows="6"></textarea>
-            </div>
-
-            <button type="button" class="btn btn-primary btn-lg btn-block" style="margin-top: 10px;"
-                id="confirmationEmptyTwo">
-                Guardar
-            </button>
+                <button type="button" class="btn btn-primary btn-lg btn-block confirmationSave d-none" style="margin-top: 10px;"
+                    data-confirmation="3">
+                    Guardar
+                </button>
+                <button type="button" class="btn btn-primary btn-lg btn-block nextCard d-none" data-check="1">Siguiente</button>
+            </form>
 
         </div>
     </div>
@@ -239,9 +265,12 @@
 
     <!-- Card Specific Objective #1 -->
     <div class="card" id="card-4" style="display:none;">
-        <div class="card-body">
 
-            <h4 class="card-title font-weight-bold text-primary">Temas</h4>
+        <div class="card-header">
+            <h5 class="card-title font-weight-bold text-primary">Temas</h5>
+        </div>
+
+        <div class="card-body">
 
             <!-- Accordion -->
             <div class="accordion accordion-secondary" style="margin-top: 10px;">
@@ -265,45 +294,48 @@
             </div>
             <!-- End Accordion -->
 
-            <!-- Row -->
-            <div class="row">
-                <div class="col-sm-12 col-md-6">
-                    <div class="form-group">
-                        <label>Ingrese tema semana #1</label>
-                        <textarea class="form-control" id="textAreaThemeOne" rows="6"></textarea>
+            <form>
+                <!-- Row -->
+                <div class="row">
+                    <div class="col-sm-12 col-md-6">
+                        <div class="form-group">
+                            <label>Ingrese tema semana #1</label>
+                            <textarea class="form-control readonlyCheck" id="textAreaThemeOne" rows="6"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <div class="form-group">
+                            <label>Ingrese tema semana #2</label>
+                            <textarea class="form-control readonlyCheck" id="textAreaThemeTwo" rows="6"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <div class="form-group">
+                            <label>Ingrese tema semana #3</label>
+                            <textarea class="form-control readonlyCheck" id="textAreaThemeThree" rows="6"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <div class="form-group">
+                            <label>Ingrese tema semana #4</label>
+                            <textarea class="form-control readonlyCheck" id="textAreaThemeFour" rows="6"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <div class="form-group">
+                            <label>Ingrese tema semana #5</label>
+                            <textarea class="form-control readonlyCheck" id="textAreaThemeFive" rows="6"></textarea>
+                        </div>
                     </div>
                 </div>
-                <div class="col-sm-12 col-md-6">
-                    <div class="form-group">
-                        <label>Ingrese tema semana #2</label>
-                        <textarea class="form-control" id="textAreaThemeTwo" rows="6"></textarea>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-6">
-                    <div class="form-group">
-                        <label>Ingrese tema semana #3</label>
-                        <textarea class="form-control" id="textAreaThemeThree" rows="6"></textarea>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-6">
-                    <div class="form-group">
-                        <label>Ingrese tema semana #4</label>
-                        <textarea class="form-control" id="textAreaThemeFour" rows="6"></textarea>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-6">
-                    <div class="form-group">
-                        <label>Ingrese tema semana #5</label>
-                        <textarea class="form-control" id="textAreaThemeFive" rows="6"></textarea>
-                    </div>
-                </div>
-            </div>
-            <!-- End Row -->
+                <!-- End Row -->
 
-            <button type="button" class="btn btn-primary btn-lg btn-block" style="margin-top: 10px;"
-                id="confirmationEmptyThree">
-                Guardar
-            </button>
+                <button type="button" class="btn btn-primary btn-lg btn-block confirmationSave d-none" style="margin-top: 10px;"
+                    data-confirmation="4">
+                    Guardar
+                </button>
+                <button type="button" class="btn btn-primary btn-lg btn-block nextCard d-none" data-check="1">Siguiente</button>
+            </form>
 
         </div>
     </div>
@@ -311,9 +343,12 @@
 
     <!-- Card Specific Objective #2 -->
     <div class="card" id="card-5" style="display:none;">
-        <div class="card-body">
 
-            <h4 class="card-title font-weight-bold text-primary">Temas</h4>
+        <div class="card-header">
+            <h5 class="card-title font-weight-bold text-primary">Temas</h5>
+        </div>
+
+        <div class="card-body">
 
             <!-- Accordion -->
             <div class="accordion accordion-secondary" style="margin-top: 10px;">
@@ -337,45 +372,48 @@
             </div>
             <!-- End Accordion -->
 
-            <!-- Row -->
-            <div class="row">
-                <div class="col-sm-12 col-md-6">
-                    <div class="form-group">
-                        <label>Ingrese tema semana #6</label>
-                        <textarea class="form-control" id="textAreaThemeSix" rows="6"></textarea>
+            <form>
+                <!-- Row -->
+                <div class="row">
+                    <div class="col-sm-12 col-md-6">
+                        <div class="form-group">
+                            <label>Ingrese tema semana #6</label>
+                            <textarea class="form-control readonlyCheck" id="textAreaThemeSix" rows="6"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <div class="form-group">
+                            <label>Ingrese tema semana #7</label>
+                            <textarea class="form-control readonlyCheck" id="textAreaThemeSeven" rows="6"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <div class="form-group">
+                            <label>Ingrese tema semana #8</label>
+                            <textarea class="form-control readonlyCheck" id="textAreaThemeEight" rows="6"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <div class="form-group">
+                            <label>Ingrese tema semana #9</label>
+                            <textarea class="form-control readonlyCheck" id="textAreaThemeNine" rows="6"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <div class="form-group">
+                            <label>Ingrese tema semana #10</label>
+                            <textarea class="form-control readonlyCheck" id="textAreaThemeTen" rows="6"></textarea>
+                        </div>
                     </div>
                 </div>
-                <div class="col-sm-12 col-md-6">
-                    <div class="form-group">
-                        <label>Ingrese tema semana #7</label>
-                        <textarea class="form-control" id="textAreaThemeSeven" rows="6"></textarea>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-6">
-                    <div class="form-group">
-                        <label>Ingrese tema semana #8</label>
-                        <textarea class="form-control" id="textAreaThemeEight" rows="6"></textarea>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-6">
-                    <div class="form-group">
-                        <label>Ingrese tema semana #9</label>
-                        <textarea class="form-control" id="textAreaThemeNine" rows="6"></textarea>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-6">
-                    <div class="form-group">
-                        <label>Ingrese tema semana #10</label>
-                        <textarea class="form-control" id="textAreaThemeTen" rows="6"></textarea>
-                    </div>
-                </div>
-            </div>
-            <!-- End Row -->
+                <!-- End Row -->
 
-            <button type="button" class="btn btn-primary btn-lg btn-block" style="margin-top: 10px;"
-                id="confirmationEmptyFour">
-                Guardar
-            </button>
+                <button type="button" class="btn btn-primary btn-lg btn-block confirmationSave d-none" style="margin-top: 10px;"
+                    data-confirmation="5">
+                    Guardar
+                </button>
+                <button type="button" class="btn btn-primary btn-lg btn-block nextCard d-none" data-check="1">Siguiente</button>
+            </form>
 
         </div>
     </div>
@@ -383,9 +421,12 @@
 
     <!-- Card Specific Objective #3 -->
     <div class="card" id="card-6" style="display:none;">
-        <div class="card-body">
 
-            <h4 class="card-title font-weight-bold text-primary">Temas</h4>
+        <div class="card-header">
+            <h5 class="card-title font-weight-bold text-primary">Temas</h5>
+        </div>
+
+        <div class="card-body">
 
             <!-- Accordion -->
             <div class="accordion accordion-secondary" style="margin-top: 10px;">
@@ -409,51 +450,54 @@
             </div>
             <!-- End Accordion -->
 
-            <!-- Row -->
-            <div class="row">
-                <div class="col-sm-12 col-md-6">
-                    <div class="form-group">
-                        <label>Ingrese tema semana #11</label>
-                        <textarea class="form-control" id="textAreaThemeEleven" rows="6"></textarea>
+            <from>
+                <!-- Row -->
+                <div class="row">
+                    <div class="col-sm-12 col-md-6">
+                        <div class="form-group">
+                            <label>Ingrese tema semana #11</label>
+                            <textarea class="form-control readonlyCheck" id="textAreaThemeEleven" rows="6"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <div class="form-group">
+                            <label>Ingrese tema semana #12</label>
+                            <textarea class="form-control readonlyCheck" id="textAreaThemeTwelve" rows="6"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <div class="form-group">
+                            <label>Ingrese tema semana #13</label>
+                            <textarea class="form-control readonlyCheck" id="textAreaThemeThirteen" rows="6"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <div class="form-group">
+                            <label>Ingrese tema semana #14</label>
+                            <textarea class="form-control readonlyCheck" id="textAreaThemeFourteen" rows="6"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <div class="form-group">
+                            <label>Ingrese tema semana #15</label>
+                            <textarea class="form-control readonlyCheck" id="textAreaThemeFifteen" rows="6"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <div class="form-group">
+                            <label>Ingrese tema semana #16</label>
+                            <textarea class="form-control readonlyCheck" id="textAreaThemeSixteen" rows="6"></textarea>
+                        </div>
                     </div>
                 </div>
-                <div class="col-sm-12 col-md-6">
-                    <div class="form-group">
-                        <label>Ingrese tema semana #12</label>
-                        <textarea class="form-control" id="textAreaThemeTwelve" rows="6"></textarea>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-6">
-                    <div class="form-group">
-                        <label>Ingrese tema semana #13</label>
-                        <textarea class="form-control" id="textAreaThemeThirteen" rows="6"></textarea>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-6">
-                    <div class="form-group">
-                        <label>Ingrese tema semana #14</label>
-                        <textarea class="form-control" id="textAreaThemeFourteen" rows="6"></textarea>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-6">
-                    <div class="form-group">
-                        <label>Ingrese tema semana #15</label>
-                        <textarea class="form-control" id="textAreaThemeFifteen" rows="6"></textarea>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-6">
-                    <div class="form-group">
-                        <label>Ingrese tema semana #16</label>
-                        <textarea class="form-control" id="textAreaThemeSixteen" rows="6"></textarea>
-                    </div>
-                </div>
-            </div>
-            <!-- End Row -->
+                <!-- End Row -->
 
-            <button type="button" class="btn btn-primary btn-lg btn-block" style="margin-top: 10px;"
-                id="confirmationEmptyFive">
-                Guardar
-            </button>
+                <button type="button" class="btn btn-primary btn-lg btn-block confirmationSave d-none" style="margin-top: 10px;"
+                    data-confirmation="6">
+                    Guardar
+                </button>
+                <button type="button" class="btn btn-primary btn-lg btn-block nextCard d-none">Siguiente</button>
+            </from>
 
         </div>
     </div>
@@ -461,79 +505,50 @@
 
     <!-- Card Evaluations -->
     <div class="card" id="card-7" style="display:none;">
-        <div class="card-body">
 
-            <h4 class="card-title font-weight-bold text-primary" style="margin-bottom: 10px;">Evaluaciones</h4>
-
-            <div class="text-right" style="margin-bottom: 10px;">
-                <button class="btn btn-primary btn-round" data-toggle="modal" data-target="#modalNewEvaluation">
-                    Nueva evaluación
-                </button>
-            </div>
-
-            <!-- Row -->
-            <div class="table-responsive">
-                <div id="basic-datatables_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4" style="margin-bottom: 10px;">
-                    <div class="row">
-                        <div class="col-sm-12 col-md-6">
-                            <div class="dataTables_length" id="basic-datatables_length"><label>Show <select name="basic-datatables_length" aria-controls="basic-datatables" class="form-control form-control-sm">
-                                        <option value="10">10</option>
-                                        <option value="25">25</option>
-                                        <option value="50">50</option>
-                                        <option value="100">100</option>
-                                    </select> entries</label></div>
-                        </div>
-                        <div class="col-sm-12 col-md-6">
-                            <div id="basic-datatables_filter" class="dataTables_filter"><label>Buscador:<input type="search" class="form-control form-control-sm" placeholder="" aria-controls="basic-datatables"></label></div>
-                        </div>
-                    </div>
+        <div class="card-header">
+            <div class="row">
+                <div class="col-sm-12 col-md-6">
+                    <h5 class="card-title font-weight-bold text-primary" style="margin-bottom: 10px;">Evaluaciones</h5>
+                </div>
+                <div class="col-sm-12 col-md-6 text-md-right">
+                    <button class="btn btn-primary btn-round" id="createEvaluation">Nueva evaluación</button>
                 </div>
             </div>
-            <!-- end Row -->
+        </div>
 
-            <div class="table-responsive">
-                <table class="table table-head-bg-primary">
-                    <thead>
-                        <tr>
-                            <th scope="col">Seleccionar</th>
-                            <th scope="col">Evaluación</th>
-                            <th scope="col">Descripción</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($evaluations as $evaluation)
-                        <tr>
-                            <td>
-                                <input type="checkbox" name="selectItem" value="{{ $evaluation->id }}">
-                            </td>
-                            <td>{{ $evaluation->name_evaluation }}</td>
-                            <td>{{ $evaluation->description ?? 'Sin descripción' }}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+        <div class="card-body">
 
-            <!-- Pagination -->
-            <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-end">
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1">Previous</a>
-                    </li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">Next</a>
-                    </li>
-                </ul>
-            </nav>
-            <!-- End Pagination -->
+            <from>
+                <div class="table-responsive">
+                    <table class="table table-head-bg-primary">
+                        <thead>
+                            <tr>
+                                <th scope="col">Seleccionar</th>
+                                <th scope="col">Evaluación</th>
+                                <th scope="col">Descripción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($evaluations as $evaluation)
+                            <tr>
+                                <td>
+                                    <input type="checkbox" name="selectItem" value="{{ $evaluation->id }}">
+                                </td>
+                                <td>{{ $evaluation->name_evaluation }}</td>
+                                <td>{{ $evaluation->description ?? 'Sin descripción' }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
 
-            <button type="button" class="btn btn-primary btn-lg btn-block" style="margin-top: 10px;"
-                id="confirmationEmptySix">
-                Guardar
-            </button>
+                <button type="button" class="btn btn-primary btn-lg btn-block confirmationSave d-none" style="margin-top: 10px;"
+                    data-confirmation="7">
+                    Guardar
+                </button>
+                <button type="button" class="btn btn-primary btn-lg btn-block nextCard d-none">Siguiente</button>
+            </from>
 
         </div>
     </div>
@@ -541,38 +556,44 @@
 
     <!-- Card References -->
     <div class="card" id="card-8" style="display:none;">
+
+        <div class="card-header">
+            <h5 class="card-title font-weight-bold text-primary">Referencias</h5>
+        </div>
+
         <div class="card-body">
 
-            <h4 class="card-title font-weight-bold text-primary" style="margin-bottom: 10px;">Referencias</h4>
-
-            <label for="pillInput">Ingrese la referencia institucional:</label>
-            <div class="form-group">
-                <div class="input-group">
-                    <input type="text" class="form-control" id="linkInstitutionalReferences" placeholder="" aria-label="" aria-describedby="basic-addon1">
-                    <div class="input-group-append">
-                        <button class="btn btn-primary" type="button" id="saveInstitutional">
-                            Guardar
-                        </button>
+            <form>
+                <label for="pillInput">Ingrese la referencia institucional:</label>
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="text" class="form-control readonlyCheck" id="linkInstitutionalReferences" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="button" id="saveInstitutional">
+                                Guardar
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <label for="pillInput">Ingrese la referencia general:</label>
-            <div class="form-group">
-                <div class="input-group">
-                    <input type="text" class="form-control" id="linkGeneralReferences" placeholder="" aria-label="" aria-describedby="basic-addon1">
-                    <div class="input-group-append">
-                        <button class="btn btn-primary" type="button" id="saveGeneral">
-                            Guardar
-                        </button>
+                <label for="pillInput">Ingrese la referencia general:</label>
+                <div class="form-group">
+                    <div class="input-group">
+                        <input type="text" class="form-control readonlyCheck" id="linkGeneralReferences" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="button" id="saveGeneral">
+                                Guardar
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <button type="button" class="btn btn-primary btn-lg btn-block" style="margin-top: 10px;"
-                id="confirmationEmptySeven">
-                Finalizar
-            </button>
+                <button type="button" class="btn btn-primary btn-lg btn-block confirmationSave d-none" style="margin-top: 10px;"
+                    data-confirmation="8">
+                    Guardar
+                </button>
+                <button type="button" class="btn btn-primary btn-lg btn-block nextCard d-none">Siguiente</button>
+            </form>
 
         </div>
     </div>
@@ -650,7 +671,7 @@
 
                     <!-- Table -->
                     <div class="table-responsive">
-                        <table class="table table-head-bg-primary table-hover" cellspacing="0" width="100%" style="margin-top: 10px;" id="multi-filter-select">
+                        <table class="table table-head-bg-primary table-hover" cellspacing="0" width="100%" style="margin-top: 10px;" id="tableCourses">
                             <thead>
                                 <tr>
                                     <th scope="col">Seleccionar</th>
@@ -665,7 +686,7 @@
                                 </tr>
 
                             </thead>
-                            <tbody id="tableCourses">
+                            <tbody id="bodyCourses">
                             </tbody>
                         </table>
                     </div>
