@@ -13,22 +13,14 @@ class ClassroomPlan extends Model
 
     protected $fillable = [
         'id_course',
-        'id_assignment_evaluation',
         'id_learning_result',
         'id_general_objective',
-        'id_specific_objective',
-        'id_reference',
         'id_state',
     ];
 
     public function courses()
     {
         return $this->belongsTo(Course::class, 'id_course');
-    }
-
-    public function assignmentEvaluation()
-    {
-        return $this->belongsTo(AssignmentEvaluation::class, 'id_assignment_evaluation');
     }
 
     public function learningResult()
@@ -40,17 +32,7 @@ class ClassroomPlan extends Model
     {
         return $this->belongsTo(GeneralObjective::class, 'id_general_objective');
     }
-
-    public function specificObjective()
-    {
-        return $this->belongsTo(SpecificObjective::class, 'id_specific_objective');
-    }
-
-    public function generalReference()
-    {
-        return $this->belongsTo(Reference::class, 'id_reference');
-    }
-
+    
     public function state()
     {
         return $this->belongsTo(State::class, 'id_state');

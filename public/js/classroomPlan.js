@@ -14,7 +14,8 @@ $.ajaxSetup({
 let faculty;
 let program;
 let learningId;
-let cursoId;
+let courseId;
+let typeCourseId;
 let component;
 
 let dataConfirmation;
@@ -193,7 +194,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Limpiar el contenido actual del select antes de agregar opciones nuevas
         selectElement.innerHTML = '';
-        
+
         // Verificar si `learningResult` está presente y contiene un solo resultado
         if (cd == true) {
             const learning = response;  // Solo hay un resultado de aprendizaje
@@ -424,12 +425,14 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function confirmationSave(dataConfirmation) {
+    function confirmationSave(dataConfirmation, courseId, learningId) {
         if (dataConfirmation == '1') {
             validate(
                 ['pillSelectLearning'],
                 'Por favor, selecciona un resultado de aprendizaje.'
             );
+
+            
 
         } else if (dataConfirmation == '2') {
             validate(
@@ -515,16 +518,16 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Terminar........
-    function validateClassroomPlan(cursoId, program) {
+    function validateClassroomPlan(courseId, program) {
         $.ajax({
             url: '/classroom-plan/validate-classroom-plans', // URL 
             method: 'POST', // Método de la solicitud: POST
             data: {
-                cursoId: cursoId,
+                courseId: courseId,
             },
             // Función que se ejecuta en caso de éxito en la solicitud
             success: function (response) {
-                if (response.confirm == 'false') {
+                if (response.confirm == false) {
 
                     loadResultsSelect(program, false);
 
@@ -538,7 +541,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         button.classList.add('d-none');
                     });
 
-                } else if (response.confirm == 'true') {
+                } else if (response.confirm == true) {
                     var learningId = response.classroomPlanId[0].learning_result;
                     selectRA(learningId, true);
 
@@ -582,16 +585,38 @@ document.addEventListener('DOMContentLoaded', function () {
         filterCourseButton.disabled = state;
     }
 
-    function saveClassroomPlan(cursoId, learningId) {
-        
+    function saveClassroomPlan(courseId, learningId) {
+
+        const nameGeneral = 'Objetivo general';
+
+        const nameSpecific = [
+            'Objetivo especifico #1',
+            'Objetivo especifico #2',
+            'Objetivo especifico #3'
+        ];
+
+        const nameReference = [
+            'Referencia institucional',
+            'Referencia general',
+        ];
+
+        const content = 'No se registro contenido';
+
         return new Promise((resolve, reject) => {
 
             $.ajax({
                 url: '/classroom-plan/create-classroom-plans', // URL 
                 method: 'POST', // Método de la solicitud: POST
                 data: {
-                    cursoId: cursoId,
+                    courseId: courseId,
                     learningId: learningId,
+                    nameGeneral: nameGeneral,
+                    nameSpecificOne: nameSpecific[0],
+                    nameSpecificTwo: nameSpecific[1],
+                    nameSpecificThree: nameSpecific[2],
+                    nameReferenceOne: nameReference[0],
+                    nameReferenceTwo: nameReference[1],
+                    content: content,
                 },
                 // Función que se ejecuta en caso de éxito en la solicitud
                 success: function (response) {
@@ -622,22 +647,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
     $('#tableCourses').on('click', '.courseSelect', function () {
         // OBTIENE EL VALOR DEL SEMESTRE SELECCIONADO
-        cursoId = $(this).data('id');
+        courseId = $(this).data('id');
 
         // Realizar la petición AJAX
         $.ajax({
             url: '/classroom-plan/visualize-info-course',
             type: 'POST',
             data: {
-                cursoId: cursoId
+                courseId: courseId
             },
             success: function (response) {
 
                 component = response.course[0].id_component;
                 visualizeInfoCourse(response);
                 tableComponent(component);
-                validateClassroomPlan(cursoId, program);
-
+                validateClassroomPlan(courseId, program);
+                typeCourseId = response.course[0].id_course_type;
             },
             // Función que se ejecuta en caso de error en la solicitud
             error: function (xhr, status, error) {
@@ -670,7 +695,8 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('pillSelectLearning').addEventListener('change', function () {
         learningId = this.value;
         console.log('RESULTADO-APRENDIZAJE', learningId);
-        console.log('CURSO', cursoId);
+        console.log('CURSO', courseId);
+        console.log('TIPO DE CURSO', typeCourseId);
         selectLearning(learningId);
     });
 
@@ -749,7 +775,7 @@ document.addEventListener('DOMContentLoaded', function () {
             dataConfirmation = this.getAttribute('data-confirmation');
             console.log('confirmar', dataConfirmation);
 
-            confirmationSave(dataConfirmation);
+            confirmationSave(dataConfirmation, courseId, learningId);
         });
     });
 

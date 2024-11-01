@@ -198,7 +198,7 @@ class ProfilesCompetenciesRaController extends Controller
                 'id_competence' => $competenceId,
             ]);
 
-            $createdResults[] = $createdRa;
+            $createdResults[] = $createdRa; 
         }
 
 

@@ -14,11 +14,11 @@ class SpecificObjective extends Model
     protected $fillable = [
         'name_specific_objective',
         'description_specific_objective',
-        'id_topics',
+        'id_classroom_plan',
     ];
 
-    public function topic()
+    public function classroomPlan()
     {
-        return $this->belongsTo(Topic::class, 'id_topics');
+        return $this->belongsTo(ClassroomPlan::class, 'id_classroom_plan');
     }
 }

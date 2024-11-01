@@ -14,5 +14,11 @@ class Reference extends Model
     protected $fillable = [
         'name_reference',
         'link_reference',
+        'id_classroom_plan',
     ];
+
+    public function classroomPlan()
+    {
+        return $this->belongsTo(ClassroomPlan::class, 'id_classroom_plan');
+    }
 }

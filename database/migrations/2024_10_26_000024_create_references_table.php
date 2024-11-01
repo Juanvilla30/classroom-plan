@@ -16,6 +16,10 @@ return new class extends Migration
             $table->string('name_reference');
             $table->string('link_reference');
             $table->timestamps();
+
+            $table->unsignedBigInteger('id_classroom_plan');
+            $table->foreign('id_classroom_plan')->references('id')->on('classroom_plans');
+
         });
     }
 

@@ -11,16 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('assignments_evaluations', function (Blueprint $table) {
+        Schema::create('specific_objectives', function (Blueprint $table) {
             $table->id();
+            $table->text('name_specific_objective');
+            $table->text('description_specific_objective');
             $table->timestamps();
 
             // Llaves foraneas
-            $table->unsignedBigInteger('id_evaluation');
-            $table->foreign('id_evaluation')->references('id')->on('evaluations');
-            
-            $table->unsignedBigInteger('id_percentage');
-            $table->foreign('id_percentage')->references('id')->on('percentages');
+            $table->unsignedBigInteger('id_classroom_plan');
+            $table->foreign('id_classroom_plan')->references('id')->on('classroom_plans');
 
         });
     }
@@ -30,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('assignments_evaluations');
+        Schema::dropIfExists('specific_objectives');
     }
 };

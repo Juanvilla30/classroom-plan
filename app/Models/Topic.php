@@ -12,7 +12,12 @@ class Topic extends Model
     protected $table = 'topics';
 
     protected $fillable = [
-        'name_topic',
         'description_topic',
+        'id_specific_objective',
     ];
+
+    public function specificObjective()
+    {
+        return $this->belongsTo(SpecificObjective::class, 'id_specific_objective');
+    }
 }
