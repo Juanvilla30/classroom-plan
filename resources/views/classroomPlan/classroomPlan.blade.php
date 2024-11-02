@@ -42,7 +42,7 @@
             <!-- Forms -->
             <form>
                 <div class="form-group">
-                    <label for="pillSelectFaculty">Seleccionar facultad</label>
+                    <label for="pillSelectFaculty">Selección facultad</label>
                     <select class="form-control input-pill" id="pillSelectFaculty">
                         <option disabled selected value="">Seleccione una facultad</option>
                         @foreach ($facultys as $faculty)
@@ -52,7 +52,7 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="pillSelectProgram">Seleccionar programa</label>
+                    <label for="pillSelectProgram">Selección programa</label>
                     <select class="form-control input-pill" id="pillSelectProgram" disabled>
                         <option disabled selected value="">Seleccione un programa</option>
 
@@ -80,7 +80,7 @@
 
             <!-- Table -->
             <div class="table-responsive">
-                <table class="table table-head-bg-primary table-hover" cellspacing="0" width="100%" style="margin-top: 10px;"
+                <table class="table table-head-bg-primary" cellspacing="0" width="100%" style="margin-top: 10px;"
                     id="tableFieldStudy">
                     <thead>
                         <tr>
@@ -177,7 +177,7 @@
             <form>
                 <div class="form-group">
                     <div class="form-group">
-                        <label for="pillSelectLearning">Seleccionar resultado de aprendizaje</label>
+                        <label for="pillSelectLearning">Selección de resultados de aprendizaje</label>
                         <select class="form-control input-pill" id="pillSelectLearning" disabled>
                             <option disabled selected value="">Seleccione un resultado de aprendizaje</option>
 
@@ -210,7 +210,7 @@
 
         <div class="card-body">
             <form>
-                <div style="margin-top: 10px;">
+                <div>
                     <label>Ingrese objetivo general:</label>
                     <textarea class="form-control readonlyCheck" id="textAreaObjective" rows="10" readonly></textarea>
                 </div>
@@ -239,17 +239,17 @@
             <form>
                 <div style="margin-top: 10px;">
                     <label>Ingrese objetivo especifico #1</label>
-                    <textarea class="form-control readonlyCheck" id="textAreaSpecificOne" rows="6"></textarea>
+                    <textarea class="form-control readonlyCheck" id="textAreaSpecific1" rows="6"></textarea>
                 </div>
 
                 <div style="margin-top: 10px;">
                     <label>Ingrese objetivo especifico #2</label>
-                    <textarea class="form-control readonlyCheck" id="textAreaSpecificTwo readonlyCheck" rows="6"></textarea>
+                    <textarea class="form-control readonlyCheck" id="textAreaSpecific2" rows="6"></textarea>
                 </div>
 
                 <div style="margin-top: 10px;">
                     <label>Ingrese objetivo especifico #3</label>
-                    <textarea class="form-control readonlyCheck" id="textAreaSpecificThree readonlyCheck" rows="6"></textarea>
+                    <textarea class="form-control readonlyCheck" id="textAreaSpecific3" rows="6"></textarea>
                 </div>
 
                 <button type="button" class="btn btn-primary btn-lg btn-block confirmationSave d-none" style="margin-top: 10px;"
@@ -275,7 +275,7 @@
             <!-- Accordion -->
             <div class="accordion accordion-secondary" style="margin-top: 10px;">
                 <div class="card">
-                    <div class="card-header" id="headingOne" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    <div class="card-header" id="headingOne" data-toggle="collapse" data-target="#collapse1" aria-expanded="true" aria-controls="collapseOne">
                         <div class="span-icon" style="color: #2B7FEA;">
                             <div class="flaticon-box-1"></div>
                         </div>
@@ -285,9 +285,9 @@
                         <div class="span-mode"></div>
                     </div>
 
-                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                    <div id="collapse1" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
                         <div class="card-body">
-                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+
                         </div>
                     </div>
                 </div>
@@ -300,31 +300,31 @@
                     <div class="col-sm-12 col-md-6">
                         <div class="form-group">
                             <label>Ingrese tema semana #1</label>
-                            <textarea class="form-control readonlyCheck" id="textAreaThemeOne" rows="6"></textarea>
+                            <textarea class="form-control readonlyCheck" id="textAreaTheme1" rows="6"></textarea>
                         </div>
                     </div>
                     <div class="col-sm-12 col-md-6">
                         <div class="form-group">
                             <label>Ingrese tema semana #2</label>
-                            <textarea class="form-control readonlyCheck" id="textAreaThemeTwo" rows="6"></textarea>
+                            <textarea class="form-control readonlyCheck" id="textAreaTheme2" rows="6"></textarea>
                         </div>
                     </div>
                     <div class="col-sm-12 col-md-6">
                         <div class="form-group">
                             <label>Ingrese tema semana #3</label>
-                            <textarea class="form-control readonlyCheck" id="textAreaThemeThree" rows="6"></textarea>
+                            <textarea class="form-control readonlyCheck" id="textAreaTheme3" rows="6"></textarea>
                         </div>
                     </div>
                     <div class="col-sm-12 col-md-6">
                         <div class="form-group">
                             <label>Ingrese tema semana #4</label>
-                            <textarea class="form-control readonlyCheck" id="textAreaThemeFour" rows="6"></textarea>
+                            <textarea class="form-control readonlyCheck" id="textAreaTheme4" rows="6"></textarea>
                         </div>
                     </div>
                     <div class="col-sm-12 col-md-6">
                         <div class="form-group">
                             <label>Ingrese tema semana #5</label>
-                            <textarea class="form-control readonlyCheck" id="textAreaThemeFive" rows="6"></textarea>
+                            <textarea class="form-control readonlyCheck" id="textAreaTheme5" rows="6"></textarea>
                         </div>
                     </div>
                 </div>
@@ -353,7 +353,7 @@
             <!-- Accordion -->
             <div class="accordion accordion-secondary" style="margin-top: 10px;">
                 <div class="card">
-                    <div class="card-header" id="headingOne" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                    <div class="card-header" id="headingOne" data-toggle="collapse" data-target="#collapse2" aria-expanded="true" aria-controls="collapseTwo">
                         <div class="span-icon" style="color: #2B7FEA;">
                             <div class="flaticon-box-1"></div>
                         </div>
@@ -363,9 +363,9 @@
                         <div class="span-mode"></div>
                     </div>
 
-                    <div id="collapseTwo" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                    <div id="collapse2" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
                         <div class="card-body">
-                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+
                         </div>
                     </div>
                 </div>
@@ -378,31 +378,31 @@
                     <div class="col-sm-12 col-md-6">
                         <div class="form-group">
                             <label>Ingrese tema semana #6</label>
-                            <textarea class="form-control readonlyCheck" id="textAreaThemeSix" rows="6"></textarea>
+                            <textarea class="form-control readonlyCheck" id="textAreaTheme6" rows="6"></textarea>
                         </div>
                     </div>
                     <div class="col-sm-12 col-md-6">
                         <div class="form-group">
                             <label>Ingrese tema semana #7</label>
-                            <textarea class="form-control readonlyCheck" id="textAreaThemeSeven" rows="6"></textarea>
+                            <textarea class="form-control readonlyCheck" id="textAreaTheme7" rows="6"></textarea>
                         </div>
                     </div>
                     <div class="col-sm-12 col-md-6">
                         <div class="form-group">
                             <label>Ingrese tema semana #8</label>
-                            <textarea class="form-control readonlyCheck" id="textAreaThemeEight" rows="6"></textarea>
+                            <textarea class="form-control readonlyCheck" id="textAreaTheme8" rows="6"></textarea>
                         </div>
                     </div>
                     <div class="col-sm-12 col-md-6">
                         <div class="form-group">
                             <label>Ingrese tema semana #9</label>
-                            <textarea class="form-control readonlyCheck" id="textAreaThemeNine" rows="6"></textarea>
+                            <textarea class="form-control readonlyCheck" id="textAreaTheme9" rows="6"></textarea>
                         </div>
                     </div>
                     <div class="col-sm-12 col-md-6">
                         <div class="form-group">
                             <label>Ingrese tema semana #10</label>
-                            <textarea class="form-control readonlyCheck" id="textAreaThemeTen" rows="6"></textarea>
+                            <textarea class="form-control readonlyCheck" id="textAreaTheme10" rows="6"></textarea>
                         </div>
                     </div>
                 </div>
@@ -431,7 +431,7 @@
             <!-- Accordion -->
             <div class="accordion accordion-secondary" style="margin-top: 10px;">
                 <div class="card">
-                    <div class="card-header" id="headingOne" data-toggle="collapse" data-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+                    <div class="card-header" id="headingOne" data-toggle="collapse" data-target="#collapse3" aria-expanded="true" aria-controls="collapseThree">
                         <div class="span-icon" style="color: #2B7FEA;">
                             <div class="flaticon-box-1"></div>
                         </div>
@@ -441,9 +441,9 @@
                         <div class="span-mode"></div>
                     </div>
 
-                    <div id="collapseThree" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                    <div id="collapse3" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
                         <div class="card-body">
-                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+
                         </div>
                     </div>
                 </div>
@@ -456,37 +456,37 @@
                     <div class="col-sm-12 col-md-6">
                         <div class="form-group">
                             <label>Ingrese tema semana #11</label>
-                            <textarea class="form-control readonlyCheck" id="textAreaThemeEleven" rows="6"></textarea>
+                            <textarea class="form-control readonlyCheck" id="textAreaTheme11" rows="6"></textarea>
                         </div>
                     </div>
                     <div class="col-sm-12 col-md-6">
                         <div class="form-group">
                             <label>Ingrese tema semana #12</label>
-                            <textarea class="form-control readonlyCheck" id="textAreaThemeTwelve" rows="6"></textarea>
+                            <textarea class="form-control readonlyCheck" id="textAreaTheme12" rows="6"></textarea>
                         </div>
                     </div>
                     <div class="col-sm-12 col-md-6">
                         <div class="form-group">
                             <label>Ingrese tema semana #13</label>
-                            <textarea class="form-control readonlyCheck" id="textAreaThemeThirteen" rows="6"></textarea>
+                            <textarea class="form-control readonlyCheck" id="textAreaTheme13" rows="6"></textarea>
                         </div>
                     </div>
                     <div class="col-sm-12 col-md-6">
                         <div class="form-group">
                             <label>Ingrese tema semana #14</label>
-                            <textarea class="form-control readonlyCheck" id="textAreaThemeFourteen" rows="6"></textarea>
+                            <textarea class="form-control readonlyCheck" id="textAreaTheme14" rows="6"></textarea>
                         </div>
                     </div>
                     <div class="col-sm-12 col-md-6">
                         <div class="form-group">
                             <label>Ingrese tema semana #15</label>
-                            <textarea class="form-control readonlyCheck" id="textAreaThemeFifteen" rows="6"></textarea>
+                            <textarea class="form-control readonlyCheck" id="textAreaTheme15" rows="6"></textarea>
                         </div>
                     </div>
                     <div class="col-sm-12 col-md-6">
                         <div class="form-group">
                             <label>Ingrese tema semana #16</label>
-                            <textarea class="form-control readonlyCheck" id="textAreaThemeSixteen" rows="6"></textarea>
+                            <textarea class="form-control readonlyCheck" id="textAreaTheme16" rows="6"></textarea>
                         </div>
                     </div>
                 </div>
@@ -509,10 +509,13 @@
         <div class="card-header">
             <div class="row">
                 <div class="col-sm-12 col-md-6">
-                    <h5 class="card-title font-weight-bold text-primary" style="margin-bottom: 10px;">Evaluaciones</h5>
+                    <h5 class="card-title font-weight-bold text-primary">Evaluaciones</h5>
                 </div>
                 <div class="col-sm-12 col-md-6 text-md-right">
-                    <button class="btn btn-primary btn-round" id="createEvaluation">Nueva evaluación</button>
+                    <button class="btn btn-primary btn-round" id="createEvaluation"
+                        data-toggle="modal" data-target="#modalNewEvaluation">
+                        Nueva evaluación
+                    </button>
                 </div>
             </div>
         </div>
@@ -520,27 +523,54 @@
         <div class="card-body">
 
             <from>
-                <div class="table-responsive">
-                    <table class="table table-head-bg-primary">
-                        <thead>
-                            <tr>
-                                <th scope="col">Seleccionar</th>
-                                <th scope="col">Evaluación</th>
-                                <th scope="col">Descripción</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($evaluations as $evaluation)
-                            <tr>
-                                <td>
-                                    <input type="checkbox" name="selectItem" value="{{ $evaluation->id }}">
-                                </td>
-                                <td>{{ $evaluation->name_evaluation }}</td>
-                                <td>{{ $evaluation->description ?? 'Sin descripción' }}</td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                <div class="row d-none" id="percentageView">
+                    <div class="col-sm-12 col-md-4">
+                        <div class="form-group text-center">
+                            <label>PORCENTAJE 30%</label>
+                            <p id="percentage1"></p>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <div class="form-group text-center">
+                            <label>PORCENTAJE 30%</label>
+                            <p id="percentage2"></p>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <div class="form-group text-center">
+                            <label>PORCENTAJE 40%</label>
+                            <p id="percentage3"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row " id="percentageContainer">
+                    <div class="col-sm-12 col-md-4">
+                        <div class="form-group text-center">
+                            <label>PORCENTAJE 30%</label>
+
+                            <div class="form-group" id="evaluationsCheckbox1">
+                                
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <div class="form-group text-center">
+                            <label>PORCENTAJE 30%</label>
+                            <div class="form-group" id="evaluationsCheckbox2">
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4">
+                        <div class="form-group text-center">
+                            <label>PORCENTAJE 40%</label>
+                            <div class="form-group" id="evaluationsCheckbox3">
+                                
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <button type="button" class="btn btn-primary btn-lg btn-block confirmationSave d-none" style="margin-top: 10px;"
@@ -564,6 +594,20 @@
         <div class="card-body">
 
             <form>
+                <div class="table-responsive">
+                    <table class="table table-head-bg-primary">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Referencias</th>
+                                <th scope="col">Links</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodyReferences">
+                        </tbody>
+                    </table>
+                </div>
+
                 <label for="pillInput">Ingrese la referencia institucional:</label>
                 <div class="form-group">
                     <div class="input-group">
@@ -623,39 +667,7 @@
     </div>
     <!-- End Modal -->
 
-    <!-- Modal Evaluation -->
-    <div class="modal fade bd-example-modal-lg" id="modalNewEvaluation" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="card-title font-weight-bold text-primary">Nueva evaluación</h5>
-
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <label for="pillInput">Ingrese el nombre de la evaluación</label>
-                            <input type="text" class="form-control input-pill" id="pillInput" placeholder="Nombre de Evaluación">
-                        </div>
-                        <div class="form-group">
-                            <label for="exampleFormControlTextarea1">Ingrese la descripción</label>
-                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="4"></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary">Guardar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End Modal -->
-
-    <!-- Modal -->
+    <!-- Modal Select Course -->
     <div class="modal fade bd-example-modal-lg" id="modalCourse" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -700,6 +712,74 @@
         </div>
     </div>
     <!-- End Modal -->
+
+    <!-- Modal List Courses -->
+    <div class="modal fade bd-example-modal-lg" id="modalListCourses" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="card-title font-weight-bold text-primary">Nueva evaluación</h5>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="pillInput">Ingrese el nombre de la evaluación</label>
+                            <input type="text" class="form-control input-pill" id="pillInput" placeholder="Nombre de Evaluación">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleFormControlTextarea1">Ingrese la descripción</label>
+                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="4"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal -->
+
+    <!-- Modal Evaluation -->
+    <div class="modal fade bd-example-modal-lg" id="modalNewEvaluation" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="card-title font-weight-bold text-primary">Nueva evaluación</h5>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="pillInput">Ingrese el nombre de la evaluación</label>
+                            <input type="text" class="form-control input-pill" id="nameEvaluation" placeholder="Nombre de Evaluación">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleFormControlTextarea1">Ingrese la descripción</label>
+                            <textarea class="form-control" id="descriptionEvaluation" rows="8"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal -->
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../../css/classroomPlans.css">
+    <!-- End Styles -->
 
     <!-- Scripts -->
     <script src="{{ asset('js/classroomPlan.js') }}"></script>

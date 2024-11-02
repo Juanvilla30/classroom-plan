@@ -29,19 +29,11 @@ class ClassroomPlanController extends Controller
     public function index()
     {
         $facultys = Faculty::orderBy('id')->get();
-        $programs = Program::orderBy('id')->get();
-        $evaluations = Evaluation::orderBy('id')->get();
-        $courses = Course::orderBy('id')->get();
-        $semesters = Semester::orderBy('id')->get();
 
         return view(
             'classroomPlan.classroomPlan',
             compact(
-                'programs',
-                'evaluations',
-                'courses',
-                'semesters',
-                'facultys'
+                'facultys',
             )
         );
     }
@@ -165,6 +157,31 @@ class ClassroomPlanController extends Controller
         }
     }
 
+    public function filtersEvaluations(Request $request)
+    {
+        try {
+            $typeCourseId = $request->input('typeCourse');
+
+            // Consultar los registros de relación de programa y curso
+            $evaluationsId = Evaluation::where('id_course_type', $typeCourseId)
+                ->orderBy('id')
+                ->get();
+
+            if ($evaluationsId->isNotEmpty()) {
+                return response()->json([
+                    'evaluationsId' => $evaluationsId,
+                ]);
+            } else {
+                return response()->json(['error' => 'Cursos no encontrados'], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error al asignar curso',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function visualizeCourse(Request $request)
     {
         try {
@@ -240,7 +257,7 @@ class ClassroomPlanController extends Controller
                 ->get();
 
             // Verificar si los cursos y planes de aula fueron encontrados
-            if ($courses->isNotEmpty() && $classroomPlan->isNotEmpty()) {
+            if ($courses->isNotEmpty()) {
                 // Devolver los cursos y los planes de aula como respuesta en formato JSON
                 return response()->json([
                     'courses' => $courses,
@@ -265,18 +282,56 @@ class ClassroomPlanController extends Controller
             // Obtener el programa de los datos de la solicitud
             $cursoId = $request->input('courseId');
 
-            // Consultar los planes de aula asociados al curso
-            $classroomPlanId = ClassroomPlan::where('id_course', $cursoId)
+            // Consultar los planes de aula asociados al curso y extraer los IDs
+            $classroomPlans = ClassroomPlan::where('id_course', $cursoId)
                 ->with('courses', 'learningResult', 'generalObjective', 'state')
                 ->orderBy('id')
                 ->get();
 
+            // Convertir classroomPlan en un array de IDs
+            $classroomPlanIds = $classroomPlans->pluck('id')->toArray();
+
+            // Consultar las evaluaciones asociadas al plan de aula
+            $evaluationsId = AssignmentEvaluation::whereIn('id_classroom_plan', $classroomPlanIds)
+                ->with('evaluation', 'percentage')
+                ->orderBy('id')
+                ->get()
+                ->toArray(); // Obtener solo los IDs como array
+
+            // Consultar las referencias asociadas al plan de aula
+            $referencesId = Reference::whereIn('id_classroom_plan', $classroomPlanIds)
+                ->orderBy('id')
+                ->get()
+                ->toArray(); // Obtener solo los IDs como array
+
+            // Consultar todos los registros de los objetivos específicos asociados al plan de aula
+            $specifics = SpecificObjective::whereIn('id_classroom_plan', $classroomPlanIds)
+                ->orderBy('id')
+                ->get();
+
+            // Convertir la colección de objetivos específicos en un array de IDs
+            $specificsIds = $specifics->pluck('id')->toArray();
+
+            // Convertir todos los registros de objetivos específicos a array
+            $specificsArray = $specifics->toArray();
+
+            // Consultar los temas asociados a los objetivos específicos
+            $topicsId = Topic::whereIn('id_specific_objective', $specificsIds)
+                ->with('specificObjective')
+                ->orderBy('id')
+                ->get()
+                ->toArray(); // Obtener solo los IDs como array
+
             // Verificar si se encontraron planes de aula
-            if (!$classroomPlanId->isEmpty()) {
+            if (!$classroomPlans->isEmpty()) {
                 // Devolver la lista como respuesta en formato JSON
                 return response()->json([
                     'confirm' => true,
-                    'classroomPlanId' => $classroomPlanId,
+                    'classroomPlanId' => $classroomPlans,
+                    'evaluationsId' => $evaluationsId,
+                    'referencesId' => $referencesId,
+                    'specificsId' => $specificsArray,
+                    'topicsId' => $topicsId,
                 ]);
             } else {
                 // Enviar una respuesta de error si no se encontraron planes
@@ -328,7 +383,7 @@ class ClassroomPlanController extends Controller
 
         try {
             // Obtener el programa de los datos de la solicitud
-            $cursoId = $request->input('cursoId');
+            $courseId = $request->input('courseId');
             $learningId = $request->input('learningId');
             $nameGeneral = $request->input('nameGeneral');
             $content = $request->input('content');
@@ -358,7 +413,7 @@ class ClassroomPlanController extends Controller
 
             // Crear el plan de aula
             $createClassroom = ClassroomPlan::create([
-                'id_course' =>  $cursoId,
+                'id_course' =>  $courseId,
                 'id_learning_result' => $learningId,
                 'id_general_objective' =>  $generalObjectiveId,
                 'id_state' =>  $statesId,
@@ -441,4 +496,225 @@ class ClassroomPlanController extends Controller
         }
     }
 
+    public function createObjectiveGeneral(Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            $classroomId = $request->input('classroomId');
+            $generalObjective = $request->input('generalObjective');
+
+            // Obtener el ID del objetivo general asociado al plan de aula
+            $classroomGeneral = ClassroomPlan::where('id', $classroomId)
+                ->orderBy('id')
+                ->first(['id_general_objective']);
+
+            // Asegurarse de que se encontró el registro antes de continuar
+            if ($classroomGeneral) {
+                $classroomGenralId = $classroomGeneral->id_general_objective;
+
+                // Actualizar el objetivo general
+                GeneralObjective::where('id', $classroomGenralId)
+                    ->update([
+                        'description_general_objective' => $generalObjective,
+                    ]);
+
+                // Obtener el registro actualizado
+                $generalId = GeneralObjective::where('id', $classroomGenralId)->first();
+
+                // Confirmar la transacción
+                DB::commit();
+
+                // Verificar si se encontró el registro y devolver la respuesta
+                return response()->json([
+                    'confirm' => true,
+                    'generalId' => $generalId,
+                ]);
+            } else {
+                // Enviar una respuesta de error si no se encontró el ClassroomPlan
+                DB::rollBack();
+                return response()->json([
+                    'confirm' => false,
+                    'error' => 'No se encontró el ClassroomPlan asociado.'
+                ]);
+            }
+        } catch (\Exception $e) {
+            // Revertir la transacción en caso de error
+            DB::rollback();
+
+            // Retornar mensaje de error
+            return response()->json([
+                'error' => 'No se pudo Cambiar el objetivo general.',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function createObjectiveSpecific(Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            $classroomId = $request->input('classroomId');
+
+            // Obtener los objetivos específicos desde la petición
+            $contSpecific = [
+                $request->input('specificObjectiveOne'),
+                $request->input('specificObjectiveTwo'),
+                $request->input('specificObjectiveThree'),
+            ];
+
+            for ($i = 0; $i < count($contSpecific); $i++) {
+
+                SpecificObjective::where('id_classroom_plan', $classroomId)->update([
+                    'description_specific_objective' => $contSpecific[$i],
+                ]);
+            }
+
+            // Obtener los registros actualizados
+            $specificId = SpecificObjective::where('id_classroom_plan', $classroomId)
+                ->get(['id'])
+                ->toArray();
+
+            // Confirmar la transacción
+            DB::commit();
+
+            // Asegurarse de que se encontró el registro antes de continuar
+            if ($specificId) {
+                // Devolver la respuesta
+                return response()->json([
+                    'confirm' => true,
+                    'specificId' => $specificId,
+                ]);
+            } else {
+                // Enviar una respuesta de error si no se encontró el ClassroomPlan
+                DB::rollBack();
+                return response()->json([
+                    'confirm' => false,
+                    'error' => 'No se pudo crear los objetivos específicos.'
+                ]);
+            }
+        } catch (\Exception $e) {
+            // Revertir la transacción en caso de error
+            DB::rollback();
+
+            // Retornar mensaje de error
+            return response()->json([
+                'error' => 'No se pudo cambiar el objetivo general.',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function createTopics(Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            $specificId = $request->input('specificId');
+            $contTopics = $request->input('topics');
+
+            // Obtener los temas existentes para el id específico
+            $topics = Topic::where('id_specific_objective', $specificId)->get();
+
+            // Verificar si el número de temas existentes coincide con el número de contenidos
+            if (count($topics) !== count($contTopics)) {
+                DB::rollBack();
+                return response()->json([
+                    'confirm' => false,
+                    'error' => 'El número de temas no coincide con el número de tópicos proporcionados.'
+                ]);
+            }
+
+            // Actualizar cada tema individualmente
+            foreach ($topics as $index => $topic) {
+                if (isset($contTopics[$index])) { // Asegúrate de que el índice existe
+                    $topic->update([
+                        'description_topic' => $contTopics[$index],
+                    ]);
+                }
+            }
+
+            // Confirmar la transacción
+            DB::commit();
+
+            // Devolver la respuesta
+            return response()->json([
+                'confirm' => true,
+            ]);
+        } catch (\Exception $e) {
+            // Revertir la transacción en caso de error
+            DB::rollback();
+
+            // Retornar mensaje de error
+            return response()->json([
+                'error' => 'No se pudo cambiar el objetivo general.',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function createEvaluations(Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            $classroomId = $request->input('classroomId');
+            $selectedEvaluations = $request->input('selectedEvaluations');
+            $selectedEvaluations2 = $request->input('selectedEvaluations2');
+            $selectedEvaluations3 = $request->input('selectedEvaluations3');
+            $percentageId1 = $request->input('percentageId1');
+            $percentageId2 = $request->input('percentageId2');
+            $percentageId3 = $request->input('percentageId3');
+
+            for ($i = 0; $i < count($selectedEvaluations); $i++) {
+
+                AssignmentEvaluation::where('id_classroom_plan', $classroomId)->update([
+                    'id_evaluation' => $selectedEvaluations[$i],
+                    'id_percentage' => $percentageId1,
+                    'id_classroom_plan' => $classroomId,
+                ]);
+            }
+
+            for ($i = 0; $i < count($selectedEvaluations2); $i++) {
+
+                AssignmentEvaluation::where('id_classroom_plan', $classroomId)->update([
+                    'id_evaluation' => $selectedEvaluations2[$i],
+                    'id_percentage' => $percentageId2,
+                    'id_classroom_plan' => $classroomId,
+                ]);
+            }
+
+            for ($i = 0; $i < count($selectedEvaluations3); $i++) {
+
+                AssignmentEvaluation::where('id_classroom_plan', $classroomId)->update([
+                    'id_evaluation' => $selectedEvaluations3[$i],
+                    'id_percentage' => $percentageId3,
+                    'id_classroom_plan' => $classroomId,
+                ]);
+            }
+
+            $evaluationsId = AssignmentEvaluation::where('id_classroom_plan', $classroomId)
+                ->orderBy('id')
+                ->get();
+
+            // Confirmar la transacción
+            DB::commit();
+
+            // Devolver la respuesta
+            return response()->json([
+                'confirm' => true,
+                'evaluationsId' => $evaluationsId,
+            ]);
+        } catch (\Exception $e) {
+            // Revertir la transacción en caso de error
+            DB::rollback();
+
+            // Retornar mensaje de error
+            return response()->json([
+                'error' => 'No se pudo cambiar el objetivo general.',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
