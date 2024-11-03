@@ -51,7 +51,6 @@ class ListProfilesCompetenciesRaController extends Controller
             ]);
         }
     }
-
     public function deletefiles(Request $request)
     {
         // Obtener el ID del perfil de egreso desde la solicitud

@@ -32,213 +32,66 @@
 
     <!-- Card -->
     <div class="card">
+
+        <div class="card-header">
+            <h5 class="card-title font-weight-bold text-primary">Selección de facultad</h5>
+        </div>
+
         <div class="card-body">
+            <ul class="nav nav-pills nav-primary" id="pills-tab" role="tablist">
 
-            <h4 class="card-title font-weight-bold text-primary" style="margin-bottom: 10px;">Listado de plan de aula</h4>
+                @foreach ($facultys as $faculty)
+                <li class="nav-item">
+                    <a class="nav-link sede-tab" id="pills-home-tab-nobd" data-toggle="pill"
+                        href="#pills-horarios-nobd" role="tab" aria-controls="pills-home-nobd" aria-selected="true"
+                        data-value="{{ $faculty->id }}">
+                        {{ ucfirst(strtolower($faculty->name_faculty)) }}
+                    </a>
+                </li>
+                @endforeach
 
-            <!-- Row -->
-            <div class="table-responsive">
-                <div id="basic-datatables_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4">
-                    <div class="row">
-                        <div class="col-sm-12 col-md-6">
-                            <div class="dataTables_length" id="basic-datatables_length"><label>Show <select name="basic-datatables_length" aria-controls="basic-datatables" class="form-control form-control-sm">
-                                        <option value="10">10</option>
-                                        <option value="25">25</option>
-                                        <option value="50">50</option>
-                                        <option value="100">100</option>
-                                    </select> entries</label></div>
-                        </div>
-                        <div class="col-sm-12 col-md-6">
-                            <div id="basic-datatables_filter" class="dataTables_filter"><label>Buscador:<input type="search" class="form-control form-control-sm" placeholder="" aria-controls="basic-datatables"></label></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- end Row -->
-
-            <!-- Table -->
-            <div class="table-responsive">
-                <table class="table table-head-bg-primary" style="margin-top: 10px;">
-                    <thead>
-                        <tr>
-                            <th scope="col">Curso</th>
-                            <th scope="col">Campo</th>
-                            <th scope="col">Componente</th>
-                            <th scope="col">Semestre</th>
-                            <th scope="col">Creditos</th>
-                            <th scope="col">Tipo de curso</th>
-                            <th scope="col">Objetivo</th>
-                            <th scope="col">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($classroom as $classroo)
-                        <tr data-docente-id="{{ $classroo->id }}">
-
-                            <td class="detalle-docente" data-docente-id="{{ $classroo->id }}">
-                                <a href="{{ route('docente.info', ['id' => $classroo->id]) }}" class="text-dark">
-                                    {{ $classroo->id_course }}
-                                </a>
-                            </td>
-
-                            <td class="detalle-docente" data-docente-id="{{ $classroo->id }}">
-                                <a href="{{ route('docente.info', ['id' => $classroo->id]) }}" class="text-dark">
-                                    {{ $classroo-> id_profile_competition_ra }}
-                                </a>
-                            </td>
-
-                            <td class="detalle-docente" data-docente-id="{{ $classroo->id }}">
-                                <a href="{{ route('docente.info', ['id' => $classroo->id]) }}" class="text-dark">
-                                    {{ $classroo->id_general_objective }}
-                                </a>
-                            </td>
-
-                            <td class="detalle-docente" data-docente-id="{{ $classroo->id }}">
-                                <a href="{{ route('docente.info', ['id' => $classroo->id]) }}" class="text-dark">
-                                    {{ $classroo->id_specific_objective }}
-                                </a>
-                            </td>
-
-                            <td class="detalle-docente" data-docente-id="{{ $classroo->id }}">
-                                <a href="{{ route('docente.info', ['id' => $classroo->id]) }}" class="text-dark">
-                                    {{ $classroo->id_general_reference }}
-                                </a>
-                            </td>
-
-                            <td class="detalle-docente" data-docente-id="{{ $classroo->id }}">
-                                <a href="{{ route('docente.info', ['id' => $classroo->id]) }}" class="text-dark">
-                                    {{ $classroo->id_institutional_reference }}
-                                </a>
-                            </td>
-
-                            <td class="detalle-docente" data-docente-id="{{ $classroo->id }}">
-                                <a href="{{ route('docente.info', ['id' => $classroo->id]) }}" class="text-dark">
-                                    {{ $classroo->id_evaluations }}
-                                </a>
-                            </td>
-
-                            <td>
-                                <!-- Botón para editar -->
-                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
-                                    data-target="#modalViewInformation">
-                                    <i class="fas fa-pencil-alt"></i>
-                                </button>
-                                <!-- Botón para eliminar -->
-                                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal"
-                                    data-target="#modalConfirmationDelete">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </td>
-
-                        </tr>
-                        @endforeach
-
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <!-- End Table -->
-
-            <!-- Pagination -->
-            <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-end">
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1">Previous</a>
-                    </li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">Next</a>
-                    </li>
-                </ul>
-            </nav>
-            <!-- End Pagination -->
-
+            </ul>
         </div>
     </div>
     <!-- End Card -->
 
-    <!-- Modal -->
-    <div class="modal fade bd-example-modal-lg" id="modalViewInformation" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-primary" id="exampleModalLongTitle" style="font-size: 25px; ">Advertencia</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="exampleFormControlTextarea1">Perfil de egreso</label>
-                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="8"></textarea>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-12 col-md-6">
-                            <div class="form-group">
-                                <label for="exampleFormControlTextarea1">Competencia 1</label>
-                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="5"></textarea>
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-md-6">
-                            <div class="form-group">
-                                <label for="exampleFormControlTextarea1">Competencia 2</label>
-                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="5"></textarea>
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-md-6">
-                            <div class="form-group">
-                                <label for="exampleFormControlTextarea1">Resultado de aprendizaje #1</label>
-                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="5"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="exampleFormControlTextarea1">Resultado de aprendizaje #2</label>
-                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="5"></textarea>
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-md-6">
-                            <div class="form-group">
-                                <label for="exampleFormControlTextarea1">Resultado de aprendizaje #3</label>
-                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="5"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="exampleFormControlTextarea1">Resultado de aprendizaje #4</label>
-                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="5"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary">Guardar</button>
-                </div>
-            </div>
-        </div>
+    <div class="row" id="cardProgram">
     </div>
-    <!-- End Modal -->
 
-    <!-- Modal -->
-    <div class="modal fade" id="modalConfirmationDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle" style="font-size: 25px;">Advertencia</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    Deseas eliminar?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary">Aceptar</button>
+    <!-- Card -->
+    <div class="card d-none" id="card-1">
+
+        <div class="card-header">
+            <h5 class="card-title font-weight-bold text-primary">Listado de planes de aula</h5>
+        </div>
+
+        <div class="card-body">
+
+            <div class="mb-3">
+                <input type="text" id="searchCourse" class="form-control" placeholder="Buscar por nombre del curso">
+            </div>
+
+
+            <div class="tab-content mt-2 mb-3" id="pills-without-border-tabContent">
+                <div class="tab-pane fade show active" id="pills-horarios-nobd" role="tabpanel"
+                    aria-labelledby="pills-home-tab-nobd">
+                    <div id="viewClassroomPlan" class="row">
+                        <div class="col-12 text-center">
+                            <h4>Por favor, selecciona una facultad para visualizar los perfiles de egreso disponibles.</h4>
+                        </div>
+                    </div>
+
+                    <div id="paginationContainer" class="d-flex justify-content-center my-3">
+                        <nav aria-label="...">
+                            <ul class="pagination mb-0" id="pagination"></ul>
+                        </nav>
+                    </div>
+
                 </div>
             </div>
         </div>
     </div>
-    <!-- End Modal -->
+    <!-- End Card -->
 
     <!-- Styles -->
     <link rel="stylesheet" href="../../css/listClassroomPlan.css">

@@ -17,13 +17,18 @@ let learningId;
 let courseId;
 let typeCourseId;
 let classroomId;
+let assigEvaId;
 let component;
 let specificId;
+let referencesId;
 let dataConfirmation;
 
 const selectedEvaluations = [];
 const selectedEvaluations2 = [];
 const selectedEvaluations3 = [];
+
+const institutionalLinks = [];
+const generalLinks = [];
 
 document.addEventListener('DOMContentLoaded', function () {
     /*
@@ -62,8 +67,22 @@ document.addEventListener('DOMContentLoaded', function () {
             // Mostrar la siguiente card
             document.getElementById(cards[currentCardIndex]).style.display = 'block';
         } else {
-            // Recargar la página cuando llegues a la última card
-            location.reload();
+            Swal.fire({
+                icon: 'success',
+                title: 'Exito',
+                text: 'Se ha creado correctamente el plan de aula',
+                confirmButtonColor: '#1269DB',
+                confirmButtonText: 'Entendido'
+            }).then((result) => {
+                // Si el usuario confirma la acción
+                if (result.isConfirmed) {
+                    // Recargar la página cuando llegues a la última card
+                    location.reload();
+                } else {
+                    location.reload();
+                    console.log('Eliminacion cancelada por el usuario'); // Mensaje en consola si el usuario cancela la acción
+                }
+            });
         }
     }
 
@@ -112,10 +131,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function resetCheckboxes() {
-
-    }
-
     function resetValite(check) {
         if (check == false) {
             // Seleccionar todos los elementos con la clase 'nextCard' y quitar la clase 'd-none' de cada uno
@@ -130,9 +145,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
             document.getElementById('createEvaluation').classList.remove('d-none');
             document.getElementById('bodyReferences').innerHTML = '';
-
             document.getElementById('percentageView').classList.add('d-none');
             document.getElementById('percentageContainer').classList.remove('d-none');
+            document.getElementById('createReferent').classList.remove('d-none');
+            document.getElementById('tableReferent').classList.add('d-none');
 
         } else {
 
@@ -148,8 +164,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
             document.getElementById('percentageView').classList.remove('d-none');
             document.getElementById('percentageContainer').classList.add('d-none');
-
             document.getElementById('createEvaluation').classList.add('d-none');
+            document.getElementById('createReferent').classList.add('d-none');
+            document.getElementById('tableReferent').classList.remove('d-none');
 
         }
     }
@@ -419,7 +436,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Procesar la respuesta del servidor y actualizar la tabla de cursos
                 var courses = response.courses; // Obtener la lista de cursos de la respuesta
 
-                console.log
                 var bodyComponent = $('#bodyComponent');
                 bodyComponent.empty();
 
@@ -495,13 +511,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function tableReferences(response) {
 
-        // Procesar la respuesta del servidor y actualizar la tabla de cursos
-        var referencesId = response; // Obtener la lista de cursos de la respuesta
+        var referencesId = response;
 
         var bodyReferences = $('#bodyReferences');
         bodyReferences.empty();
 
-        // Verificar si se encontraron cursos en la respuesta
         if (referencesId.length > 0) {
             let cont = 1;
             referencesId.forEach(function (reference) {
@@ -512,7 +526,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         ${cont++}
                     </td>                               
                     <td>
-                        ${reference.name_reference}
+                        ${capitalizeText(reference.name_reference)}
                     </td>
                     <td>
                         ${reference.link_reference}
@@ -522,13 +536,38 @@ document.addEventListener('DOMContentLoaded', function () {
                 bodyReferences.append(row);
             });
         } else {
-            // Mostrar un mensaje si no se encontraron cursos
             bodyReferences.append('<tr><td colspan="6">No se encontraron.</td></tr>');
         }
     }
 
+    function viewCourse(response) {
+
+        var programs = response.program;
+        var courses = response.course; // Obtener la lista de cursos de la respuesta
+
+        // Verifica si programas están definidos antes de usarlos
+        if (programs.length > 0 && courses.length > 0) {
+            // Solo tomamos el primer programa para mostrar su facultad y nombre
+            var program = programs[0]; // Aquí obtén el programa que necesitas, dependiendo de tu lógica
+            var course = courses[0]; // Aquí obtén el programa que necesitas, dependiendo de tu lógica
+        } else {
+            console.error('No se encontraron programas.');
+            return; // Sal de la función si no hay programas
+        }
+
+        // Actualizar los campos en el área #course-info
+        $('#nameFaculty').text(capitalizeText(program.faculty.name_faculty));
+        $('#nameProgram').text(capitalizeText(program.name_program));
+        $('#nameField').text(capitalizeText(course.component.study_field.name_study_field));
+        $('#nameComponent').text(capitalizeText(course.component.name_component));
+        $('#nameCourse').text(capitalizeText(course.name_course));
+        $('#nameSemester').text(capitalizeText(course.semester.name_semester));
+        $('#nameCredits').text(course.credit);
+        $('#nameCourseType').text(capitalizeText(course.course_type.name_course_type));
+
+    }
+
     function viewPercentage(response) {
-        console.log('ENCUENTRA', response);
 
         // Inicializar arreglos para acumular los nombres de evaluación
         let evaluations1 = [];
@@ -568,37 +607,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     }
 
-    function checkboxSave(selectedEvaluations, selectedEvaluations2, selectedEvaluations3) {
-        const checkboxContainers = [
-            { containerId: 'evaluationsCheckbox1', selectedArray: selectedEvaluations, dataAttr: 'data-evaluation1' },
-            { containerId: 'evaluationsCheckbox2', selectedArray: selectedEvaluations2, dataAttr: 'data-evaluation2' },
-            { containerId: 'evaluationsCheckbox3', selectedArray: selectedEvaluations3, dataAttr: 'data-evaluation3' },
-        ];
-
-        checkboxContainers.forEach(({ containerId, selectedArray, dataAttr }) => {
-            document.querySelectorAll(`#${containerId} input[type="checkbox"]`).forEach((checkbox) => {
-                checkbox.addEventListener('change', (event) => {
-                    const evaluationId = event.target.getAttribute(dataAttr);
-                    if (event.target.checked) {
-                        // Agregar el ID de la evaluación al array
-                        selectedArray.push(evaluationId);
-                        console.log('Evaluación seleccionada:', evaluationId);
-                    } else {
-                        // Eliminar el ID de la evaluación del array
-                        const index = selectedArray.indexOf(evaluationId);
-                        if (index !== -1) {
-                            selectedArray.splice(index, 1);
-                        }
-                        console.log('Evaluación deseleccionada:', evaluationId);
-                    }
-                    console.log('Evaluaciones seleccionadas:', selectedArray);
-                });
-            });
-        });
-    }
-
     function viewEvaluation(response) {
-        console.log('Response:', response); // Verifica qué se está recibiendo
 
         // Verificar si se encontraron cursos en la respuesta
         if (response.length > 0) {
@@ -668,6 +677,37 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    function viewReferences(dataLinks, linkReference) {
+        // Inicializar arreglos para acumular los nombres de evaluación
+        let references1 = [];
+        let references2 = [];
+
+        if (dataLinks == 1) {
+            if (Array.isArray(linkReference) && linkReference.length > 0) {
+                linkReference.forEach(function (resp) {
+                    references1.push(resp);
+                });
+
+                // Mostrar todos los nombres de evaluación en los elementos correspondientes
+                document.getElementById('institutionalView').innerHTML = references1.join('<br>');
+
+            } else {
+                document.getElementById('institutionalView').textContent = 'Sin referencias institucionales';
+            }
+        } else {
+            if (Array.isArray(linkReference) && linkReference.length > 0) {
+                linkReference.forEach(function (resp) {
+                    references2.push(resp);
+                });
+
+                // Mostrar todos los nombres de evaluación en los elementos correspondientes
+                document.getElementById('generalView').innerHTML = references2.join('<br>');
+            } else {
+                document.getElementById('generalView').textContent = 'Sin referencias generales';
+            }
+        }
+    }
+
     function viewClassroom(response) {
 
         console.log('REFERENCIAS', response.referencesId);
@@ -710,6 +750,32 @@ document.addEventListener('DOMContentLoaded', function () {
 
     }
 
+    function checkboxSave(selectedEvaluations, selectedEvaluations2, selectedEvaluations3) {
+        const checkboxContainers = [
+            { containerId: 'evaluationsCheckbox1', selectedArray: selectedEvaluations, dataAttr: 'data-evaluation1' },
+            { containerId: 'evaluationsCheckbox2', selectedArray: selectedEvaluations2, dataAttr: 'data-evaluation2' },
+            { containerId: 'evaluationsCheckbox3', selectedArray: selectedEvaluations3, dataAttr: 'data-evaluation3' },
+        ];
+
+        checkboxContainers.forEach(({ containerId, selectedArray, dataAttr }) => {
+            document.querySelectorAll(`#${containerId} input[type="checkbox"]`).forEach((checkbox) => {
+                checkbox.addEventListener('change', (event) => {
+                    const evaluationId = event.target.getAttribute(dataAttr);
+                    if (event.target.checked) {
+                        // Agregar el ID de la evaluación al array
+                        selectedArray.push(evaluationId);
+                    } else {
+                        // Eliminar el ID de la evaluación del array
+                        const index = selectedArray.indexOf(evaluationId);
+                        if (index !== -1) {
+                            selectedArray.splice(index, 1);
+                        }
+                    }
+                });
+            });
+        });
+    }
+
     function validateEvaluation(typeCourse, response) {
 
         if (typeCourse !== false) {
@@ -736,33 +802,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function visualizeInfoCourse(response) {
-
-        var programs = response.program;
-        var courses = response.course; // Obtener la lista de cursos de la respuesta
-
-        // Verifica si programas están definidos antes de usarlos
-        if (programs.length > 0 && courses.length > 0) {
-            // Solo tomamos el primer programa para mostrar su facultad y nombre
-            var program = programs[0]; // Aquí obtén el programa que necesitas, dependiendo de tu lógica
-            var course = courses[0]; // Aquí obtén el programa que necesitas, dependiendo de tu lógica
-        } else {
-            console.error('No se encontraron programas.');
-            return; // Sal de la función si no hay programas
-        }
-
-        // Actualizar los campos en el área #course-info
-        $('#nameFaculty').text(capitalizeText(program.faculty.name_faculty));
-        $('#nameProgram').text(capitalizeText(program.name_program));
-        $('#nameField').text(capitalizeText(course.component.study_field.name_study_field));
-        $('#nameComponent').text(capitalizeText(course.component.name_component));
-        $('#nameCourse').text(capitalizeText(course.name_course));
-        $('#nameSemester').text(capitalizeText(course.semester.name_semester));
-        $('#nameCredits').text(course.credit);
-        $('#nameCourseType').text(capitalizeText(course.course_type.name_course_type));
-
-    }
-
     function validate(fields, alertMessage) {
         // Verificar si hay algún campo vacío
         let hasEmptyField = fields.some(field => {
@@ -779,8 +818,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 confirmButtonText: 'Entendido'
             });
         } else {
+
             // Mostrar el modal si no hay campos vacíos
             $('#modalConfirmation').modal('show');
+
         }
     }
 
@@ -805,6 +846,22 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         $('#modalConfirmation').modal('show');
         return true; // Retorna true si hay al menos una selección
+    }
+
+    function validateReferences(institutionalLinks, generalLinks) {
+
+        if (institutionalLinks !== '' && generalLinks !== '') {
+            $('#modalConfirmation').modal('show');
+        } else {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Advertencia',
+                text: 'Por favor, ingresa al menos un link de referencias',
+                confirmButtonColor: '#1269DB',
+                confirmButtonText: 'Entendido'
+            });
+        }
+
     }
 
     function validateClassroomPlan(courseId, program, typeCourseId) {
@@ -864,7 +921,7 @@ document.addEventListener('DOMContentLoaded', function () {
         } else if (dataConfirmation == '4') {
             validate(
                 ['textAreaTheme1', 'textAreaTheme2', 'textAreaTheme3', 'textAreaTheme4', 'textAreaTheme5'],
-                'Los campos de temas no pueden estar vacíos.'
+                'Los campos de temas no pueden estar vacíos.',
             );
 
         } else if (dataConfirmation == '5') {
@@ -880,11 +937,10 @@ document.addEventListener('DOMContentLoaded', function () {
             );
 
         } else if (dataConfirmation == '7') {
-            validateCheckbox()
+            validateCheckbox();
 
         } else if (dataConfirmation == '8') {
-            $('#modalConfirmation').modal('show');
-
+            validateReferences();
         }
     }
 
@@ -902,18 +958,28 @@ document.addEventListener('DOMContentLoaded', function () {
         let selectFaculty = document.getElementById('pillSelectFaculty');
         let selectProgram = document.getElementById('pillSelectProgram');
         let filterCourseButton = document.getElementById('filterCourse');
-        let saveGeneralButton = document.getElementById('saveGeneral');
-        let saveInstitutionalButton = document.getElementById('saveInstitutional');
-
+        
         // Activar o desactivar los elementos según el valor de `state`
         selectFaculty.disabled = state2;
         selectProgram.disabled = state2;
         filterCourseButton.disabled = state2;
-        saveGeneralButton.disabled = state2;
-        saveInstitutionalButton.disabled = state2;
     }
 
-    function saveClassroomPlan(courseId, learningId) {
+    function dataReference(dataLinks){
+        if (dataLinks == 1) {
+            let institutionalLink = document.getElementById('linkInstitutionalReferences').value;
+            institutionalLinks.push(institutionalLink);
+            viewReferences(dataLinks, institutionalLinks);
+            document.getElementById('linkInstitutionalReferences').value = '';
+        } else {
+            let generalLink = document.getElementById('linkGeneralReferences').value;
+            generalLinks.push(generalLink);
+            viewReferences(dataLinks, generalLinks);
+            document.getElementById('linkGeneralReferences').value = '';
+        }
+    }
+
+    function saveClassroomPlan(courseId, learningId) {  
 
         const nameGeneral = 'Objetivo general';
 
@@ -1051,20 +1117,55 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function saveAsEvaluation(classroomId, selectedEvaluations, selectedEvaluations2, selectedEvaluations3) {
-        const percentageId = [1,2,3]
+    function saveAsEvaluation(classroomId, assigEvaId, selectedEvaluations, selectedEvaluations2, selectedEvaluations3) {
+        const percentageId = [1, 2, 3]
         return new Promise((resolve, reject) => {
             $.ajax({
                 url: '/classroom-plan/save-evaluations',
                 type: 'PUT',
                 data: {
                     classroomId: classroomId,
+                    assigEvaId: assigEvaId,
                     percentageId1: percentageId[0],
                     percentageId2: percentageId[1],
                     percentageId3: percentageId[2],
                     selectedEvaluations: selectedEvaluations,
                     selectedEvaluations2: selectedEvaluations2,
                     selectedEvaluations3: selectedEvaluations3,
+                },
+                success: function (response) {
+                    resolve(response);
+                },
+                // Función que se ejecuta en caso de error en la solicitud
+                error: function (xhr, status, error) {
+                    // Imprimir mensajes de error en la consola
+                    console.error('Error al obtener:', xhr);
+                    console.error('Estado:', status);
+                    console.error('Error:', error);
+                    reject(error);
+
+                }
+            });
+        });
+    }
+
+    function saveReference(classroomId, referencesId, institutionalLinks, generalLinks) {
+
+        const nameReferences = [
+            'Referencia institucional',
+            'Referencia general',
+        ];
+
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: '/classroom-plan/save-references',
+                type: 'PUT',
+                data: {
+                    classroomId: classroomId,
+                    referencesId: referencesId,
+                    nameReferences: nameReferences,
+                    institutionalLinks: institutionalLinks,
+                    generalLinks: generalLinks,
                 },
                 success: function (response) {
                     resolve(response);
@@ -1095,6 +1196,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 blockAttributes(false, true);
                 saveClassroomPlan(courseId, learningId).then(response => {
                     classroomId = response.createClassroom.id;
+                    assigEvaId = response.assignmentEvaluations;
+                    referencesId = response.references;
                     learningId = '';
                     courseId = '';
                 }).catch(error => {
@@ -1201,18 +1304,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             }
         } else if (dataConfirmation == 7) {
-            console.log(classroomId);
             // CONTINUAR EVALUATIONS
             if (selectedEvaluations !== '' && selectedEvaluations2 !== '' && selectedEvaluations3 !== '') {
-                saveAsEvaluation(classroomId, selectedEvaluations, selectedEvaluations2, selectedEvaluations3).then(response => {
-                    console.log('ESTAMOS-BIEN',response);
+                saveAsEvaluation(classroomId, assigEvaId, selectedEvaluations, selectedEvaluations2, selectedEvaluations3);
+            }
+
+        } else if (dataConfirmation == 8) {
+            if (institutionalLinks !== '' && generalLinks !== '') {
+                saveReference(classroomId, referencesId, institutionalLinks, generalLinks).then(response => {
+                    console.log('ARREGLO', response);
                 }).catch(error => {
                     console.error("Error en la solicitud AJAX:", error);
                 });
             }
-
-        } else if (dataConfirmation == 8) {
-            console.log('hola')
         }
     }
 
@@ -1236,7 +1340,7 @@ document.addEventListener('DOMContentLoaded', function () {
             success: function (response) {
                 typeCourseId = response.course[0].id_course_type;
                 component = response.course[0].id_component;
-                visualizeInfoCourse(response);
+                viewCourse(response);
                 tableComponent(component);
                 validateClassroomPlan(courseId, program, typeCourseId);
                 resetForm(false);
@@ -1284,21 +1388,6 @@ document.addEventListener('DOMContentLoaded', function () {
         courseId = '';
     });
 
-    document.getElementById('saveInstitutional').addEventListener('click', function () {
-        validate(
-            ['linkInstitutionalReferences'],
-            'Por favor, ingreasa una referencia institucional.'
-        );
-    });
-
-    document.getElementById('saveGeneral').addEventListener('click', function () {
-        validate(
-            ['linkGeneralReferences'],
-            'Por favor, ingreasa una referencia general.'
-        );
-
-    });
-
     document.querySelectorAll('.confirmationSave').forEach(function (button) {
         button.addEventListener('click', function () {
 
@@ -1312,6 +1401,14 @@ document.addEventListener('DOMContentLoaded', function () {
         button.addEventListener('click', function () {
             blockAttributes(true, true);
             showNextCard();
+        });
+    });
+
+    // Capturar los eventos de clic en los enlaces
+    document.querySelectorAll('.referenceLinks').forEach(function (button) {
+        button.addEventListener('click', function () {
+            const dataLinks = this.getAttribute('data-links'); // Obtener el atributo data-links
+            dataReference(dataLinks);
         });
     });
 

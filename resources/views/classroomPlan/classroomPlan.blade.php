@@ -34,7 +34,7 @@
     <div class="card">
 
         <div class="card-header">
-            <h5 class="card-title font-weight-bold text-primary">Seleccion de curso</h5>
+            <h5 class="card-title font-weight-bold text-primary">Selección de curso</h5>
         </div>
 
         <div class="card-body">
@@ -550,7 +550,7 @@
                             <label>PORCENTAJE 30%</label>
 
                             <div class="form-group" id="evaluationsCheckbox1">
-                                
+
                             </div>
 
                         </div>
@@ -559,7 +559,7 @@
                         <div class="form-group text-center">
                             <label>PORCENTAJE 30%</label>
                             <div class="form-group" id="evaluationsCheckbox2">
-                                
+
                             </div>
                         </div>
                     </div>
@@ -567,7 +567,7 @@
                         <div class="form-group text-center">
                             <label>PORCENTAJE 40%</label>
                             <div class="form-group" id="evaluationsCheckbox3">
-                                
+
                             </div>
                         </div>
                     </div>
@@ -594,7 +594,7 @@
         <div class="card-body">
 
             <form>
-                <div class="table-responsive">
+                <div class="table-responsive d-none" id="tableReferent">
                     <table class="table table-head-bg-primary">
                         <thead>
                             <tr>
@@ -608,26 +608,44 @@
                     </table>
                 </div>
 
-                <label for="pillInput">Ingrese la referencia institucional:</label>
-                <div class="form-group">
-                    <div class="input-group">
-                        <input type="text" class="form-control readonlyCheck" id="linkInstitutionalReferences" placeholder="" aria-label="" aria-describedby="basic-addon1">
-                        <div class="input-group-append">
-                            <button class="btn btn-primary" type="button" id="saveInstitutional">
-                                Guardar
-                            </button>
+                <div class="" id="createReferent">
+                    <div class="" id="institutionalContainer">
+                        <div class="form-group">
+                            <label>Referencias institucionales</label>
+                            <p id="institutionalView"></p>
                         </div>
                     </div>
-                </div>
 
-                <label for="pillInput">Ingrese la referencia general:</label>
-                <div class="form-group">
-                    <div class="input-group">
-                        <input type="text" class="form-control readonlyCheck" id="linkGeneralReferences" placeholder="" aria-label="" aria-describedby="basic-addon1">
-                        <div class="input-group-append">
-                            <button class="btn btn-primary" type="button" id="saveGeneral">
-                                Guardar
-                            </button>
+                    <label for="pillInput" style="margin-left: 10px;">Ingrese la referencia institucional:</label>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="text" class="form-control readonlyCheck" id="linkInstitutionalReferences" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary referenceLinks" type="button" id="saveInstitutional"
+                                    data-links="1">
+                                    Guardar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="" id="generalContainer">
+                        <div class="form-group">
+                            <label>Referencias generales</label>
+                            <p id="generalView"></p>
+                        </div>
+                    </div>
+
+                    <label for="pillInput" style="margin-left: 10px;">Ingrese la referencia general:</label>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="text" class="form-control readonlyCheck" id="linkGeneralReferences" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary referenceLinks" type="button" id="saveGeneral"
+                                    data-links="2">
+                                    Guardar
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -668,7 +686,8 @@
     <!-- End Modal -->
 
     <!-- Modal Select Course -->
-    <div class="modal fade bd-example-modal-lg" id="modalCourse" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade bd-example-modal-lg" id="modalCourse" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -714,7 +733,8 @@
     <!-- End Modal -->
 
     <!-- Modal List Courses -->
-    <div class="modal fade bd-example-modal-lg" id="modalListCourses" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade bd-example-modal-lg" id="modalListCourses" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -746,7 +766,8 @@
     <!-- End Modal -->
 
     <!-- Modal Evaluation -->
-    <div class="modal fade bd-example-modal-lg" id="modalNewEvaluation" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade bd-example-modal-lg" id="modalNewEvaluation" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">

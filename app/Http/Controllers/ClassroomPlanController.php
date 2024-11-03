@@ -660,40 +660,44 @@ class ClassroomPlanController extends Controller
 
         try {
             $classroomId = $request->input('classroomId');
-            $selectedEvaluations = $request->input('selectedEvaluations');
-            $selectedEvaluations2 = $request->input('selectedEvaluations2');
-            $selectedEvaluations3 = $request->input('selectedEvaluations3');
-            $percentageId1 = $request->input('percentageId1');
-            $percentageId2 = $request->input('percentageId2');
-            $percentageId3 = $request->input('percentageId3');
+            $assigEvaId = $request->input('assigEvaId');
+            $selectedEvaluations = [
+                $request->input('selectedEvaluations'),
+                $request->input('selectedEvaluations2'),
+                $request->input('selectedEvaluations3')
+            ];
+            $percentageIds = [
+                $request->input('percentageId1'),
+                $request->input('percentageId2'),
+                $request->input('percentageId3')
+            ];
 
-            for ($i = 0; $i < count($selectedEvaluations); $i++) {
-
-                AssignmentEvaluation::where('id_classroom_plan', $classroomId)->update([
-                    'id_evaluation' => $selectedEvaluations[$i],
-                    'id_percentage' => $percentageId1,
-                    'id_classroom_plan' => $classroomId,
-                ]);
+            // Actualizar las primeras evaluaciones si existen
+            foreach ($assigEvaId as $index => $assignmentId) {
+                if (!empty($selectedEvaluations[$index][0])) {
+                    AssignmentEvaluation::where('id', $assignmentId)
+                        ->update([
+                            'id_evaluation' => $selectedEvaluations[$index][0],
+                            'id_percentage' => $percentageIds[$index],
+                            'id_classroom_plan' => $classroomId,
+                        ]);
+                }
             }
 
-            for ($i = 0; $i < count($selectedEvaluations2); $i++) {
-
-                AssignmentEvaluation::where('id_classroom_plan', $classroomId)->update([
-                    'id_evaluation' => $selectedEvaluations2[$i],
-                    'id_percentage' => $percentageId2,
-                    'id_classroom_plan' => $classroomId,
-                ]);
+            // Crear las evaluaciones adicionales si existen
+            foreach ($selectedEvaluations as $index => $evaluations) {
+                if (count($evaluations) > 1) {
+                    for ($i = 1; $i < count($evaluations); $i++) {
+                        AssignmentEvaluation::create([
+                            'id_evaluation' => $evaluations[$i],
+                            'id_percentage' => $percentageIds[$index],
+                            'id_classroom_plan' => $classroomId,
+                        ]);
+                    }
+                }
             }
 
-            for ($i = 0; $i < count($selectedEvaluations3); $i++) {
-
-                AssignmentEvaluation::where('id_classroom_plan', $classroomId)->update([
-                    'id_evaluation' => $selectedEvaluations3[$i],
-                    'id_percentage' => $percentageId3,
-                    'id_classroom_plan' => $classroomId,
-                ]);
-            }
-
+            // Obtener los IDs de las evaluaciones asignadas
             $evaluationsId = AssignmentEvaluation::where('id_classroom_plan', $classroomId)
                 ->orderBy('id')
                 ->get();
@@ -712,7 +716,77 @@ class ClassroomPlanController extends Controller
 
             // Retornar mensaje de error
             return response()->json([
-                'error' => 'No se pudo cambiar el objetivo general.',
+                'error' => 'No se pudo cambiar el asignamiento.',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function createReferences(Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            $classroomId = $request->input('classroomId');
+            $referencesId = $request->input('referencesId');
+            $nameReferences = $request->input('nameReferences');
+            $institutionalLinks = $request->input('institutionalLinks');
+            $generalLinks = $request->input('generalLinks');
+
+            // Actualizar la primera referencia
+            Reference::where('id', $referencesId[0])
+                ->update([
+                    'name_reference' => $nameReferences[0],
+                    'link_reference' => $institutionalLinks[0],
+                    'id_classroom_plan' => $classroomId,
+                ]);
+
+            // Actualizar la segunda referencia
+            Reference::where('id', $referencesId[1])
+                ->update([
+                    'name_reference' => $nameReferences[1],
+                    'link_reference' => $generalLinks[0],
+                    'id_classroom_plan' => $classroomId,
+                ]);
+
+            // Crear las referencias institucionales adicionales
+            foreach (array_slice($institutionalLinks, 1) as $institutional) {
+                Reference::create([
+                    'name_reference' => $nameReferences[0],
+                    'link_reference' => $institutional,
+                    'id_classroom_plan' => $classroomId,
+                ]);
+            }
+
+            // Crear las referencias generales adicionales
+            foreach (array_slice($generalLinks, 1) as $general) {
+                Reference::create([
+                    'name_reference' => $nameReferences[1],
+                    'link_reference' => $general,
+                    'id_classroom_plan' => $classroomId,
+                ]);
+            }
+
+            // Obtener los IDs de las referencias asignadas
+            $referenceId = Reference::where('id_classroom_plan', $classroomId)
+                ->orderBy('id')
+                ->get();
+
+            // Confirmar la transacción
+            DB::commit();
+
+            // Devolver la respuesta
+            return response()->json([
+                'confirm' => true,
+                'referenceId' => $referenceId,
+            ]);
+        } catch (\Exception $e) {
+            // Revertir la transacción en caso de error
+            DB::rollback();
+
+            // Retornar mensaje de error
+            return response()->json([
+                'error' => 'No se pudo cambiar el asignamiento.',
                 'message' => $e->getMessage()
             ], 500);
         }
