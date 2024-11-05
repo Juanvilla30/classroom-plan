@@ -9,6 +9,7 @@ use App\Http\Controllers\ProfilesCompetenciesRaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ListUsersController;
 use App\http\Controllers\GenerateDocumentController;
+use App\Http\Controllers\ViewClassroomPlanController;
 use App\Http\Controllers\ViewProfilesCompetenciesRaController;
 use App\http\Controllers\FacultiController;
 use Illuminate\Support\Facades\Route;
@@ -51,6 +52,7 @@ Route::delete('/list-profiles/delete-profile', [ListProfilesCompetenciesRaContro
 
 // Rutas de plan de aula
 Route::get('/classroom-plan', [ClassroomPlanController::class, 'index'])->name('classroomPlan');
+Route::get('/classroom-plan/search', [ClassroomPlanController::class, 'searchFaculty'])->name('searchFaculty');
 Route::post('/classroom-plan/faculty-program', [ClassroomPlanController::class, 'filtersFacultyProgram'])->name('filtersFacultyProgram');
 Route::post('/classroom-plan/learning-program', [ClassroomPlanController::class, 'filtersLearningProgram'])->name('filtersLearningProgram');
 Route::post('/classroom-plan/visualize-info-course', [ClassroomPlanController::class, 'visualizeCourse'])->name('visualizeInfoCourse');
@@ -59,9 +61,23 @@ Route::post('/classroom-plan/list-courses', [ClassroomPlanController::class, 'li
 Route::post('/classroom-plan/Learning-result', [ClassroomPlanController::class, 'viewLearning'])->name('viewLearning');
 Route::post('/classroom-plan/validate-classroom-plans', [ClassroomPlanController::class, 'validateClassroomPlans'])->name('validateClassroomPlans');
 Route::post('/classroom-plan/create-classroom-plans', [ClassroomPlanController::class, 'createClassroomPlan'])->name('createClassroomPlan');
+Route::post('/classroom-plan/table-evaluations', [ClassroomPlanController::class, 'filtersEvaluations'])->name('filtersEvaluations');
+Route::put('/classroom-plan/save-general-objective', [ClassroomPlanController::class, 'createObjectiveGeneral'])->name('createObjectiveGeneral');
+Route::put('/classroom-plan/save-specific-objective', [ClassroomPlanController::class, 'createObjectiveSpecific'])->name('createObjectiveSpecific');
+Route::put('/classroom-plan/save-topic', [ClassroomPlanController::class, 'createTopics'])->name('createTopics');
+Route::put('/classroom-plan/save-evaluations', [ClassroomPlanController::class, 'createEvaluations'])->name('createEvaluations');
+Route::put('/classroom-plan/save-references', [ClassroomPlanController::class, 'createReferences'])->name('createReferences');
 
 // Rutas de listado de plan de aula
 Route::get('/list-classroom-plan', [ListClassroomPlanController::class, 'index'])->name('listClassroomPlan');
+Route::post('/list-classroom-plan/select-program', [ListClassroomPlanController::class, 'selectProgram'])->name('selectProgram');
+Route::post('/list-classroom-plan/select-classroom', [ListClassroomPlanController::class, 'selectClassroom'])->name('selectClassroom');
+Route::delete('/list-classroom-plan/delete-classroom-plan', [ListClassroomPlanController::class, 'deleteClassroom'])->name('deleteClassroom');
+
+// Rutas de vizualizacion de plan de aula
+Route::get('/view-classroom-plan/{id}', [ViewClassroomPlanController::class, 'index'])->name('editClassroomPlan');
+Route::post('/view-classroom-plan/info-classroom-plans', [ViewClassroomPlanController::class, 'ClaassroomInfo'])->name('ClaassroomInfo');
+Route::post('/view-classroom-plan/search-data', [ViewClassroomPlanController::class, 'searchData'])->name('searchData');
 
 // Rutas user
 Route::get('/user', [UserController::class, 'index'])->name('user');  

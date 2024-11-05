@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
             Swal.fire({
                 icon: 'success',
                 title: 'Exito',
-                text: 'Se ha creado correctamente el el perfil de egreso',
+                text: 'Se ha creado correctamente el perfil de egreso',
                 confirmButtonColor: '#1269DB',
                 confirmButtonText: 'Entendido'
             }).then((result) => {
@@ -76,6 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Recargar la página cuando llegues a la última card
                     location.reload();
                 } else {
+                    location.reload();
                     console.log('Eliminacion cancelada por el usuario'); // Mensaje en consola si el usuario cancela la acción
                 }
             });

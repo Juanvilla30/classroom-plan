@@ -108,6 +108,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 </div>
                             </div>
                         `;
+
                         $('#profileEgressContainer').append(cardHTML);
 
                         // Agregar el event listener después de agregar el HTML
