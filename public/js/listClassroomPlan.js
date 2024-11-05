@@ -255,6 +255,7 @@ document.addEventListener('DOMContentLoaded', function () {
         paginateClassrooms(filteredCourses, programId); // Usar la lista filtrada para la paginación
     }
 
+    // SELECTS
     function selectProgram(facultyId) {
         $.ajax({
             url: '/list-classroom-plan/select-program',

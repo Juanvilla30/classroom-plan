@@ -19,10 +19,10 @@ return new class extends Migration
             $table->timestamps();
 
             // Llaves foráneas
-            $table->unsignedBigInteger('id_modality');
+            $table->unsignedBigInteger('id_modality')->nullable();
             $table->foreign('id_modality')->references('id')->on('modalities');
 
-            $table->unsignedBigInteger('id_component'); 
+            $table->unsignedBigInteger('id_component')->nullable();
             $table->foreign('id_component')->references('id')->on('components');
 
             $table->unsignedBigInteger('id_semester');
@@ -30,9 +30,6 @@ return new class extends Migration
 
             $table->unsignedBigInteger('id_course_type');
             $table->foreign('id_course_type')->references('id')->on('course_types');
-            
-            $table->unsignedBigInteger('id_education_level')->nullable(); 
-            $table->foreign('id_education_level')->references('id')->on('education_levels');
             
             $table->unsignedBigInteger('id_role')->nullable(); 
             $table->foreign('id_role')->references('id')->on('users');

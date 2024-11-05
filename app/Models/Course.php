@@ -19,7 +19,6 @@ class Course extends Model
         'id_component',
         'id_semester',
         'id_course_type',
-        'id_education_level',
         'id_role',
     ];
 
@@ -41,11 +40,6 @@ class Course extends Model
     public function courseType()
     {
         return $this->belongsTo(CourseType::class, 'id_course_type');
-    }
-
-    public function educationLevel()
-    {
-        return $this->belongsTo(EducationLevel::class, 'id_education_level');
     }
 
     public function role()

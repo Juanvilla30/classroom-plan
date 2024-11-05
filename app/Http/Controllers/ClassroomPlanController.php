@@ -6,6 +6,7 @@ use App\Models\AssignmentEvaluation;
 use App\Models\ClassroomPlan;
 use App\Models\Competence;
 use App\Models\Course;
+use App\Models\EducationLevel;
 use App\Models\Evaluation;
 use App\Models\Faculty;
 use App\Models\GeneralObjective;
@@ -28,17 +29,44 @@ class ClassroomPlanController extends Controller
     {
         try {
 
-            $facultys = Faculty::orderBy('id')->get();
+            $educationInfo = EducationLevel::orderBy('id')->get();
 
             return view(
                 'classroomPlan.classroomPlan',
                 compact(
-                    'facultys',
+                    'educationInfo',
                 )
             );
         } catch (\Exception $e) {
             // Redireccionar o devolver una vista de error con un mensaje informativo
             return redirect()->back()->with('error', 'Ocurrió un problema al cargar la información del plan de aula.');
+        }
+    }
+
+    public function searchFaculty(Request $request)
+    {
+        try {
+
+            $facultyInfo = Faculty::orderBy('id')->get();
+
+            if ($facultyInfo->isNotEmpty()) {
+                return response()->json([
+                    'check' => true,
+                    'facultyInfo' => $facultyInfo,
+                ]);
+            } else {
+                return response()->json(
+                    [
+                        'check' => false,
+                        'error' => 'Cursos no encontrados'
+                    ],404
+                );
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error al filtrar programas de facultad',
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -553,7 +581,7 @@ class ClassroomPlanController extends Controller
             }
 
             foreach ($topics as $index => $topic) {
-                if (isset($contTopics[$index])) { 
+                if (isset($contTopics[$index])) {
                     $topic->update([
                         'description_topic' => $contTopics[$index],
                     ]);

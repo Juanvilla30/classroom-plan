@@ -42,26 +42,18 @@
             <!-- Forms -->
             <form>
                 <div class="form-group">
-                    <label for="pillSelectFaculty">Selección facultad</label>
-                    <select class="form-control input-pill" id="pillSelectFaculty">
-                        <option disabled selected value="">Seleccione una facultad</option>
-                        @foreach ($facultys as $faculty)
-                        <option value="{{ $faculty->id }}">{{ ucfirst(strtolower($faculty->name_faculty)) }}
+                    <label for="selectEducation">Selección nivel de educación</label>
+                    <select class="form-control input-pill" id="selectEducation">
+                        <option disabled selected value="">Seleccione un nivel de educación</option>
+                        @foreach ($educationInfo as $education)
+                        <option value="{{ $education->id }}">{{ ucfirst(strtolower($education->name_education_level)) }}
                         </option>
                         @endforeach
                     </select>
-                </div>
-                <div class="form-group">
-                    <label for="pillSelectProgram">Selección programa</label>
-                    <select class="form-control input-pill" id="pillSelectProgram" disabled>
-                        <option disabled selected value="">Seleccione un programa</option>
-
-                    </select>
-                </div>
-
-                <button type="button" class="btn btn-primary btn-lg btn-block" style="margin-top: 20px;" id="filterCourse">
-                    Seleccione el curso
-                </button>
+                </div>                
+            </form>
+            <form id="fromSelectCourse" class="d-none">
+                
             </form>
             <!-- End Forms -->
 

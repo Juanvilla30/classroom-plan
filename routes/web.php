@@ -51,6 +51,7 @@ Route::delete('/list-profiles/delete-profile', [ListProfilesCompetenciesRaContro
 
 // Rutas de plan de aula
 Route::get('/classroom-plan', [ClassroomPlanController::class, 'index'])->name('classroomPlan');
+Route::get('/classroom-plan/search', [ClassroomPlanController::class, 'searchFaculty'])->name('searchFaculty');
 Route::post('/classroom-plan/faculty-program', [ClassroomPlanController::class, 'filtersFacultyProgram'])->name('filtersFacultyProgram');
 Route::post('/classroom-plan/learning-program', [ClassroomPlanController::class, 'filtersLearningProgram'])->name('filtersLearningProgram');
 Route::post('/classroom-plan/visualize-info-course', [ClassroomPlanController::class, 'visualizeCourse'])->name('visualizeInfoCourse');
