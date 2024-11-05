@@ -90,3 +90,8 @@ Route::get('/ListUsers', [ListUsersController::class, 'index'])->name('ListUsers
 
 //Routes document
 Route::get('/document', [GenerateDocumentController::class, 'index'])->name('document');
+
+//Rutas para facultedes
+Route::get('/faculties', [FacultiController::class,'index'])->name('faculties');
+Route::post('/faculties', [FacultiController::class,'import']);
+
