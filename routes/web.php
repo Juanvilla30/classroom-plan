@@ -10,6 +10,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ListUsersController;
 use App\http\Controllers\GenerateDocumentController;
 use App\Http\Controllers\ViewProfilesCompetenciesRaController;
+use App\http\Controllers\FacultiController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -72,3 +73,6 @@ Route::get('/ListUsers', [ListUsersController::class, 'index'])->name('ListUsers
 
 //Routes document
 Route::get('/document', [GenerateDocumentController::class, 'index'])->name('document');
+
+//Rutas para facultedes
+Route::get('/faculties', [FacultiController::class,'index'])->name('faculties');
