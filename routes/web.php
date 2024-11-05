@@ -74,6 +74,8 @@ Route::delete('/list-classroom-plan/delete-classroom-plan', [ListClassroomPlanCo
 
 // Rutas de vizualizacion de plan de aula
 Route::get('/view-classroom-plan/{id}', [ViewClassroomPlanController::class, 'index'])->name('editClassroomPlan');
+Route::post('/view-classroom-plan/info-classroom-plans', [ViewClassroomPlanController::class, 'ClaassroomInfo'])->name('ClaassroomInfo');
+Route::post('/view-classroom-plan/search-data', [ViewClassroomPlanController::class, 'searchData'])->name('searchData');
 
 // Rutas user
 Route::get('/user', [UserController::class, 'index'])->name('user');  

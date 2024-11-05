@@ -11,16 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('evaluations', function (Blueprint $table) {
+        Schema::create('education_levels', function (Blueprint $table) {
             $table->id();
-            $table->string('name_evaluation');
-            $table->string('description')->nullable();
+            $table->string('name_education_level');
             $table->timestamps();
-
-            // Llaves foraneas
-            $table->unsignedBigInteger('id_course_type')->nullable();
-            $table->foreign('id_course_type')->references('id')->on('course_types');
-
         });
     }
 
@@ -29,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('evaluations');
+        Schema::dropIfExists('education_levels');
     }
 };

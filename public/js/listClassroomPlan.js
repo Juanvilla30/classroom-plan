@@ -13,7 +13,7 @@ $.ajaxSetup({
 let facultyId;
 let programId;
 let originalClassroomList = []; // Para almacenar la lista original de cursos
-let itemsPerPage = 2; // Número de elementos por página
+let itemsPerPage = 6; // Número de elementos por página
 let currentPage = 1; // Página actual
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -288,7 +288,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                         </div>  
                                     </div>
                                 </div>
-                            </div>
+                            </div>  
                         `;
                         $('#cardProgram').append(cardHTML);
 

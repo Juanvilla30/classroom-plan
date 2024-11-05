@@ -6,7 +6,6 @@ use App\Models\AssignmentEvaluation;
 use App\Models\ClassroomPlan;
 use App\Models\Competence;
 use App\Models\Course;
-use App\Models\CourseType;
 use App\Models\Evaluation;
 use App\Models\Faculty;
 use App\Models\GeneralObjective;
@@ -16,7 +15,6 @@ use App\Models\ProfileEgress;
 use App\Models\Program;
 use App\Models\ProgramCourseRelationship;
 use App\Models\Reference;
-use App\Models\Semester;
 use App\Models\SpecificObjective;
 use App\Models\State;
 use App\Models\Topic;
@@ -28,29 +26,32 @@ class ClassroomPlanController extends Controller
 
     public function index()
     {
-        $facultys = Faculty::orderBy('id')->get();
+        try {
 
-        return view(
-            'classroomPlan.classroomPlan',
-            compact(
-                'facultys',
-            )
-        );
+            $facultys = Faculty::orderBy('id')->get();
+
+            return view(
+                'classroomPlan.classroomPlan',
+                compact(
+                    'facultys',
+                )
+            );
+        } catch (\Exception $e) {
+            // Redireccionar o devolver una vista de error con un mensaje informativo
+            return redirect()->back()->with('error', 'Ocurrió un problema al cargar la información del plan de aula.');
+        }
     }
 
     public function filtersFacultyProgram(Request $request)
     {
         try {
-            // Obtener el programa de los datos de la solicitud
             $faculty = $request->input('faculty');
 
-            // Consultar los programas asociados
             $listPrograms = Program::where('id_faculty', $faculty)
                 ->with(['faculty'])
                 ->orderBy('id')
                 ->get();
 
-            // Verificar si se encontraron cursos
             if ($listPrograms->isNotEmpty()) {
                 return response()->json([
                     'listPrograms' => $listPrograms,
@@ -72,17 +73,14 @@ class ClassroomPlanController extends Controller
             $programId = $request->input('program');
             $learningId = $request->input('learningId');
 
-            // Consultar los perfiles de egreso asociados al programa
             $profileId = ProfileEgress::where('id_program', $programId)
                 ->with('program')
                 ->orderBy('id')
                 ->get();
 
-            // Verificar si se encontraron perfiles
             if ($profileId->isNotEmpty()) {
                 $profileIdsArray = $profileId->pluck('id');
 
-                // Obtener las competencias asociadas al perfil de egreso
                 $competences = Competence::whereIn('id_profile_egres', $profileIdsArray)
                     ->orderBy('id')
                     ->get();
@@ -118,7 +116,6 @@ class ClassroomPlanController extends Controller
         try {
             $program = $request->input('programs');
 
-            // Consultar los registros de relación de programa y curso
             $listCurseIds = ProgramCourseRelationship::where('id_program', $program)
                 ->orderBy('id')
                 ->get(['id_course', 'id_program']);
@@ -126,13 +123,11 @@ class ClassroomPlanController extends Controller
             $courseIds = $listCurseIds->pluck('id_course')->toArray();
             $programIds = $listCurseIds->pluck('id_program')->unique()->toArray();
 
-            // Consultar los programas asociados
             $listPrograms = Program::whereIn('id', $programIds)
                 ->with(['faculty'])
                 ->orderBy('id')
                 ->get();
 
-            // Consultar los cursos asociados
             $listCurse = Course::whereIn('id', $courseIds)
                 ->with([
                     'component.studyField',
@@ -162,7 +157,6 @@ class ClassroomPlanController extends Controller
         try {
             $typeCourseId = $request->input('typeCourse');
 
-            // Consultar los registros de relación de programa y curso
             $evaluationsId = Evaluation::where('id_course_type', $typeCourseId)
                 ->orderBy('id')
                 ->get();
@@ -185,44 +179,35 @@ class ClassroomPlanController extends Controller
     public function visualizeCourse(Request $request)
     {
         try {
-            // Obtener el ID del curso desde la solicitud
             $cursoId = $request->courseId;
 
-            // Consultar los registros de relación de programa y curso
             $listCurseIds = ProgramCourseRelationship::where('id_course', $cursoId)
                 ->orderBy('id')
                 ->get(['id_course', 'id_program']);
 
-            // Extraer los IDs de curso y programa de los resultados obtenidos
             $courseIds = $listCurseIds->pluck('id_course')->toArray();
             $programIds = $listCurseIds->pluck('id_program')->unique()->toArray();
 
-            // Consultar los programas asociados
             $program = Program::whereIn('id', $programIds)
                 ->with(['faculty'])
                 ->orderBy('id')
                 ->get();
 
-            // Buscar el curso en la base de datos con todas las relaciones necesarias
             $course = Course::with([
                 'component.studyField',
                 'semester',
                 'courseType'
             ])->find($courseIds);
 
-            // Verificar si el curso fue encontrado
             if ($course && $program) {
-                // Devolver el curso como respuesta en formato JSON
                 return response()->json([
                     'course' => $course,
                     'program' => $program
                 ]);
             } else {
-                // Enviar una respuesta de error si el curso no fue encontrado
                 return response()->json(['error' => 'Curso no encontrado'], 404);
             }
         } catch (\Exception $e) {
-            // Retornar mensaje de error en caso de excepción
             return response()->json([
                 'error' => 'No se pudo visualizar el curso',
                 'message' => $e->getMessage()
@@ -233,10 +218,8 @@ class ClassroomPlanController extends Controller
     public function listCourses(Request $request)
     {
         try {
-            // Obtener el ID del componente desde la solicitud
             $component = $request->input('component');
 
-            // Buscar todos los cursos en la base de datos con todas las relaciones necesarias
             $courses = Course::with([
                 'component.studyField',
                 'semester',
@@ -245,7 +228,6 @@ class ClassroomPlanController extends Controller
                 ->orderBy('id')
                 ->get();
 
-            // Buscar los planes de aula relacionados con los cursos encontrados
             $classroomPlan = ClassroomPlan::with([
                 'courses',
                 'courses.component',
@@ -256,19 +238,15 @@ class ClassroomPlanController extends Controller
                 ->orderBy('id')
                 ->get();
 
-            // Verificar si los cursos y planes de aula fueron encontrados
             if ($courses->isNotEmpty()) {
-                // Devolver los cursos y los planes de aula como respuesta en formato JSON
                 return response()->json([
                     'courses' => $courses,
                     'classroomPlan' => $classroomPlan
                 ]);
             } else {
-                // Enviar una respuesta de error si no se encontraron datos
                 return response()->json(['error' => 'Datos no encontrados'], 404);
             }
         } catch (\Exception $e) {
-            // Retornar mensaje de error en caso de excepción
             return response()->json([
                 'error' => 'No se pudo listar los cursos',
                 'message' => $e->getMessage()
@@ -279,52 +257,41 @@ class ClassroomPlanController extends Controller
     public function validateClassroomPlans(Request $request)
     {
         try {
-            // Obtener el programa de los datos de la solicitud
             $cursoId = $request->input('courseId');
 
-            // Consultar los planes de aula asociados al curso y extraer los IDs
             $classroomPlans = ClassroomPlan::where('id_course', $cursoId)
                 ->with('courses', 'learningResult', 'generalObjective', 'state')
                 ->orderBy('id')
                 ->get();
 
-            // Convertir classroomPlan en un array de IDs
             $classroomPlanIds = $classroomPlans->pluck('id')->toArray();
 
-            // Consultar las evaluaciones asociadas al plan de aula
             $evaluationsId = AssignmentEvaluation::whereIn('id_classroom_plan', $classroomPlanIds)
                 ->with('evaluation', 'percentage')
                 ->orderBy('id')
                 ->get()
-                ->toArray(); // Obtener solo los IDs como array
+                ->toArray();
 
-            // Consultar las referencias asociadas al plan de aula
             $referencesId = Reference::whereIn('id_classroom_plan', $classroomPlanIds)
                 ->orderBy('id')
                 ->get()
-                ->toArray(); // Obtener solo los IDs como array
+                ->toArray();
 
-            // Consultar todos los registros de los objetivos específicos asociados al plan de aula
             $specifics = SpecificObjective::whereIn('id_classroom_plan', $classroomPlanIds)
                 ->orderBy('id')
                 ->get();
 
-            // Convertir la colección de objetivos específicos en un array de IDs
             $specificsIds = $specifics->pluck('id')->toArray();
 
-            // Convertir todos los registros de objetivos específicos a array
             $specificsArray = $specifics->toArray();
 
-            // Consultar los temas asociados a los objetivos específicos
             $topicsId = Topic::whereIn('id_specific_objective', $specificsIds)
                 ->with('specificObjective')
                 ->orderBy('id')
                 ->get()
-                ->toArray(); // Obtener solo los IDs como array
+                ->toArray();
 
-            // Verificar si se encontraron planes de aula
             if (!$classroomPlans->isEmpty()) {
-                // Devolver la lista como respuesta en formato JSON
                 return response()->json([
                     'confirm' => true,
                     'classroomPlanId' => $classroomPlans,
@@ -334,13 +301,11 @@ class ClassroomPlanController extends Controller
                     'topicsId' => $topicsId,
                 ]);
             } else {
-                // Enviar una respuesta de error si no se encontraron planes
                 return response()->json([
                     'confirm' => false
                 ]);
             }
         } catch (\Exception $e) {
-            // Retornar mensaje de error en caso de excepción
             return response()->json([
                 'error' => 'No se pudo validar el plan de aula',
                 'message' => $e->getMessage()
@@ -351,28 +316,22 @@ class ClassroomPlanController extends Controller
     public function viewLearning(Request $request)
     {
         try {
-            // Obtener el programa de los datos de la solicitud
             $learningId = $request->input('learningId');
 
-            // Consultar los perfiles de egreso asociados al programa
             $learningResults = LearningResult::where('id', $learningId)
                 ->orderBy('id')
                 ->get();
 
-            // Verificar si se encontraron perfiles
             if (!$learningResults->isEmpty()) {
-                // Devolver la lista como respuesta en formato JSON
                 return response()->json([
                     'learningResult' => $learningResults,
                 ]);
             } else {
-                // Enviar una respuesta de error si no se encontraron perfiles
                 return response()->json([
                     'confirm' => false
                 ]);
             }
         } catch (\Exception $e) {
-            // Retornar mensaje de error en caso de excepción
             return response()->json(['error' => 'No se pudo obtener el perfil de aprendizaje', 'message' => $e->getMessage()], 500);
         }
     }
@@ -382,7 +341,6 @@ class ClassroomPlanController extends Controller
         DB::beginTransaction();
 
         try {
-            // Obtener el programa de los datos de la solicitud
             $courseId = $request->input('courseId');
             $learningId = $request->input('learningId');
             $nameGeneral = $request->input('nameGeneral');
@@ -399,19 +357,15 @@ class ClassroomPlanController extends Controller
                 $request->input('nameReferenceTwo'),
             ];
 
-            // Crear el objetivo general
             $createGeneral = GeneralObjective::create([
                 'name_general_objective' =>  $nameGeneral,
                 'description_general_objective' =>  $content,
             ]);
 
-            // Obtener el ID del objetivo general creado
             $generalObjectiveId = $createGeneral->id;
 
-            // Obtener el primer id de evaluación y el primer estado
             $statesId = State::orderBy('id')->pluck('id')->first();
 
-            // Crear el plan de aula
             $createClassroom = ClassroomPlan::create([
                 'id_course' =>  $courseId,
                 'id_learning_result' => $learningId,
@@ -419,16 +373,13 @@ class ClassroomPlanController extends Controller
                 'id_state' =>  $statesId,
             ]);
 
-            // Obtener el ID del plan de aula creado
             $createClassroomId = $createClassroom->id;
 
-            // Obtener el primer id de evaluación y todos los ids de porcentaje
             $evaluationId = Evaluation::orderBy('id')->pluck('id')->first();
             $percentageIds = Percentage::orderBy('id')->pluck('id');
 
             $createdAssignmentEvaluationIds = [];
 
-            // Crear registros en AssignmentEvaluation para cada id de porcentaje
             foreach ($percentageIds as $percentageId) {
                 $assignmentEvaluation = AssignmentEvaluation::create([
                     'id_evaluation' => $evaluationId,
@@ -440,7 +391,6 @@ class ClassroomPlanController extends Controller
 
             $createSpObjective = [];
 
-            // Crear cada objetivo específico
             foreach ($nameSpecific as $name) {
                 $createSpecific = SpecificObjective::create([
                     'name_specific_objective' =>  $name,
@@ -450,7 +400,6 @@ class ClassroomPlanController extends Controller
                 $createSpObjective[] = $createSpecific->id;
             }
 
-            // Crear topics para cada objetivo específico
             $createTopics = [];
             $topicDistribution = [5, 5, 6];
 
@@ -466,7 +415,6 @@ class ClassroomPlanController extends Controller
 
             $createReferences = [];
 
-            // Crear referencias
             foreach ($nameReference as $referenceName) {
                 $createReference = Reference::create([
                     'name_reference' =>  $referenceName,
@@ -476,10 +424,8 @@ class ClassroomPlanController extends Controller
                 $createReferences[] = $createReference->id;
             }
 
-            // Confirmar la transacción
             DB::commit();
 
-            // Retornar respuesta JSON con todos los IDs creados
             return response()->json([
                 'createClassroom' => $createClassroom,
                 'assignmentEvaluations' => $createdAssignmentEvaluationIds,
@@ -488,10 +434,8 @@ class ClassroomPlanController extends Controller
                 'references' => $createReferences,
             ]);
         } catch (\Exception $e) {
-            // Revertir la transacción en caso de error
             DB::rollback();
 
-            // Retornar mensaje de error
             return response()->json(['error' => 'No se pudo crear el plan de aula', 'message' => $e->getMessage()], 500);
         }
     }
@@ -504,34 +448,27 @@ class ClassroomPlanController extends Controller
             $classroomId = $request->input('classroomId');
             $generalObjective = $request->input('generalObjective');
 
-            // Obtener el ID del objetivo general asociado al plan de aula
             $classroomGeneral = ClassroomPlan::where('id', $classroomId)
                 ->orderBy('id')
                 ->first(['id_general_objective']);
 
-            // Asegurarse de que se encontró el registro antes de continuar
             if ($classroomGeneral) {
                 $classroomGenralId = $classroomGeneral->id_general_objective;
 
-                // Actualizar el objetivo general
                 GeneralObjective::where('id', $classroomGenralId)
                     ->update([
                         'description_general_objective' => $generalObjective,
                     ]);
 
-                // Obtener el registro actualizado
                 $generalId = GeneralObjective::where('id', $classroomGenralId)->first();
 
-                // Confirmar la transacción
                 DB::commit();
 
-                // Verificar si se encontró el registro y devolver la respuesta
                 return response()->json([
                     'confirm' => true,
                     'generalId' => $generalId,
                 ]);
             } else {
-                // Enviar una respuesta de error si no se encontró el ClassroomPlan
                 DB::rollBack();
                 return response()->json([
                     'confirm' => false,
@@ -539,10 +476,8 @@ class ClassroomPlanController extends Controller
                 ]);
             }
         } catch (\Exception $e) {
-            // Revertir la transacción en caso de error
             DB::rollback();
 
-            // Retornar mensaje de error
             return response()->json([
                 'error' => 'No se pudo Cambiar el objetivo general.',
                 'message' => $e->getMessage()
@@ -556,8 +491,8 @@ class ClassroomPlanController extends Controller
 
         try {
             $classroomId = $request->input('classroomId');
+            $specificId = $request->input('specificId');
 
-            // Obtener los objetivos específicos desde la petición
             $contSpecific = [
                 $request->input('specificObjectiveOne'),
                 $request->input('specificObjectiveTwo'),
@@ -566,28 +501,23 @@ class ClassroomPlanController extends Controller
 
             for ($i = 0; $i < count($contSpecific); $i++) {
 
-                SpecificObjective::where('id_classroom_plan', $classroomId)->update([
+                SpecificObjective::where('id', $specificId[$i])->update([
                     'description_specific_objective' => $contSpecific[$i],
                 ]);
             }
 
-            // Obtener los registros actualizados
             $specificId = SpecificObjective::where('id_classroom_plan', $classroomId)
                 ->get(['id'])
                 ->toArray();
 
-            // Confirmar la transacción
             DB::commit();
 
-            // Asegurarse de que se encontró el registro antes de continuar
             if ($specificId) {
-                // Devolver la respuesta
                 return response()->json([
                     'confirm' => true,
                     'specificId' => $specificId,
                 ]);
             } else {
-                // Enviar una respuesta de error si no se encontró el ClassroomPlan
                 DB::rollBack();
                 return response()->json([
                     'confirm' => false,
@@ -595,10 +525,8 @@ class ClassroomPlanController extends Controller
                 ]);
             }
         } catch (\Exception $e) {
-            // Revertir la transacción en caso de error
             DB::rollback();
 
-            // Retornar mensaje de error
             return response()->json([
                 'error' => 'No se pudo cambiar el objetivo general.',
                 'message' => $e->getMessage()
@@ -614,10 +542,8 @@ class ClassroomPlanController extends Controller
             $specificId = $request->input('specificId');
             $contTopics = $request->input('topics');
 
-            // Obtener los temas existentes para el id específico
             $topics = Topic::where('id_specific_objective', $specificId)->get();
 
-            // Verificar si el número de temas existentes coincide con el número de contenidos
             if (count($topics) !== count($contTopics)) {
                 DB::rollBack();
                 return response()->json([
@@ -626,27 +552,22 @@ class ClassroomPlanController extends Controller
                 ]);
             }
 
-            // Actualizar cada tema individualmente
             foreach ($topics as $index => $topic) {
-                if (isset($contTopics[$index])) { // Asegúrate de que el índice existe
+                if (isset($contTopics[$index])) { 
                     $topic->update([
                         'description_topic' => $contTopics[$index],
                     ]);
                 }
             }
 
-            // Confirmar la transacción
             DB::commit();
 
-            // Devolver la respuesta
             return response()->json([
                 'confirm' => true,
             ]);
         } catch (\Exception $e) {
-            // Revertir la transacción en caso de error
             DB::rollback();
 
-            // Retornar mensaje de error
             return response()->json([
                 'error' => 'No se pudo cambiar el objetivo general.',
                 'message' => $e->getMessage()
@@ -672,7 +593,6 @@ class ClassroomPlanController extends Controller
                 $request->input('percentageId3')
             ];
 
-            // Actualizar las primeras evaluaciones si existen
             foreach ($assigEvaId as $index => $assignmentId) {
                 if (!empty($selectedEvaluations[$index][0])) {
                     AssignmentEvaluation::where('id', $assignmentId)
@@ -684,7 +604,6 @@ class ClassroomPlanController extends Controller
                 }
             }
 
-            // Crear las evaluaciones adicionales si existen
             foreach ($selectedEvaluations as $index => $evaluations) {
                 if (count($evaluations) > 1) {
                     for ($i = 1; $i < count($evaluations); $i++) {
@@ -697,24 +616,19 @@ class ClassroomPlanController extends Controller
                 }
             }
 
-            // Obtener los IDs de las evaluaciones asignadas
             $evaluationsId = AssignmentEvaluation::where('id_classroom_plan', $classroomId)
                 ->orderBy('id')
                 ->get();
 
-            // Confirmar la transacción
             DB::commit();
 
-            // Devolver la respuesta
             return response()->json([
                 'confirm' => true,
                 'evaluationsId' => $evaluationsId,
             ]);
         } catch (\Exception $e) {
-            // Revertir la transacción en caso de error
             DB::rollback();
 
-            // Retornar mensaje de error
             return response()->json([
                 'error' => 'No se pudo cambiar el asignamiento.',
                 'message' => $e->getMessage()
@@ -733,7 +647,6 @@ class ClassroomPlanController extends Controller
             $institutionalLinks = $request->input('institutionalLinks');
             $generalLinks = $request->input('generalLinks');
 
-            // Actualizar la primera referencia
             Reference::where('id', $referencesId[0])
                 ->update([
                     'name_reference' => $nameReferences[0],
@@ -741,7 +654,6 @@ class ClassroomPlanController extends Controller
                     'id_classroom_plan' => $classroomId,
                 ]);
 
-            // Actualizar la segunda referencia
             Reference::where('id', $referencesId[1])
                 ->update([
                     'name_reference' => $nameReferences[1],
@@ -749,7 +661,6 @@ class ClassroomPlanController extends Controller
                     'id_classroom_plan' => $classroomId,
                 ]);
 
-            // Crear las referencias institucionales adicionales
             foreach (array_slice($institutionalLinks, 1) as $institutional) {
                 Reference::create([
                     'name_reference' => $nameReferences[0],
@@ -758,7 +669,6 @@ class ClassroomPlanController extends Controller
                 ]);
             }
 
-            // Crear las referencias generales adicionales
             foreach (array_slice($generalLinks, 1) as $general) {
                 Reference::create([
                     'name_reference' => $nameReferences[1],
@@ -767,24 +677,19 @@ class ClassroomPlanController extends Controller
                 ]);
             }
 
-            // Obtener los IDs de las referencias asignadas
             $referenceId = Reference::where('id_classroom_plan', $classroomId)
                 ->orderBy('id')
                 ->get();
 
-            // Confirmar la transacción
             DB::commit();
 
-            // Devolver la respuesta
             return response()->json([
                 'confirm' => true,
                 'referenceId' => $referenceId,
             ]);
         } catch (\Exception $e) {
-            // Revertir la transacción en caso de error
             DB::rollback();
 
-            // Retornar mensaje de error
             return response()->json([
                 'error' => 'No se pudo cambiar el asignamiento.',
                 'message' => $e->getMessage()

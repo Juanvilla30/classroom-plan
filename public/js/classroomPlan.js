@@ -540,6 +540,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // VIEW
     function viewCourse(response) {
 
         var programs = response.program;
@@ -1061,13 +1062,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     }
 
-    function saveObjSpecific(classroomId, specificObjectives) {
+    function saveObjSpecific(classroomId,specificId, specificObjectives) {
         return new Promise((resolve, reject) => {
             // Realizar la petición AJAX
             $.ajax({
                 url: '/classroom-plan/save-specific-objective',
                 type: 'PUT',
                 data: {
+                    specificId: specificId,
                     classroomId: classroomId,
                     specificObjectiveOne: specificObjectives[0],
                     specificObjectiveTwo: specificObjectives[1],
@@ -1198,6 +1200,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     classroomId = response.createClassroom.id;
                     assigEvaId = response.assignmentEvaluations;
                     referencesId = response.references;
+                    specificId = response.specificObjectives;
                     learningId = '';
                     courseId = '';
                 }).catch(error => {
@@ -1227,7 +1230,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Verificar si todos los objetivos específicos tienen valor antes de guardar
             if (specificObjectives.length === 3) {
-                saveObjSpecific(classroomId, specificObjectives).then(response => {
+                saveObjSpecific(classroomId, specificId, specificObjectives).then(response => {
                     specificId = response;
                     // Reiniciar los valores después de guardar
                     specificObjectives.forEach((_, index) => {
