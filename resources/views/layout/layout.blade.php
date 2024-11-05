@@ -151,7 +151,7 @@
                                             <div class="scroll-bar ui-draggable ui-draggable-handle"></div>
                                         </div>
                                     </div>
-                                    <div class="scroll-element scroll-y" >
+                                    <div class="scroll-element scroll-y">
                                         <div class="scroll-element_outer">
                                             <div class="scroll-element_size"></div>
                                             <div class="scroll-element_track"></div>
@@ -189,7 +189,7 @@
                             </a>
                             <div class="clearfix"></div>
 
-                            <div class="in collapse" id="logoutDropdown" >
+                            <div class="in collapse" id="logoutDropdown">
                                 <ul class="nav">
                                     <li>
                                         <a class="nav-link" href="" data-toggle="modal" data-target="#logoutModal">
@@ -219,6 +219,24 @@
                                 <p>Inicio</p>
                             </a>
                         </li>
+
+
+                        <li class="nav-section">
+                            <span class="sidebar-mini-icon">
+                                <i class="fa fa-ellipsis-h"></i>
+                            </span>
+                            <h4 class="text-section">Gestión de facultades</h4>
+                        </li>
+
+                        <!-- nav-bar list faculties -->
+                        <li class="nav-item {{ request()->routeIs('faculties') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ route('faculties') }}">
+                                <i class="fas fa-file-alt"></i>
+                                <p>Gestionar facultades</p>
+                            </a>
+                        </li>
+                        <!-- end nav-bar list  faculties -->
+
 
                         <li class="nav-section">
                             <span class="sidebar-mini-icon">
@@ -292,7 +310,7 @@
                                 <p>Gestionar informe</p>
                             </a>
                         </li>
-                        <!-- end nav-bar document -->                        
+                        <!-- end nav-bar document -->
 
                     </ul>
                 </div>

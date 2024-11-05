@@ -75,13 +75,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // SEARCH
-    function searchFaculty() {
+    function searchFaculty(educationId) {
+        facultyId = '';
+        programId = '';
         $.ajax({
-            url: '/classroom-plan/search',
+            url: '/classroom-plan/search-faculty',
             method: 'GET',
             success: function (response) {
                 facultyInfo = response.facultyInfo
-                viewSelectCourse(facultyInfo);
+                viewSelectCourse(facultyInfo, educationId);
                 console.log(response.facultyInfo);
             },
             error: function (xhr, status, error) {
@@ -93,8 +95,104 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    function searchCourses(programId) {
+        if (programId) {
+            $('#modalCourse').modal('show');
+
+            $.ajax({
+                url: '/classroom-plan/search-course',
+                method: 'POST', 
+                data: {
+                    programId: programId,
+                },
+                success: function (response) {
+                    console.log(response)
+                    let relationInfo = response.relationInfo;
+                    console.log(relationInfo)
+
+                    let bodyCourse = $('#bodyCourses');
+                    bodyCourse.empty();
+
+                    if (relationInfo.length > 0) {
+                        relationInfo.forEach(function (relation) {
+                            let row = `
+                            <tr>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-primary btn-sm courseSelect" 
+                                        data-id="${relation.course.id}" data-dismiss="modal">
+                                        <i class="fas fa-check-circle"></i>
+                                    </button>
+                                </td>
+                                <td>${capitalizeText(relation.program.faculty.name_faculty)}</td>
+                                <td>${capitalizeText(relation.program.name_program)}</td>
+                                <td>${capitalizeText(relation.course.component.study_field.name_study_field)}</td>
+                                <td>${capitalizeText(relation.course.component.name_component)}</td>
+                                <td>${capitalizeText(relation.course.name_course)}</td>
+                                <td>${capitalizeText(relation.course.semester.name_semester)}</td>
+                                <td>${relation.course.credit}</td>
+                                <td>${capitalizeText(relation.course.course_type.name_course_type)}</td>
+                            </tr>
+                        `;
+                            bodyCourse.append(row);
+                        });
+                    } else {
+                        // Mostrar un mensaje si no se encontraron cursos
+                        bodyCourse.append('<tr><td colspan="6">No se encontraron.</td></tr>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error al eliminar el grupo:', xhr);
+                    console.error('Estado:', status);
+                    console.error('Error:', error);
+                    console.error('Respuesta del servidor:', xhr.responseText);
+                    $('#bodyCourses').html('<tr><td colspan="6">Ocurrió un error al buscar los cursos. Inténtalo de nuevo.</td></tr>');
+                }
+            });
+        } else {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Advertencia',
+                text: 'Por favor selecciona el programa para poder seleccionar un curso',
+                confirmButtonColor: '#1269DB',
+                confirmButtonText: 'Entendido'
+            });
+            event.preventDefault();
+        }
+    }
+
+    function searchLearning() {
+        return new Promise((resolve, reject) => {
+
+            $.ajax({
+                url: '/classroom-plan/learning-program', // URL 
+                method: 'POST', // Método de la solicitud: POST
+                data: {
+                    program: program,
+                    learningId: learningId,
+                },
+                // Función que se ejecuta en caso de éxito en la solicitud
+                success: function (response) {
+
+                    resolve(response);
+
+                },
+                // Función que se ejecuta en caso de error en la solicitud
+                error: function (xhr, status, error) {
+                    // Imprimir mensajes de error en la consola
+                    console.error('Error al eliminar el grupo:', xhr);
+                    console.error('Estado:', status);
+                    console.error('Error:', error);
+                    console.error('Respuesta del servidor:', xhr.responseText);
+
+                    // Rechazamos la promesa en caso de error
+                    reject(error);
+                }
+            });
+        });
+    }
+
     // VIEW
-    function viewSelectCourse(facultyInfo) {
+    function viewSelectCourse(facultyInfo, educationId) {
         document.getElementById('fromSelectCourse').classList.remove('d-none');
         let selectsContent = `
             <div class="form-group">
@@ -122,12 +220,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     </select>
                 </div>
 
-                <button type="button" class="btn btn-primary btn-lg btn-block" style="margin-top: 20px;" id="filterCourse">
+                <button type="button" class="btn btn-primary btn-lg btn-block" style="margin-top: 20px;" id="buttonSearchCourse">
                     Seleccione el curso
                 </button>
             `;
             document.getElementById("fromSelectCourse").innerHTML = selectsContent;
-            select();
+            select(educationId);
 
         } else {
 
@@ -136,8 +234,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function selectProgram(facultyId) {
-
+    function selectProgram(facultyId, educationId) {
         const selectElement = document.getElementById('selectProgram');
 
         if (facultyId === '') {
@@ -146,15 +243,16 @@ document.addEventListener('DOMContentLoaded', function () {
             selectElement.disabled = false;
 
             $.ajax({
-                url: '/classroom-plan/faculty-program',
+                url: '/classroom-plan/search-program',
                 method: 'POST',
                 data: {
                     faculty: facultyId,
+                    educationId: educationId,
                 },
                 success: function (response) {
                     selectElement.innerHTML = '<option disabled selected value="">Seleccione un programa</option>';
 
-                    response.listPrograms.forEach(function (program) {
+                    response.programsInfo.forEach(function (program) {
                         const option = document.createElement('option');
                         option.value = program.id;
                         option.text = program.name_program.charAt(0).toUpperCase() + program.name_program.slice(1).toLowerCase(); // Capitalizar
@@ -174,24 +272,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
     }
 
-    function select() {
+    function select(educationId) {
         document.getElementById('selectFaculty').addEventListener('change', function () {
             facultyId = this.options[this.selectedIndex].value;
-            selectProgram(facultyId);
+            selectProgram(facultyId, educationId);
         });
 
         document.getElementById('selectProgram').addEventListener('change', function () {
             programId = this.options[this.selectedIndex].value;
         });
+
+        document.getElementById('buttonSearchCourse').addEventListener('click', function () {
+            searchCourses(programId);
+        });
     }
-
-    /*
-        *
-        * AJAX
-        *
-    */
-
-
 
     /*
         *
@@ -200,13 +294,8 @@ document.addEventListener('DOMContentLoaded', function () {
     */
     document.getElementById('selectEducation').addEventListener('change', function () {
         educationId = this.options[this.selectedIndex].value;
-        if (educationId == 1) {
-            searchFaculty();
+        searchFaculty(educationId);
 
-        } else {
-            console.log(educationId);
-            document.getElementById('fromSelectCourse').classList.add('d-none');
-        }
     });
 });
 

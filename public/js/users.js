@@ -90,7 +90,6 @@ async function reloadModal(id) {
         const data = await response.json();
         console.log("Datos recibidos:", data); // Agregar para depuración
 
-        // Asegúrate de acceder a los datos de 'user'
         const user = data.user;
 
         // Asignación de valores de los campos
@@ -140,7 +139,6 @@ async function deleteUser(id) {
 
         // Maneja la respuesta en función del código de estado
         if (response.ok) {
-            // Verifica si la respuesta es 2xx
             console.log("Usuario eliminado con éxito");
 
             Swal.fire({
@@ -153,7 +151,6 @@ async function deleteUser(id) {
                 location.reload(); // Recarga la página después de la confirmación
             });
         } else {
-            // Si no es un código 2xx, tratamos de procesar la respuesta como JSON y manejamos posibles errores
             const data = await response.json();
             throw new Error(`Error: ${data.message || "Error desconocido"}`);
         }

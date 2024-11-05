@@ -11,6 +11,7 @@ use App\Http\Controllers\ListUsersController;
 use App\http\Controllers\GenerateDocumentController;
 use App\Http\Controllers\ViewClassroomPlanController;
 use App\Http\Controllers\ViewProfilesCompetenciesRaController;
+use App\http\Controllers\FacultiController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -51,11 +52,12 @@ Route::delete('/list-profiles/delete-profile', [ListProfilesCompetenciesRaContro
 
 // Rutas de plan de aula
 Route::get('/classroom-plan', [ClassroomPlanController::class, 'index'])->name('classroomPlan');
-Route::get('/classroom-plan/search', [ClassroomPlanController::class, 'searchFaculty'])->name('searchFaculty');
-Route::post('/classroom-plan/faculty-program', [ClassroomPlanController::class, 'filtersFacultyProgram'])->name('filtersFacultyProgram');
+Route::get('/classroom-plan/search-faculty', [ClassroomPlanController::class, 'searchFaculty'])->name('searchFaculty');
+Route::post('/classroom-plan/search-program', [ClassroomPlanController::class, 'searchProgram'])->name('searchProgram');
+Route::post('/classroom-plan/search-course', [ClassroomPlanController::class, 'searchCourses'])->name('searchCourses');
+
 Route::post('/classroom-plan/learning-program', [ClassroomPlanController::class, 'filtersLearningProgram'])->name('filtersLearningProgram');
 Route::post('/classroom-plan/visualize-info-course', [ClassroomPlanController::class, 'visualizeCourse'])->name('visualizeInfoCourse');
-Route::post('/classroom-plan/filters-course', [ClassroomPlanController::class, 'filtersAssignCourse'])->name('filtersAssignCourse');
 Route::post('/classroom-plan/list-courses', [ClassroomPlanController::class, 'listCourses'])->name('listCourses');
 Route::post('/classroom-plan/Learning-result', [ClassroomPlanController::class, 'viewLearning'])->name('viewLearning');
 Route::post('/classroom-plan/validate-classroom-plans', [ClassroomPlanController::class, 'validateClassroomPlans'])->name('validateClassroomPlans');
@@ -88,3 +90,7 @@ Route::get('/ListUsers', [ListUsersController::class, 'index'])->name('ListUsers
 
 //Routes document
 Route::get('/document', [GenerateDocumentController::class, 'index'])->name('document');
+
+//Rutas para facultedes
+Route::get('/faculties', [FacultiController::class,'index'])->name('faculties');
+Route::post('/faculties', [FacultiController::class,'import']);
