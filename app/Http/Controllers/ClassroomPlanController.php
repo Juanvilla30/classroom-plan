@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AssignmentEvaluation;
 use App\Models\ClassroomPlan;
 use App\Models\Competence;
+use App\Models\Component;
 use App\Models\Course;
 use App\Models\EducationLevel;
 use App\Models\Evaluation;
@@ -18,6 +19,7 @@ use App\Models\ProgramCourseRelationship;
 use App\Models\Reference;
 use App\Models\SpecificObjective;
 use App\Models\State;
+use App\Models\StudyField;
 use App\Models\Topic;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -30,11 +32,13 @@ class ClassroomPlanController extends Controller
         try {
 
             $educationInfo = EducationLevel::orderBy('id')->get();
+            $facultyInfo = Faculty::orderBy('id')->get();
 
             return view(
                 'classroomPlan.classroomPlan',
                 compact(
                     'educationInfo',
+                    'facultyInfo',
                 )
             );
         } catch (\Exception $e) {
@@ -58,14 +62,14 @@ class ClassroomPlanController extends Controller
                 return response()->json(
                     [
                         'check' => false,
-                        'error' => 'Cursos no encontrados'
+                        'error' => 'No encontrado'
                     ],
                     404
                 );
             }
         } catch (\Exception $e) {
             return response()->json([
-                'error' => 'Error al filtrar programas de facultad',
+                'error' => 'Error al encontrar',
                 'message' => $e->getMessage()
             ], 500);
         }
@@ -91,12 +95,37 @@ class ClassroomPlanController extends Controller
             } else {
                 return response()->json([
                     'check' => false,
-                    'error' => 'Cursos no encontrados'
+                    'error' => 'No encontrados'
                 ], 404);
             }
         } catch (\Exception $e) {
             return response()->json([
-                'error' => 'Error al filtrar programas de facultad',
+                'error' => 'Error al encontrar',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function searchStudyField(Request $request)
+    {
+        try {
+            $studyFieldInfo = StudyField::orderBy('id')
+                ->get();
+
+            if ($studyFieldInfo->isNotEmpty()) {
+                return response()->json([
+                    'check' => true,
+                    'studyFieldInfo' => $studyFieldInfo,
+                ]);
+            } else {
+                return response()->json([
+                    'check' => false,
+                    'error' => 'No encontrados'
+                ], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error al encontrar',
                 'message' => $e->getMessage()
             ], 500);
         }
@@ -106,26 +135,71 @@ class ClassroomPlanController extends Controller
     {
         try {
             $programId = $request->input('programId');
+            $studyFieldId = $request->input('studyFieldId');
 
-            $relationInfo = ProgramCourseRelationship::where('id_program', $programId)
-                ->with([
-                    'program.faculty',
-                    'course.component.studyField',
-                    'course.semester',
-                    'course.courseType',
-                ])->orderBy('id')
-                ->get();
+            if ($studyFieldId === null) {
+                $specializationInfo = ProgramCourseRelationship::where('id_program', $programId)
+                    ->with([
+                        'program.faculty',
+                        'program.educationLevel',
+                        'course.component.studyField',
+                        'course.semester',
+                        'course.courseType',
+                    ])->orderBy('id')
+                    ->get();
 
-            if ($relationInfo->isNotEmpty()) {
                 return response()->json([
-                    'check' => true,
-                    'relationInfo' => $relationInfo,
+                    'check' => '1',
+                    'specializationInfo' => $specializationInfo,
                 ]);
             } else {
-                return response()->json([
-                    'check' => false,
-                    'error' => 'Cursos no encontrados'
-                ], 404);
+
+                $studyFieldIds = StudyField::where('id', $studyFieldId)
+                    ->pluck('id')
+                    ->toArray();
+
+                if (in_array(1, $studyFieldIds)) {
+                    $componentIds = Component::where('id_study_field', $studyFieldId)
+                        ->pluck('id')
+                        ->toArray();
+
+                    $coursesInfo = Course::whereIn('id_component', $componentIds)
+                        ->with([
+                            'component.studyField',
+                            'semester',
+                            'courseType',
+                        ])->orderBy('id_semester')
+                        ->get();
+
+                    return response()->json([
+                        'check' => false,
+                        'coursesInfo' => $coursesInfo,
+                    ]);
+                } else {
+                    $componentIds = Component::where('id_study_field', $studyFieldId)
+                        ->pluck('id')
+                        ->toArray();
+
+                    $coursesIds = Course::whereIn('id_component', $componentIds)
+                        ->whereIn('id', ProgramCourseRelationship::where('id_program', $programId)->pluck('id_course'))
+                        ->pluck('id')
+                        ->toArray();
+
+                    $relationInfo = ProgramCourseRelationship::whereIn('id_course', $coursesIds)
+                        ->with([
+                            'program.faculty',
+                            'program.educationLevel',
+                            'course.component.studyField',
+                            'course.semester',
+                            'course.courseType',
+                        ])->orderBy('id')
+                        ->get();
+
+                    return response()->json([
+                        'check' => true,
+                        'relationInfo' => $relationInfo,
+                    ]);
+                }
             }
         } catch (\Exception $e) {
             return response()->json([
@@ -135,11 +209,107 @@ class ClassroomPlanController extends Controller
         }
     }
 
-    public function filtersLearningProgram(Request $request)
+    public function viewInfoCourse(Request $request)
     {
         try {
-            $programId = $request->input('program');
-            $learningId = $request->input('learningId');
+            $courseId = $request->input('courseId');
+            $programId = $request->input('programId');
+
+            if ($programId !== null) {
+                $relationInfo = ProgramCourseRelationship::where('id_course', $courseId)
+                    ->where('id_program', $programId)
+                    ->with([
+                        'program.faculty',
+                        'program.educationLevel',
+                        'course.component.studyField',
+                        'course.semester',
+                        'course.courseType',
+                    ])->orderBy('id')
+                    ->get();
+
+                return response()->json([
+                    'check' => true,
+                    'relationInfo' => $relationInfo,
+                ]);
+            } else {
+                $courseInfo = Course::where('id', $courseId)
+                    ->with([
+                        'component.studyField',
+                        'semester',
+                        'courseType',
+                    ])->orderBy('id')
+                    ->get();
+
+                return response()->json([
+                    'check' => false,
+                    'courseInfo' => $courseInfo,
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error al asignar curso',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function viewListCourses(Request $request)
+    {
+        try {
+            $componentId = $request->input('componentId');
+            $programId = $request->input('programId');
+
+            if ($componentId !== null) {
+                $coursesInfo = Course::where('id_component', $componentId)
+                    ->orderBy('id')
+                    ->get();
+
+                $classroomPlanInfo = ClassroomPlan::with([
+                    'courses',
+                    'courses.component.studyField',
+                    'courses.semester',
+                    'courses.courseType',
+                ])->whereIn('id_course', $coursesInfo->pluck('id'))
+                    ->orderBy('id')
+                    ->get();
+
+                return response()->json([
+                    'check' => true,
+                    'classroomPlanInfo' => $classroomPlanInfo
+                ]);
+            }
+
+            if ($programId !== null) {
+                $relationInfo = ProgramCourseRelationship::where('id_program', $programId)
+                    ->orderBy('id')
+                    ->get();
+
+                $classroomPlanInfo = ClassroomPlan::with([
+                    'courses',
+                    'courses.component.studyField',
+                    'courses.semester',
+                    'courses.courseType',
+                ])->whereIn('id_course', $relationInfo->pluck('id_course'))
+                    ->orderBy('id')
+                    ->get();
+
+                return response()->json([
+                    'check' => false,
+                    'classroomPlanInfo' => $classroomPlanInfo,
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'No se pudo listar los cursos',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function searchLearning(Request $request)
+    {
+        try {
+            $programId = $request->input('programId');
 
             $profileId = ProfileEgress::where('id_program', $programId)
                 ->with('program')
@@ -173,113 +343,16 @@ class ClassroomPlanController extends Controller
             }
         } catch (\Exception $e) {
             return response()->json([
-                'error' => 'Error al filtrar programas de aprendizaje',
+                'error' => 'Error al filtrar resultados de aprendizaje',
                 'message' => $e->getMessage()
             ], 500);
         }
     }
 
-    public function filtersEvaluations(Request $request)
-    {
-        try {
-            $typeCourseId = $request->input('typeCourse');
 
-            $evaluationsId = Evaluation::where('id_course_type', $typeCourseId)
-                ->orderBy('id')
-                ->get();
 
-            if ($evaluationsId->isNotEmpty()) {
-                return response()->json([
-                    'evaluationsId' => $evaluationsId,
-                ]);
-            } else {
-                return response()->json(['error' => 'Cursos no encontrados'], 404);
-            }
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Error al asignar curso',
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    }
 
-    public function visualizeCourse(Request $request)
-    {
-        try {
-            $cursoId = $request->courseId;
 
-            $listCurseIds = ProgramCourseRelationship::where('id_course', $cursoId)
-                ->orderBy('id')
-                ->get(['id_course', 'id_program']);
-
-            $courseIds = $listCurseIds->pluck('id_course')->toArray();
-            $programIds = $listCurseIds->pluck('id_program')->unique()->toArray();
-
-            $program = Program::whereIn('id', $programIds)
-                ->with(['faculty'])
-                ->orderBy('id')
-                ->get();
-
-            $course = Course::with([
-                'component.studyField',
-                'semester',
-                'courseType'
-            ])->find($courseIds);
-
-            if ($course && $program) {
-                return response()->json([
-                    'course' => $course,
-                    'program' => $program
-                ]);
-            } else {
-                return response()->json(['error' => 'Curso no encontrado'], 404);
-            }
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'No se pudo visualizar el curso',
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function listCourses(Request $request)
-    {
-        try {
-            $component = $request->input('component');
-
-            $courses = Course::with([
-                'component.studyField',
-                'semester',
-                'courseType'
-            ])->where('id_component', $component)
-                ->orderBy('id')
-                ->get();
-
-            $classroomPlan = ClassroomPlan::with([
-                'courses',
-                'courses.component',
-                'courses.component.studyField',
-                'courses.semester',
-                'courses.courseType',
-            ])->whereIn('id_course', $courses->pluck('id'))
-                ->orderBy('id')
-                ->get();
-
-            if ($courses->isNotEmpty()) {
-                return response()->json([
-                    'courses' => $courses,
-                    'classroomPlan' => $classroomPlan
-                ]);
-            } else {
-                return response()->json(['error' => 'Datos no encontrados'], 404);
-            }
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'No se pudo listar los cursos',
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    }
 
     public function validateClassroomPlans(Request $request)
     {
@@ -335,6 +408,31 @@ class ClassroomPlanController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'No se pudo validar el plan de aula',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+    public function filtersEvaluations(Request $request)
+    {
+        try {
+            $typeCourseId = $request->input('typeCourse');
+
+            $evaluationsId = Evaluation::where('id_course_type', $typeCourseId)
+                ->orderBy('id')
+                ->get();
+
+            if ($evaluationsId->isNotEmpty()) {
+                return response()->json([
+                    'evaluationsId' => $evaluationsId,
+                ]);
+            } else {
+                return response()->json(['error' => 'Cursos no encontrados'], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error al asignar curso',
                 'message' => $e->getMessage()
             ], 500);
         }

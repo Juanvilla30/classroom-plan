@@ -43,19 +43,215 @@
             <form>
                 <div class="form-group">
                     <label for="selectEducation">Selección nivel de educación</label>
-                    <select class="form-control input-pill" id="selectEducation">
+                    <select class="form-control input-pill selectsFrom" id="selectEducation">
                         <option disabled selected value="">Seleccione un nivel de educación</option>
                         @foreach ($educationInfo as $education)
                         <option value="{{ $education->id }}">{{ ucfirst(strtolower($education->name_education_level)) }}
                         </option>
                         @endforeach
                     </select>
-                </div>                
+                </div>
+                <div class="form-group">
+                    <label for="selectFaculty">Selección facultad</label>
+                    <select class="form-control input-pill selectsFrom" id="selectFaculty" disabled>
+                        <option disabled selected value="">Seleccione una facultad</option>
+                        @foreach ($facultyInfo as $faculty)
+                        <option value="{{ $faculty->id }}">{{ ucfirst(strtolower($faculty->name_faculty)) }}
+                        </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="selectProgram">Selección programa</label>
+                    <select class="form-control input-pill selectsFrom" id="selectProgram" disabled>
+                        <option disabled selected value="">Seleccione un programa</option>
+                    </select>
+                </div>
             </form>
-            <form id="fromSelectCourse" class="d-none">
-                
+            <form id="fromSelectStudyFields" class="d-none">
+            </form>
+            <form id="fromButtonSearch">
+                <h3 style="text-align: center; font-weight: bold;">Selecciona los filtros para poder seleccionar un curso</h3>
             </form>
             <!-- End Forms -->
+
+        </div>
+    </div>
+    <!-- End Card -->
+
+    <!-- Card Info -->
+    <div class="card">
+
+        <div class="card-header">
+            <h5 class="card-title font-weight-bold text-primary">Información de curso</h5>
+        </div>
+
+        <div class="card-body">
+
+            <form>
+                <div class="row text-center" id="infoPensum">
+                    <div class="col-sm-12 col-md-4 mx-auto">
+                        <div class="form-group">
+                            <label>Facultad:</label>
+                            <p id="nameFaculty"></p>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mx-auto">
+                        <div class="form-group">
+                            <label>Programa:</label>
+                            <p id="nameProgram"></p>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mx-auto">
+                        <div class="form-group">
+                            <label>Semestre:</label>
+                            <p id="nameSemester"></p>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mx-auto">
+                        <div class="form-group">
+                            <label>Codigo de Curso:</label>
+                            <p id="codeCourse"></p>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mx-auto">
+                        <div class="form-group">
+                            <label>Curso:</label>
+                            <p id="nameCourse"></p>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mx-auto">
+                        <div class="form-group">
+                            <label>Nivel de educación:</label>
+                            <p id="educationLevel"></p>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mx-auto">
+                        <div class="form-group">
+                            <label>Campo:</label>
+                            <p id="nameField"></p>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mx-auto">
+                        <div class="form-group">
+                            <label>Componente:</label>
+                            <p id="nameComponent"></p>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mx-auto">
+                        <div class="form-group">
+                            <label>Creditos:</label>
+                            <p id="nameCredits"></p>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mx-auto">
+                        <div class="form-group">
+                            <label>Tipo de curso:</label>
+                            <p id="nameCourseType"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row text-center d-none" id="infoCampoComun">
+                    <div class="col-sm-12 col-md-4 mx-auto">
+                        <div class="form-group">
+                            <label>Codigo de Curso:</label>
+                            <p id="codeCourseCC"></p>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mx-auto">
+                        <div class="form-group">
+                            <label>Curso:</label>
+                            <p id="nameCourseCC"></p>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mx-auto">
+                        <div class="form-group">
+                            <label>Nivel de educación:</label>
+                            <p id="educationLevelCC"></p>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mx-auto">
+                        <div class="form-group">
+                            <label>Campo:</label>
+                            <p id="nameFieldCC"></p>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mx-auto">
+                        <div class="form-group">
+                            <label>Componente:</label>
+                            <p id="nameComponentCC"></p>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mx-auto">
+                        <div class="form-group">
+                            <label>Creditos:</label>
+                            <p id="nameCreditsCC"></p>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mx-auto">
+                        <div class="form-group">
+                            <label>Semestre:</label>
+                            <p id="nameSemesterCC"></p>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mx-auto">
+                        <div class="form-group">
+                            <label>Tipo de curso:</label>
+                            <p id="nameCourseTypeCC"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row text-center d-none" id="infoSpecialization">
+                    <div class="col-sm-12 col-md-4 mx-auto">
+                        <div class="form-group">
+                            <label>Facultad:</label>
+                            <p id="nameFacultyS"></p>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mx-auto">
+                        <div class="form-group">
+                            <label>Programa:</label>
+                            <p id="nameProgramS"></p>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mx-auto">
+                        <div class="form-group">
+                            <label>Semestre:</label>
+                            <p id="nameSemesterS"></p>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mx-auto">
+                        <div class="form-group">
+                            <label>Codigo de Curso:</label>
+                            <p id="codeCourseS"></p>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mx-auto">
+                        <div class="form-group">
+                            <label>Curso:</label>
+                            <p id="nameCourseS"></p>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mx-auto">
+                        <div class="form-group">
+                            <label>Nivel de educación:</label>
+                            <p id="educationLevelS"></p>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mx-auto">
+                        <div class="form-group">
+                            <label>Creditos:</label>
+                            <p id="nameCreditsS"></p>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-4 mx-auto">
+                        <div class="form-group">
+                            <label>Tipo de curso:</label>
+                            <p id="nameCourseTypeS"></p>
+                        </div>
+                    </div>
+                </div>
+            </form>
 
         </div>
     </div>
@@ -72,12 +268,13 @@
 
             <!-- Table -->
             <div class="table-responsive">
-                <table class="table table-head-bg-primary" cellspacing="0" width="100%" style="margin-top: 10px;"
-                    id="tableFieldStudy">
+                <table class="table table-head-bg-primary" cellspacing="0" width="100%"
+                    style="margin-top: 10px;" id="tableFieldStudy">
                     <thead>
                         <tr>
                             <th scope="col">Campo</th>
                             <th scope="col">Componente</th>
+                            <th scope="col">Codigo de curso</th>
                             <th scope="col">Curso</th>
                             <th scope="col">Semestre</th>
                             <th scope="col">Creditos</th>
@@ -89,70 +286,6 @@
                 </table>
             </div>
             <!-- End Table -->
-
-        </div>
-    </div>
-    <!-- End Card -->
-
-    <!-- Card Info -->
-    <div class="card">
-
-        <div class="card-header">
-            <h5 class="card-title font-weight-bold text-primary">Información de curso</h5>
-        </div>
-
-        <div class="card-body">
-
-            <div class="row">
-                <div class="col-sm-12 col-md-6">
-                    <div class="form-group">
-                        <label>Facultad:</label>
-                        <p id="nameFaculty"></p>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-6">
-                    <div class="form-group">
-                        <label>Programa:</label>
-                        <p id="nameProgram"></p>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-6">
-                    <div class="form-group">
-                        <label>Campo:</label>
-                        <p id="nameField"></p>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-6">
-                    <div class="form-group">
-                        <label>Componente:</label>
-                        <p id="nameComponent"></p>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-6">
-                    <div class="form-group">
-                        <label>Curso:</label>
-                        <p id="nameCourse"></p>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-6">
-                    <div class="form-group">
-                        <label>Semestre:</label>
-                        <p id="nameSemester"></p>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-6">
-                    <div class="form-group">
-                        <label>Creditos:</label>
-                        <p id="nameCredits"></p>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-6">
-                    <div class="form-group">
-                        <label>Tipo de curso:</label>
-                        <p id="nameCourseType"></p>
-                    </div>
-                </div>
-            </div>
 
         </div>
     </div>
@@ -680,21 +813,40 @@
     <!-- Modal Select Course -->
     <div class="modal fade bd-example-modal-lg" id="modalCourse" tabindex="-1" role="dialog"
         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog modal-lg" role="document">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document" style="max-width: 90%;">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="card-title font-weight-bold text-primary">Selección de curso</h5>
-
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
-
                 </div>
                 <div class="modal-body">
 
-                    <!-- Table -->
-                    <div class="table-responsive">
-                        <table class="table table-head-bg-primary table-hover" cellspacing="0" width="100%" style="margin-top: 10px;" id="tableCourses">
+                    <!-- Table Specialization -->
+                    <div class="table-responsive" id="specializationContainer">
+                        <table class="table table-head-bg-primary table-hover" cellspacing="0" width="100%"
+                            style="margin-top: 10px;" id="tableSpecialization">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Seleccionar</th>
+                                    <th scope="col">Facultad</th>
+                                    <th scope="col">Programa</th>
+                                    <th scope="col">Curso</th>
+                                    <th scope="col">Semestre</th>
+                                    <th scope="col">Créditos</th>
+                                    <th scope="col">Tipo de curso</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bodySpecialization">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Table Pensum -->
+                    <div class="table-responsive" id="pensumContainer">
+                        <table class="table table-head-bg-primary table-hover" cellspacing="0"
+                            width="100%" style="margin-top: 10px;" id="tablePensum">
                             <thead>
                                 <tr>
                                     <th scope="col">Seleccionar</th>
@@ -704,16 +856,34 @@
                                     <th scope="col">Componente</th>
                                     <th scope="col">Curso</th>
                                     <th scope="col">Semestre</th>
-                                    <th scope="col">Creditos</th>
+                                    <th scope="col">Créditos</th>
                                     <th scope="col">Tipo de curso</th>
                                 </tr>
-
                             </thead>
-                            <tbody id="bodyCourses">
+                            <tbody id="bodyPensum">
                             </tbody>
                         </table>
                     </div>
-                    <!-- End Table -->
+
+                    <!-- Table CampoComun -->
+                    <div class="table-responsive" id="campoComunContainer">
+                        <table class="table table-head-bg-primary table-hover" cellspacing="0" width="100%"
+                            style="margin-top: 10px;" id="tableCampoComun">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Seleccionar</th>
+                                    <th scope="col">Campo</th>
+                                    <th scope="col">Componente</th>
+                                    <th scope="col">Curso</th>
+                                    <th scope="col">Semestre</th>
+                                    <th scope="col">Créditos</th>
+                                    <th scope="col">Tipo de curso</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bodyCampoComun">
+                            </tbody>
+                        </table>
+                    </div>
 
                 </div>
                 <div class="modal-footer">
@@ -796,7 +966,6 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/classroomPlan.js') }}"></script>
-    <script src="{{ asset('js/functionTables.js') }}"></script>
     <!-- End Scripts -->
 
 </div>

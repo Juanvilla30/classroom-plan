@@ -55,12 +55,14 @@ Route::get('/classroom-plan', [ClassroomPlanController::class, 'index'])->name('
 Route::get('/classroom-plan/search-faculty', [ClassroomPlanController::class, 'searchFaculty'])->name('searchFaculty');
 Route::post('/classroom-plan/search-program', [ClassroomPlanController::class, 'searchProgram'])->name('searchProgram');
 Route::post('/classroom-plan/search-course', [ClassroomPlanController::class, 'searchCourses'])->name('searchCourses');
+Route::get('/classroom-plan/search-study-field', [ClassroomPlanController::class, 'searchStudyField'])->name('searchStudyField');
+Route::post('/classroom-plan/search-info-course', [ClassroomPlanController::class, 'viewInfoCourse'])->name('viewInfoCourse');
+Route::post('/classroom-plan/search-list-courses', [ClassroomPlanController::class, 'viewListCourses'])->name('viewListCourses');
+Route::post('/classroom-plan/search-learning', [ClassroomPlanController::class, 'searchLearning'])->name('searchLearning');
 
-Route::post('/classroom-plan/learning-program', [ClassroomPlanController::class, 'filtersLearningProgram'])->name('filtersLearningProgram');
-Route::post('/classroom-plan/visualize-info-course', [ClassroomPlanController::class, 'visualizeCourse'])->name('visualizeInfoCourse');
-Route::post('/classroom-plan/list-courses', [ClassroomPlanController::class, 'listCourses'])->name('listCourses');
-Route::post('/classroom-plan/Learning-result', [ClassroomPlanController::class, 'viewLearning'])->name('viewLearning');
 Route::post('/classroom-plan/validate-classroom-plans', [ClassroomPlanController::class, 'validateClassroomPlans'])->name('validateClassroomPlans');
+
+Route::post('/classroom-plan/Learning-result', [ClassroomPlanController::class, 'viewLearning'])->name('viewLearning');
 Route::post('/classroom-plan/create-classroom-plans', [ClassroomPlanController::class, 'createClassroomPlan'])->name('createClassroomPlan');
 Route::post('/classroom-plan/table-evaluations', [ClassroomPlanController::class, 'filtersEvaluations'])->name('filtersEvaluations');
 Route::put('/classroom-plan/save-general-objective', [ClassroomPlanController::class, 'createObjectiveGeneral'])->name('createObjectiveGeneral');
