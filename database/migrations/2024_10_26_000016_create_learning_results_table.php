@@ -14,13 +14,14 @@ return new class extends Migration
         Schema::create('learning_results', function (Blueprint $table) {
             $table->id();
             $table->text('name_learning_result');
-            $table->text('description_learning_result');            
-            $table->timestamps();
+            $table->text('description_learning_result');
 
             // Llaves foraneas
             $table->unsignedBigInteger('id_competence');
             $table->foreign('id_competence')->references('id')->on('competences');
 
+            // CAMPOS DE ACTUALIZACION
+            $table->timestamps();
         });
     }
 

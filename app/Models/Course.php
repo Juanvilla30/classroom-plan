@@ -19,7 +19,7 @@ class Course extends Model
         'id_component',
         'id_semester',
         'id_course_type',
-        'id_role',
+        'id_user',
     ];
 
     public function modality()
@@ -42,8 +42,8 @@ class Course extends Model
         return $this->belongsTo(CourseType::class, 'id_course_type');
     }
 
-    public function role()
+    public function user()
     {
-        return $this->belongsTo(Role::class, 'id_role');
+        return $this->belongsTo(User::class, 'id_user');
     }
 }

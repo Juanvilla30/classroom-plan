@@ -15,12 +15,13 @@ return new class extends Migration
             $table->id();
             $table->text('name_profile_egres');
             $table->text('description_profile_egres');
-            $table->timestamps();
 
             // Llaves foraneas
-            $table->unsignedBigInteger('id_program');
+            $table->unsignedBigInteger('id_program')->nullable();
             $table->foreign('id_program')->references('id')->on('programs');
 
+            // CAMPOS DE ACTUALIZACION
+            $table->timestamps();
         });
     }
 

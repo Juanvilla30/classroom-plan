@@ -15,12 +15,13 @@ return new class extends Migration
             $table->id();
             $table->text('name_specific_objective');
             $table->text('description_specific_objective');
-            $table->timestamps();
 
             // Llaves foraneas
             $table->unsignedBigInteger('id_classroom_plan');
             $table->foreign('id_classroom_plan')->references('id')->on('classroom_plans');
 
+            // CAMPOS DE ACTUALIZACION
+            $table->timestamps();
         });
     }
 

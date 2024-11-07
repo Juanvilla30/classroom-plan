@@ -16,14 +16,14 @@ class Program extends Model
         'name_program',
         'anio',
         'degree_type',
-        'id_role',
+        'id_user',
         'id_education_level',
         'id_faculty',
     ];
 
-    public function role()
+    public function user()
     {
-        return $this->belongsTo(Role::class, 'id_rol');
+        return $this->belongsTo(User::class, 'id_user');
     }
 
     public function educationLevel()

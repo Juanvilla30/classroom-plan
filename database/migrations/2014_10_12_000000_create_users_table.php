@@ -22,12 +22,13 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
-            $table->timestamps();
 
             // Llaves foraneas
             $table->unsignedBigInteger('id_role');
             $table->foreign('id_role')->references('id')->on('roles');
 
+            // CAMPOS DE ACTUALIZACION
+            $table->timestamps();
         });
     }
 

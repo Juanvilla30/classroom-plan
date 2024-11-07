@@ -14,11 +14,13 @@ return new class extends Migration
         Schema::create('components', function (Blueprint $table) {
             $table->id();
             $table->string('name_component');
-            $table->timestamps();
 
             // Llaves foraneas
             $table->unsignedBigInteger('id_study_field');
             $table->foreign('id_study_field')->references('id')->on('study_fields');
+
+            // CAMPOS DE ACTUALIZACION
+            $table->timestamps();
         });
     }
 

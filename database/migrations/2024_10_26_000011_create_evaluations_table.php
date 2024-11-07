@@ -15,12 +15,13 @@ return new class extends Migration
             $table->id();
             $table->string('name_evaluation');
             $table->string('description')->nullable();
-            $table->timestamps();
 
             // Llaves foraneas
             $table->unsignedBigInteger('id_course_type')->nullable();
             $table->foreign('id_course_type')->references('id')->on('course_types');
 
+            // CAMPOS DE ACTUALIZACION
+            $table->timestamps();
         });
     }
 

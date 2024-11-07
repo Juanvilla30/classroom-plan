@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('course_code');
             $table->string('name_course');
             $table->integer('credit');
-            $table->timestamps();
 
             // Llaves foráneas
             $table->unsignedBigInteger('id_modality')->nullable();
@@ -31,8 +30,11 @@ return new class extends Migration
             $table->unsignedBigInteger('id_course_type');
             $table->foreign('id_course_type')->references('id')->on('course_types');
             
-            $table->unsignedBigInteger('id_role')->nullable(); 
-            $table->foreign('id_role')->references('id')->on('users');
+            $table->unsignedBigInteger('id_user')->nullable(); 
+            $table->foreign('id_user')->references('id')->on('users');
+
+            // CAMPOS DE ACTUALIZACION
+            $table->timestamps();
         });
     }
 

@@ -14,12 +14,13 @@ return new class extends Migration
         Schema::create('topics', function (Blueprint $table) {
             $table->id();
             $table->text('description_topic');
-            $table->timestamps();
 
             // Llaves foraneas
             $table->unsignedBigInteger('id_specific_objective')->nullable();
             $table->foreign('id_specific_objective')->references('id')->on('specific_objectives');
 
+            // CAMPOS DE ACTUALIZACION
+            $table->timestamps();
         });
     }
 

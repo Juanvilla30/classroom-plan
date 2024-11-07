@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('programs_courses_relationships', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
 
             // Llaves foráneas
             $table->unsignedBigInteger('id_program');
@@ -21,6 +20,9 @@ return new class extends Migration
 
             $table->unsignedBigInteger('id_course')->nullable();
             $table->foreign('id_course')->references('id')->on('courses');
+
+            // CAMPOS DE ACTUALIZACION
+            $table->timestamps();
         });
     }
 

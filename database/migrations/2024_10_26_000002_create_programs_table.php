@@ -17,17 +17,19 @@ return new class extends Migration
             $table->string('name_program');
             $table->integer('anio');
             $table->string('degree_type');
-            $table->timestamps();
 
             // Llaves foraneas
-            $table->unsignedBigInteger('id_role')->nullable();
-            $table->foreign('id_role')->references('id')->on('roles');
+            $table->unsignedBigInteger('id_user')->nullable();
+            $table->foreign('id_user')->references('id')->on('users');
 
             $table->unsignedBigInteger('id_education_level')->nullable(); 
             $table->foreign('id_education_level')->references('id')->on('education_levels');
             
             $table->unsignedBigInteger('id_faculty')->nullable();
             $table->foreign('id_faculty')->references('id')->on('faculties');
+
+            // CAMPOS DE ACTUALIZACION
+            $table->timestamps();
         });
     }
 

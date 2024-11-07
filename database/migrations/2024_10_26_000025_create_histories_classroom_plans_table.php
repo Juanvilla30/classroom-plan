@@ -13,12 +13,13 @@ return new class extends Migration
     {
         Schema::create('histories_classroom_plans', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
 
             // Llaves foraneas
             $table->unsignedBigInteger('id_classroom_plan');
             $table->foreign('id_classroom_plan')->references('id')->on('classroom_plans');
 
+            // CAMPOS DE ACTUALIZACION
+            $table->timestamps();
         });
     }
 

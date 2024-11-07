@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('assignments_evaluations', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
 
             // Llaves foraneas
             $table->unsignedBigInteger('id_evaluation');
@@ -25,6 +24,8 @@ return new class extends Migration
             $table->unsignedBigInteger('id_classroom_plan');
             $table->foreign('id_classroom_plan')->references('id')->on('classroom_plans');
 
+            // CAMPOS DE ACTUALIZACION
+            $table->timestamps();
         });
     }
 
