@@ -10,7 +10,7 @@ $.ajaxSetup({
     * VARIABLES
     *
 */
-
+let profilInfoId;
 let faculty;
 let program;
 let nameProfile;
@@ -33,7 +33,6 @@ document.addEventListener("DOMContentLoaded", function () {
         * ARREGLOS
         *
     */
-
     // Arreglo con los IDs de las cards
     const cards = ['card-1', 'card-2', 'card-3', 'card-4'];
 
@@ -46,13 +45,11 @@ document.addEventListener("DOMContentLoaded", function () {
         * FUNCIONES
         *
     */
-
     // Función para capitalizar el primer carácter de un texto
     function capitalizeText(text) {
         return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
     }
 
-    // Función para mostrar la siguiente card
     function showNextCard() {
         // Ocultar la card actual
         document.getElementById(cards[currentCardIndex]).style.display = 'none';
@@ -83,7 +80,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Función para habilitar o deshabilitar el select según el valor de 'prueba'
     function selectProgram(faculty) {
 
         const selectElement = document.getElementById('pillSelectProgram');
@@ -132,41 +128,27 @@ document.addEventListener("DOMContentLoaded", function () {
     function getNameProgram(program) {
 
         return new Promise((resolve, reject) => {
-            // Realizar una solicitud AJAX para obtener los cursos según los parámetros proporcionados
-            $.ajax({
-                url: '/profiles-competencies-ra/name-program', // URL 
-                method: 'POST', // Método de la solicitud: POST
-                data: {
-                    program: program,
-                },
-                // Función que se ejecuta en caso de éxito en la solicitud
-                success: function (response) {
-                    // Resolvemos la promesa con la respuesta del servidor
-                    var nameProgram = response.listPrograms[0].name_program;
-
-                    nameProgram = 'perfil de grado de ' + nameProgram;
-
-                    resolve(nameProgram);
-                },
-                // Función que se ejecuta en caso de error en la solicitud
-                error: function (xhr, status, error) {
-                    // Imprimir mensajes de error en la consola
-                    console.error('Error al eliminar el grupo:', xhr);
-                    console.error('Estado:', status);
-                    console.error('Error:', error);
-                    console.error('Respuesta del servidor:', xhr.responseText);
-
-                    // Rechazamos la promesa en caso de error
-                    reject(error);
-
-                    // Mostrar un mensaje de error en la tabla en caso de error en la solicitud
-                    $('#cursoTableBody').html('<tr><td colspan="6">Ocurrió un error al buscar los cursos. Inténtalo de nuevo.</td></tr>');
-                }
-            });
+            if (program !== null) {
+                $.ajax({
+                    url: '/profiles-competencies-ra/name-program',
+                    method: 'POST',
+                    data: { program: program },
+                    success: function (response) {
+                        const nameProgram = 'perfil de egreso de ' + response.listPrograms[0].name_program;
+                        resolve(nameProgram);
+                    },
+                    error: function (xhr) {
+                        console.error('Error en la solicitud:', xhr);
+                        $('#cursoTableBody').html('<tr><td colspan="6">Ocurrió un error al buscar los cursos. Inténtalo de nuevo.</td></tr>');
+                        reject(xhr.responseText || 'Error desconocido');
+                    }
+                });
+            } else {
+                resolve('perfil de egreso de campo común');
+            }
         });
     }
 
-    // Función para reiniciar el formulario
     function resetForm() {
         // Reiniciar el selector de facultad
         var facultySelect = document.getElementById('pillSelectFaculty');
@@ -198,6 +180,7 @@ document.addEventListener("DOMContentLoaded", function () {
             'Resultados de aprendizaje #3',
             'Resultados de aprendizaje #4'
         ];
+
         const learningResultContent = 'No se asignó ningún resultado de aprendizaje.';
 
         return new Promise((resolve, reject) => {
@@ -222,12 +205,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     contentRaFour: learningResultContent,
                 },
                 success: function (response) {
-                    // Asignar los IDs a las variables
                     var profileId = response.profileCreate.id;
-                    var competitionIds = response.createdCompetitions.map(comp => comp.id); // Suponiendo que es un array
-                    var rAIds = response.createdResults.map(result => result.id); // Suponiendo que es un array
+                    var competitionIds = response.createdCompetitions.map(comp => comp.id);
+                    var rAIds = response.createdResults.map(result => result.id);
 
-                    // Pasar las variables al resolver
                     resolve({ profileId, competitionIds, rAIds });
                 },
                 error: function (xhr, status, error) {
@@ -425,22 +406,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function validateProfile(programId) {
         $.ajax({
-            url: '/profiles-competencies-ra/validate-profile', // URL 
-            method: 'POST', // Método de la solicitud: POST
+            url: '/profiles-competencies-ra/validate-profile',
+            method: 'POST',
             data: {
                 programId: programId,
             },
-            // Función que se ejecuta en caso de éxito en la solicitud
             success: function (response) {
 
                 if (response.confirm == 'perfil no encontrado') {
 
-                    // Seleccionar todos los elementos con la clase 'readonlyField' y vaciar su contenido
                     document.querySelectorAll('.readonlyField').forEach(function (textarea) {
                         textarea.value = '';
                     });
 
-                    // Seleccionar todos los elementos con la clase 'nextCard' y quitar la clase 'd-none' de cada uno
                     document.querySelectorAll('.savePCRA').forEach(function (button) {
                         button.classList.remove('d-none');
                     });
@@ -449,7 +427,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         element.removeAttribute('readonly');
                     });
 
-                    // Seleccionar todos los elementos con la clase 'nextCard' y añadir la clase 'd-none' a cada uno
                     document.querySelectorAll('.nextCard').forEach(function (button) {
                         button.classList.add('d-none');
                     });
@@ -460,12 +437,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     var competenceCont = response.competencesId;
                     var learningCont = response.learningResultsId;
 
-                    // Seleccionar todos los elementos con la clase 'readonlyField' y vaciar su contenido
                     document.querySelectorAll('.readonlyField').forEach(function (textarea) {
                         textarea.value = '';
                     });
 
-                    // Seleccionar todos los elementos con la clase 'nextCard' y quitar la clase 'd-none' de cada uno
                     document.querySelectorAll('.nextCard').forEach(function (button) {
                         button.classList.remove('d-none');
                     });
@@ -474,15 +449,12 @@ document.addEventListener("DOMContentLoaded", function () {
                         element.setAttribute('readonly', true);
                     });
 
-                    // Seleccionar todos los elementos con la clase 'nextCard' y añadir la clase 'd-none' a cada uno
                     document.querySelectorAll('.savePCRA').forEach(function (button) {
                         button.classList.add('d-none');
                     });
 
-                    // Seleccionar el textarea por su id y asignar el contenido de 'prueba'
                     document.getElementById('textAreaProfile').value = profileCont;
 
-                    // Llenar los textarea para competencias
                     competenceCont.forEach(function (competence) {
                         if (competence.name_competence === 'Competencias #1') {
                             document.getElementById('textAreaCompetitionOne').value = competence.description_competence;
@@ -493,9 +465,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                     });
 
-                    // Llenar los textarea para resultados de aprendizaje
                     Object.keys(learningCont).forEach(function (competenceId) {
-                        // Obtener los resultados de aprendizaje para el ID de competencia actual
                         var results = learningCont[competenceId];
 
                         results.forEach(function (learningResult) {
@@ -513,9 +483,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 }
             },
-            // Función que se ejecuta en caso de error en la solicitud
             error: function (xhr, status, error) {
-                // Imprimir mensajes de error en la consola
                 console.error('Error al eliminar el grupo:', xhr);
                 console.error('Estado:', status);
                 console.error('Error:', error);
@@ -524,11 +492,68 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    function validateProfileInformation(profilInfoId) {
+        if (profilInfoId == 'true') {
+            document.querySelectorAll('.savePCRA').forEach(function (button) {
+                button.classList.add('d-none');
+            });
+
+            document.querySelectorAll('.nextCard').forEach(function (button) {
+                button.classList.add('d-none');
+            });
+            document.getElementById('showFaculty').classList.remove('d-none');
+            document.getElementById('showProgram').classList.remove('d-none');
+            const pillSelectFaculty = document.getElementById("pillSelectFaculty");
+            const pillSelectProgram = document.getElementById("pillSelectProgram");
+            const textAreaProfile = document.getElementById("textAreaProfile");
+
+            if (pillSelectFaculty) {
+                pillSelectFaculty.selectedIndex = 0; // Restablece al primer elemento (mensaje de selección)
+            }
+            if (pillSelectProgram) {
+                pillSelectProgram.selectedIndex = 0; // Restablece al primer elemento (mensaje de selección)
+                pillSelectProgram.disabled = true;   // Desactiva el campo
+            }
+            if (textAreaProfile) {
+                textAreaProfile.value = '';
+            }
+
+        } else if (profilInfoId == 'false') {
+            document.querySelectorAll('.savePCRA').forEach(function (button) {
+                button.classList.add('d-none');
+            });
+
+            document.querySelectorAll('.nextCard').forEach(function (button) {
+                button.classList.add('d-none');
+            });
+
+            document.getElementById('showFaculty').classList.add('d-none');
+            document.getElementById('showProgram').classList.add('d-none');
+            const textAreaProfile = document.getElementById("textAreaProfile");
+
+            if (textAreaProfile) {
+                textAreaProfile.value = '';
+            }
+
+            validateProfile(null);
+            getNameProgram(null).then(response => {
+                nameProfile = response;
+            })
+                .catch(error => {
+                    console.error("Error en la solicitud AJAX:", error);
+                });
+        }
+    }
+
     /*
         *
         * Event Listener
         *
     */
+    document.getElementById('selectProfileInformation').addEventListener('change', function () {
+        profilInfoId = this.options[this.selectedIndex].value;
+        validateProfileInformation(profilInfoId);
+    });
 
     document.getElementById('pillSelectFaculty').addEventListener('change', function () {
         faculty = this.options[this.selectedIndex].value;
@@ -544,7 +569,6 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => {
                 console.error("Error en la solicitud AJAX:", error);
             });
-
     });
 
     // Escuchar el click en el botón de confirmación del modal

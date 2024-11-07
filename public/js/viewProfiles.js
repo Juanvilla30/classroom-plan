@@ -10,32 +10,72 @@ $.ajaxSetup({
     * VARIABLES
     *
 */
-
 let facultyId;
 let cursoId;
 let component;
+let cont = true;
+
+const programId = document.getElementById('programId').getAttribute('data-info');
 
 document.addEventListener('DOMContentLoaded', function () {
-    /*
-        *
-        * ARREGLOS
-        *
-    */
-
-
 
     /*
         *
         * FUNCIONES
         *
     */
-
-    // Función para capitalizar el primer carácter de un texto
     function capitalizeText(text) {
         return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
     }
 
-    // Función de redirección
+    searchProgram(programId);
+
+    function searchProgram(programId) {
+        let infoContent
+
+        if (programId == '') {
+            infoContent = `
+                <div class="col-12 text-center">
+                    <h3 class="card-title font-weight-bold text-primary">Perfil de campo comun</h3>
+                </div>             
+            `;
+            document.getElementById("viewInfo").innerHTML = infoContent;
+        } else {
+            $.ajax({
+                url: '/view-profiles-competencies-ra/search-program-faculty',
+                type: 'POST',
+                data: {
+                    programId: programId
+                },
+                success: function (response) {
+                    let info = response.programInfo[0]
+                    console.log(info)
+
+                    infoContent = `                
+                        <div class="col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label>Facultad:</label>
+                                <p>${capitalizeText(info.faculty.name_faculty)}</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <div class="form-group">
+                                <label>Programa:</label>
+                                <p>${capitalizeText(info.name_program)}</p>
+                            </div>
+                        </div>
+                    `;
+                    document.getElementById("viewInfo").innerHTML = infoContent;
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error al obtener:', xhr);
+                    console.error('Estado:', status);
+                    console.error('Error:', error);
+                }
+            });
+        }
+    }
+
     function activateTextArea() {
         Swal.fire({
             title: 'Advertencia',
@@ -131,18 +171,61 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    function activateUpdate() {
+        // Cerrar el modal
+        $('#modalActivateUpdate').modal('hide');
+
+        document.getElementById('activateUpdate').textContent = 'Desactivar actualización';
+        document.getElementById('saveUpdateProfile').classList.remove('d-none');
+        document.getElementById('textAreaProfile').removeAttribute('readonly');
+        document.getElementById('textAreaCompeOne').removeAttribute('readonly');
+        document.getElementById('textAreaRaOne').removeAttribute('readonly');
+        document.getElementById('textAreaRaTwo').removeAttribute('readonly');
+        document.getElementById('textAreaCompeTwo').removeAttribute('readonly');
+        document.getElementById('textAreaRaThree').removeAttribute('readonly');
+        document.getElementById('textAreaRaFour').removeAttribute('readonly');
+
+    }
+
+    function deactivateUpdate() {
+        // Cerrar el modal
+        $('#modalDeactivateUpdate').modal('hide');
+
+        document.getElementById('activateUpdate').textContent = 'Activar actualización';
+        document.getElementById('saveUpdateProfile').classList.add('d-none');
+        document.getElementById('textAreaProfile').setAttribute('readonly', true);
+        document.getElementById('textAreaCompeOne').setAttribute('readonly', true);
+        document.getElementById('textAreaRaOne').setAttribute('readonly', true);
+        document.getElementById('textAreaRaTwo').setAttribute('readonly', true);
+        document.getElementById('textAreaCompeTwo').setAttribute('readonly', true);
+        document.getElementById('textAreaRaThree').setAttribute('readonly', true);
+        document.getElementById('textAreaRaFour').setAttribute('readonly', true);
+        location.reload();
+    }
+
     /*
         *
         * Event Listener
         *
     */
-
-    // Escuchar el click en el botón de confirmación del modal
-    document.getElementById('updateProfile').addEventListener('click', function () {
-        activateTextArea()
+    document.getElementById('activateUpdate').addEventListener('click', function () {
+        if (cont == true) {
+            $('#modalActivateUpdate').modal('show');
+        } else {
+            $('#modalDeactivateUpdate').modal('show');
+        }
     });
 
-    // Escuchar el click en el botón de confirmación del modal
+    document.getElementById('confirm-activate').addEventListener('click', function () {
+        activateUpdate(programId);
+        cont = false;
+    });
+
+    document.getElementById('confirm-desactivate').addEventListener('click', function () {
+        deactivateUpdate()
+        cont = true;
+    });
+
     document.getElementById('saveUpdateProfile').addEventListener('click', function () {
         saveUpdate();
     });

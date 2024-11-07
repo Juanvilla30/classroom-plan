@@ -41,12 +41,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function searchClassroom(classroomId) {
         $.ajax({
-            url: '/view-classroom-plan/info-classroom-plans', // URL 
-            method: 'POST', // Método de la solicitud: POST
+            url: '/view-classroom-plan/info-classroom-plans',
+            method: 'POST', 
             data: {
                 classroomId: classroomId,
             },
-            // Función que se ejecuta en caso de éxito en la solicitud
             success: function (response) {
                 let learningInfo = response.classroomInfo.learning_result;
                 let generalInfo = response.classroomInfo.general_objective;
@@ -62,9 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 viewReferences(referenceInfo);
 
             },
-            // Función que se ejecuta en caso de error en la solicitud
             error: function (xhr, status, error) {
-                // Imprimir mensajes de error en la consola
                 console.error('Error al eliminar el grupo:', xhr);
                 console.error('Estado:', status);
                 console.error('Error:', error);
@@ -75,12 +72,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function searchClassroom(classroomId) {
         $.ajax({
-            url: '/view-classroom-plan/info-classroom-plans', // URL 
-            method: 'POST', // Método de la solicitud: POST
+            url: '/view-classroom-plan/info-classroom-plans', 
+            method: 'POST', 
             data: {
                 classroomId: classroomId,
             },
-            // Función que se ejecuta en caso de éxito en la solicitud
             success: function (response) {
                 let learningInfo = response.classroomInfo.learning_result;
                 let generalInfo = response.classroomInfo.general_objective;
@@ -96,9 +92,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 viewReferences(referenceInfo);
 
             },
-            // Función que se ejecuta en caso de error en la solicitud
             error: function (xhr, status, error) {
-                // Imprimir mensajes de error en la consola
                 console.error('Error al eliminar el grupo:', xhr);
                 console.error('Estado:', status);
                 console.error('Error:', error);
@@ -110,21 +104,18 @@ document.addEventListener('DOMContentLoaded', function () {
     function searchData(programId) {
         if (programId !== '') {
             $.ajax({
-                url: '/view-classroom-plan/search-data', // URL 
-                method: 'POST', // Método de la solicitud: POST
+                url: '/view-classroom-plan/search-data', 
+                method: 'POST', 
                 data: {
                     programId: programId,
                 },
-                // Función que se ejecuta en caso de éxito en la solicitud
                 success: function (response) {
                     console.log(response);
                     learninResult = response.learningResult
                     contentCompetence = response.competences
                     updateLearning(learninResult);
                 },
-                // Función que se ejecuta en caso de error en la solicitud
                 error: function (xhr, status, error) {
-                    // Imprimir mensajes de error en la consola
                     console.error('Error al eliminar el grupo:', xhr);
                     console.error('Estado:', status);
                     console.error('Error:', error);
@@ -138,10 +129,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function uploadData(selectLearningId, learningResults) {
-        // Convierte selectLearningId a un número si es un string
         const selectedId = Number(selectLearningId);
 
-        // Recorre el arreglo para encontrar y asignar la descripción
         learningResults.forEach((learningResult) => {
             if (selectedId === learningResult.id) {
                 document.getElementById('textAreaDescriptionRa').value = capitalizeText(learningResult.description_learning_result);
@@ -176,7 +165,6 @@ document.addEventListener('DOMContentLoaded', function () {
             <div class="row">
         `;
 
-        // Verificar si se encontraron cursos en la respuesta
         if (specificInfo.length > 0) {
             specificInfo.forEach((specific, index) => {
                 const i = index + 1;
@@ -201,11 +189,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function viewTopics(topicInfo) {
-        // Verificar si se encontraron cursos en la respuesta
         if (topicInfo.length > 0) {
             let topicsContent1 = '<div class="row">';
 
-            // Limitamos el bucle a 5 elementos
             topicInfo.slice(0, 5).forEach((topic, index) => {
                 const i = index + 1;
                 topicsContent1 += `
@@ -223,7 +209,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             let topicsContent2 = '<div class="row">';
 
-            // Limitamos el bucle a 5 elementos
             topicInfo.slice(5, 10).forEach((topic, index) => {
                 const i = index + 6;
                 topicsContent2 += `
@@ -241,7 +226,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             let topicsContent3 = '<div class="row">';
 
-            // Limitamos el bucle a 5 elementos
             topicInfo.slice(10, 17).forEach((topic, index) => {
                 const i = index + 11;
                 topicsContent3 += `
@@ -267,7 +251,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function viewPercentage(response) {
-        // Inserta la estructura HTML en el elemento with ID "fromEvaluation"
         const htmlContent = `
             <div class="row">
                 <div class="col-sm-12 col-md-4">
@@ -292,12 +275,10 @@ document.addEventListener('DOMContentLoaded', function () {
         `;
         document.getElementById("fromEvaluation").innerHTML = htmlContent;
 
-        // Inicializa los arreglos para acumular los nombres de evaluación
         let evaluations1 = [];
         let evaluations2 = [];
         let evaluations3 = [];
 
-        // Procesa la respuesta
         if (response.length > 0) {
             response.forEach(function (resp) {
                 const idPercentage = resp.id_percentage;
@@ -314,12 +295,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
 
-            // Actualiza el contenido de los elementos con los nombres acumulados de cada evaluación
             document.getElementById('percentage1').textContent = evaluations1.join(', ') || 'Sin evaluaciones';
             document.getElementById('percentage2').textContent = evaluations2.join(', ') || 'Sin evaluaciones';
             document.getElementById('percentage3').textContent = evaluations3.join(', ') || 'Sin evaluaciones';
         } else {
-            // Si no hay resultados, muestra un mensaje de "No se encontraron resultados"
             document.getElementById('percentage1').textContent = 'No se encontraron resultados.';
             document.getElementById('percentage2').textContent = 'No se encontraron resultados.';
             document.getElementById('percentage3').textContent = 'No se encontraron resultados.';
@@ -386,7 +365,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         <option disabled selected value="">Seleccione un nuevo resultado de aprendizaje</option>
                             
         `;
-        // Verificar si se encontraron cursos en la respuesta
         if (response.length > 0) {
             response.forEach((learning, index) => {
                 const i = index + 1;

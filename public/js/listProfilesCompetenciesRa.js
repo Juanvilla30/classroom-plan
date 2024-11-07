@@ -61,7 +61,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         deleteId: deleteId
                     },
                     success: function (response) {
-                        console.log(response)
                         location.reload();
                     },
                     error: function (xhr, status, error) {
@@ -122,13 +121,16 @@ document.addEventListener('DOMContentLoaded', function () {
                         $('.link-delete').on('click', function (e) {
                             e.preventDefault(); // Prevenir el comportamiento predeterminado del enlace
                             const deleteId = $(this).data('id'); // Obtener el ID desde el atributo data-id
-                            console.log(deleteId);
                             deleteProfile(deleteId);
                         });
                     });
                 } else {
                     // Mostrar mensaje si no hay perfiles de egreso
-                    $('#profileEgressContainer').append('<p class="text-center w-100">No hay perfiles de egresos disponibles.</p>');
+                    $('#profileEgressContainer').append(
+                        '<div class="col-12 text-center">' +
+                            '<h4>No hay perfiles de egresos disponibles.</h4>' +
+                        '</div>'
+                    );
                 }
             },
             error: function (xhr, status, error) {
@@ -139,11 +141,30 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    function validateProfileInfo(profilInfoId){
+        if (profilInfoId == 'true') {
+            document.getElementById('pills-tab').classList.remove('d-none');
+            $('#profileEgressContainer').empty(); // Limpia todos los elementos dentro de facultyList
+            $('#profileEgressContainer').append(
+                '<div class="col-12 text-center">' +
+                    '<h4>Por favor, selecciona una opción para visualizar los perfiles de egreso disponibles.</h4>' +
+                '</div>'
+            );            
+        } else {
+            document.getElementById('pills-tab').classList.add('d-none');
+            listProfiles(null);
+        }
+    }
+
     /*
         *
         * Event Listener
         *
     */
+    document.getElementById('selectProfileInformation').addEventListener('change', function () {
+        profilInfoId = this.options[this.selectedIndex].value;
+        validateProfileInfo(profilInfoId);
+    });
 
     // Asignar evento click a cada enlace con la clase 'nav-link sede-tab' para actualizar el enlace seleccionado y mostrar el ID de la facultad
     document.querySelectorAll('.nav-link.sede-tab').forEach(link => {

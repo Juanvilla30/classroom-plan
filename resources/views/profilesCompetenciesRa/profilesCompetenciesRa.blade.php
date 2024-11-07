@@ -34,7 +34,7 @@
     <div class="card" id="card-1" style="display: block;">
 
         <div class="card-header">
-            <h5 class="card-title font-weight-bold text-primary" >Asignación de perfil de egreso</h5>
+            <h5 class="card-title font-weight-bold text-primary">Asignación de perfil de egreso</h5>
         </div>
 
         <div class="card-body">
@@ -42,6 +42,16 @@
             <!-- Forms -->
             <form>
                 <div class="form-group">
+                    <label for="selectProfileInformation">Seleccionar el tipo de perfil</label>
+                    <select class="form-control input-pill" id="selectProfileInformation">
+                        <option disabled selected value="">Seleccione un tipo de perfil</option>
+                        <option value="true">Perfil de programa</option>
+                        <option value="false">Perfil de campo comun</option>
+                    </select>
+                </div>
+            </form>
+            <form>
+                <div class="form-group d-none" id="showFaculty">
                     <label for="pillSelectFaculty">Seleccionar facultad</label>
                     <select class="form-control input-pill" id="pillSelectFaculty">
                         <option disabled selected value="">Seleccione una facultad</option>
@@ -51,7 +61,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="form-group">
+                <div class="form-group d-none" id="showProgram">
                     <label for="pillSelectProgram">Seleccionar programa</label>
                     <select class="form-control input-pill" id="pillSelectProgram" disabled>
                         <option disabled selected value="">Seleccione un programa</option>
@@ -75,7 +85,7 @@
     <div class="card" id="card-2" style="display:none;">
 
         <div class="card-header">
-            <h5 class="card-title font-weight-bold text-primary" >Asignación de competencias</h5>
+            <h5 class="card-title font-weight-bold text-primary">Asignación de competencias</h5>
         </div>
 
         <div class="card-body">
@@ -106,7 +116,7 @@
     <div class="card" id="card-3" style="display:none;">
 
         <div class="card-header">
-            <h5 class="card-title font-weight-bold text-primary" >Asignación de resultados de aprendizaje</h5>
+            <h5 class="card-title font-weight-bold text-primary">Asignación de resultados de aprendizaje</h5>
         </div>
 
         <div class="card-body">
@@ -164,7 +174,7 @@
     <div class="card" id="card-4" style="display:none;">
 
         <div class="card-header">
-            <h5 class="card-title font-weight-bold text-primary" >Asignación de resultados de aprendizaje</h5>
+            <h5 class="card-title font-weight-bold text-primary">Asignación de resultados de aprendizaje</h5>
         </div>
 
         <div class="card-body">

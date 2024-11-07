@@ -31,11 +31,23 @@
     <!-- End Breadcumb Header -->
 
     <div class="card">
+
         <div class="card-header">
             <h5 class="card-title font-weight-bold text-primary" style="margin-bottom: 10px;">Listado de perfiles de egreso</h5>
         </div>
+
         <div class="card-body">
-            <ul class="nav nav-pills nav-primary" id="pills-tab" role="tablist">
+            <form>
+                <div class="form-group">
+                    <label for="selectProfileInformation">Seleccionar el tipo de perfil</label>
+                    <select class="form-control input-pill" id="selectProfileInformation">
+                        <option disabled selected value="">Seleccione un tipo de perfil</option>
+                        <option value="true">Perfil de programa</option>
+                        <option value="false">Perfil de campo comun</option>
+                    </select>
+                </div>
+            </form>
+            <ul class="nav nav-pills nav-primary d-none" id="pills-tab" role="tablist">
 
                 @foreach ($facultys as $faculty)
                 <li class="nav-item">
@@ -53,7 +65,7 @@
                     aria-labelledby="pills-home-tab-nobd">
                     <div id="profileEgressContainer" class="row">
                         <div class="col-12 text-center">
-                            <h4>Por favor, selecciona una facultad para visualizar los perfiles de egreso disponibles.</h4>
+                            <h4>Por favor, selecciona una opción para visualizar los perfiles de egreso disponibles.</h4>
                         </div>
                     </div>
                 </div>

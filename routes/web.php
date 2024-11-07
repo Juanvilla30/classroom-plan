@@ -43,6 +43,7 @@ Route::put('/profiles-competencies-ra/save-ra', [ProfilesCompetenciesRaControlle
 
 // Rutas de View profiles_competencies_ra
 Route::get('/view-profiles-competencies-ra/{id}', [ViewProfilesCompetenciesRaController::class, 'index'])->name('viewProfilesCompetenciesRa');
+Route::post('/view-profiles-competencies-ra/search-program-faculty', [ViewProfilesCompetenciesRaController::class, 'programFaculty'])->name('programFaculty');
 Route::put('/view-profiles/update-profile', [ViewProfilesCompetenciesRaController::class, 'updateProfile'])->name('updateProfile');
 
 // Rutas de List profiles_competencies_ra

@@ -36,7 +36,8 @@
     </div>
     <!-- End Breadcumb Header -->
 
-    <div id="profileId" data-id="{{ $id }}"></div>
+    <div class="d-none" id="programId" data-info="{{ $programId }}"></div>
+    <div class="d-none" id="profileId" data-id="{{ $id }}"></div>
 
     <!-- Card Profile -->
     <div class="card">
@@ -44,10 +45,12 @@
         <div class="card-header">
             <div class="row">
                 <div class="col-sm-12 col-md-6">
-                    <h5 class="card-title font-weight-bold text-primary" style="margin-bottom: 10px;">Visualizar información de perfil de egresos</h5>
+                    <h5 class="card-title font-weight-bold text-primary">Visualizar información de perfil de egresos</h5>
                 </div>
                 <div class="col-sm-12 col-md-6 text-md-right">
-                    <button class="btn btn-primary btn-round" id="updateProfile">Actualizar</button>
+                    <button class="btn btn-primary btn-round" id="activateUpdate">
+                        Activar actualización
+                    </button>
                 </div>
             </div>
         </div>
@@ -56,20 +59,11 @@
 
             <!-- Forms -->
             <form>
-                <div class="row">
-                    <div class="col-sm-12 col-md-6">
-                        <div class="form-group">
-                            <label>Facultad:</label>
-                            <p id="nameFaculty">{{ ucfirst(strtolower($profileEgress->program->faculty->name_faculty)) }}</p>
-                        </div>
-                    </div>
-                    <div class="col-sm-12 col-md-6">
-                        <div class="form-group">
-                            <label>Programa:</label>
-                            <p id="nameProgram">{{ ucfirst(strtolower($profileEgress->program->name_program)) }}</p>
-                        </div>
-                    </div>
+                <div class="row" id="viewInfo">
+
                 </div>
+            </form>
+            <form>
                 <div class="form-group">
                     <label for="exampleFormControlTextarea1">Perfil de egreso</label>
                     <textarea class="form-control" id="textAreaProfile" rows="10" readonly>{{ ucfirst(strtolower($profileEgress->description_profile_egres)) }}</textarea>
@@ -100,10 +94,10 @@
                     </textarea>
                 </div>
                 @php
-                    // Asegúrate de que $competencia1 no sea nulo y que su id exista en $learningResults
-                    $rA1 = isset($competencia1) && isset($learningResults[$competencia1->id])
-                    ? $learningResults[$competencia1->id]->firstWhere('name_learning_result', 'Resultados de aprendizaje #1')
-                    : null;
+                // Asegúrate de que $competencia1 no sea nulo y que su id exista en $learningResults
+                $rA1 = isset($competencia1) && isset($learningResults[$competencia1->id])
+                ? $learningResults[$competencia1->id]->firstWhere('name_learning_result', 'Resultados de aprendizaje #1')
+                : null;
                 @endphp
                 <div class="form-group">
                     <label for="exampleFormControlTextarea1">Resultado de aprendizaje #1</label>
@@ -113,10 +107,10 @@
                     </textarea>
                 </div>
                 @php
-                    // Asegúrate de que $competencia1 no sea nulo y que su id exista en $learningResults
-                    $rA2 = isset($competencia1) && isset($learningResults[$competencia1->id])
-                    ? $learningResults[$competencia1->id]->firstWhere('name_learning_result', 'Resultados de aprendizaje #2')
-                    : null;
+                // Asegúrate de que $competencia1 no sea nulo y que su id exista en $learningResults
+                $rA2 = isset($competencia1) && isset($learningResults[$competencia1->id])
+                ? $learningResults[$competencia1->id]->firstWhere('name_learning_result', 'Resultados de aprendizaje #2')
+                : null;
                 @endphp
                 <div class="form-group">
                     <label for="exampleFormControlTextarea1">Resultado de aprendizaje #2</label>
@@ -151,10 +145,10 @@
                     </textarea>
                 </div>
                 @php
-                    // Asegúrate de que $competencia1 no sea nulo y que su id exista en $learningResults
-                    $rA3 = isset($competencia1) && isset($learningResults[$competencia1->id])
-                    ? $learningResults[$competencia1->id]->firstWhere('name_learning_result', 'Resultados de aprendizaje #3')
-                    : null;
+                // Asegúrate de que $competencia1 no sea nulo y que su id exista en $learningResults
+                $rA3 = isset($competencia1) && isset($learningResults[$competencia1->id])
+                ? $learningResults[$competencia1->id]->firstWhere('name_learning_result', 'Resultados de aprendizaje #3')
+                : null;
                 @endphp
                 <div class="form-group">
                     <label for="exampleFormControlTextarea1">Resultado de aprendizaje #3</label>
@@ -164,10 +158,10 @@
                     </textarea>
                 </div>
                 @php
-                    // Asegúrate de que $competencia1 no sea nulo y que su id exista en $learningResults
-                    $rA4 = isset($competencia1) && isset($learningResults[$competencia1->id])
-                    ? $learningResults[$competencia1->id]->firstWhere('name_learning_result', 'Resultados de aprendizaje #4')
-                    : null;
+                // Asegúrate de que $competencia1 no sea nulo y que su id exista en $learningResults
+                $rA4 = isset($competencia1) && isset($learningResults[$competencia1->id])
+                ? $learningResults[$competencia1->id]->firstWhere('name_learning_result', 'Resultados de aprendizaje #4')
+                : null;
                 @endphp
                 <div class="form-group">
                     <label for="exampleFormControlTextarea1">Resultado de aprendizaje #4</label>
@@ -183,6 +177,56 @@
         </div>
     </div>
     <!-- End Card -->
+
+    <!-- Modal Activate Update -->
+    <div class="modal fade" id="modalActivateUpdate" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="card-title font-weight-bold text-primary">Advertencia</h5>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ¿Seguro que deseas activar el modo edición?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="confirm-activate" data-card="1">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal -->
+
+    <!-- Modal Deactivate Update -->
+    <div class="modal fade" id="modalDeactivateUpdate" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="card-title font-weight-bold text-primary">Advertencia</h5>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Los datos que no han sido guardados se eliminarán. Por favor, asegúrate de guardar la información antes de desactivar.<br><br>
+
+                    ¿Seguro que deseas desactivar el modo edición?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="confirm-desactivate" data-card="1">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal -->
 
     <!-- Scripts -->
     <script src="{{ asset('js/viewProfiles.js') }}"></script>

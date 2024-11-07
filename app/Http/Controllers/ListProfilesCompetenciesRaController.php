@@ -26,31 +26,33 @@ class ListProfilesCompetenciesRaController extends Controller
 
     public function listProfiles(Request $request)
     {
-        // Obtener el ID de la facultad desde la solicitud
         $facultysId = $request->input('facultyId');
 
-        // Obtener un array con los IDs de los programas asociados a la facultad
-        $listPrograms = Program::where('id_faculty', $facultysId)->pluck('id');
+        if ($facultysId !== null) {
+            $listPrograms = Program::where('id_faculty', $facultysId)->pluck('id');
 
-        // Obtener los perfiles de egreso que pertenecen a los programas de la facultad
-        $listProfiles = ProfileEgress::whereIn('id_program', $listPrograms)
-            ->with(['program.faculty']) // Agrega relaciones según sea necesario
-            ->orderBy('id')
-            ->get();
+            $listProfiles = ProfileEgress::whereIn('id_program', $listPrograms)
+                ->with(['program.faculty'])
+                ->orderBy('id')
+                ->get();
+        } else {
 
-        // Verificar si se encontraron perfiles de egreso
+            $listProfiles = ProfileEgress::whereNull('id_program')
+                ->orderBy('id')
+                ->get();
+        }
+
         if ($listProfiles->isNotEmpty()) {
-            // Devolver la lista de perfiles como respuesta en formato JSON
             return response()->json([
                 'listProfiles' => $listProfiles,
             ]);
         } else {
-            // Enviar una respuesta de error si no se encontraron perfiles
             return response()->json([
                 'listProfiles' => 'Perfiles no encontrados'
             ]);
         }
     }
+
     public function deletefiles(Request $request)
     {
         // Obtener el ID del perfil de egreso desde la solicitud
