@@ -49,7 +49,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 success: function (response) {
                     let info = response.programInfo[0]
-                    console.log(info)
 
                     infoContent = `                
                         <div class="col-sm-12 col-md-6">
@@ -74,34 +73,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
         }
-    }
-
-    function activateTextArea() {
-        Swal.fire({
-            title: 'Advertencia',
-            text: '¿Estás seguro de que deseas activar la actualización del perfil de egreso?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#1572E8',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Aceptar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            // Si el usuario confirma la acción
-            if (result.isConfirmed) {
-                // Mostrar el botón Guardar
-                document.getElementById('saveUpdateProfile').classList.remove('d-none');
-                document.getElementById('textAreaProfile').removeAttribute('readonly');
-                document.getElementById('textAreaCompeOne').removeAttribute('readonly');
-                document.getElementById('textAreaRaOne').removeAttribute('readonly');
-                document.getElementById('textAreaRaTwo').removeAttribute('readonly');
-                document.getElementById('textAreaCompeTwo').removeAttribute('readonly');
-                document.getElementById('textAreaRaThree').removeAttribute('readonly');
-                document.getElementById('textAreaRaFour').removeAttribute('readonly');
-            } else {
-                console.log('Eliminacion cancelada por el usuario'); // Mensaje en consola si el usuario cancela la acción
-            }
-        });
     }
 
     function saveUpdate() {
