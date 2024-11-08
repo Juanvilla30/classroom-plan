@@ -83,14 +83,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // RESET
     function resetContent() {
-        // Limpiar los textos dentro de cada <p>
         $('#nameFaculty, #nameProgram, #nameSemester, #codeCourse, #nameCourse, #educationLevel, #nameField, #nameComponent, #nameCredits, #nameCourseType').text('');
         $('#nameFacultyS, #nameProgramS, #nameSemesterS, #codeCourseS, #nameCourseS, #educationLevelS, #nameCreditsS, #nameCourseTypeS').text('');
         $('#nameFacultyCC, #nameProgramCC, #nameSemesterCC, #codeCourseCC, #nameCourseCC, #educationLevelCC, #nameCreditsCC, #nameFieldCC, #nameComponentCC').text('');
 
-        // Ocultar todos los divs de información
         $('#infoCampoComun, #infoSpecialization').addClass('d-none');
         $('#infoPensum').removeClass('d-none');
+
+        const selectElement = document.getElementById('selectLearning');
+        selectElement.innerHTML = '';
+
+        const defaultOption = document.createElement('option');
+        defaultOption.selected = true;
+        defaultOption.value = '';
+        defaultOption.text = 'Seleccione un resultado de aprendizaje';
+        selectElement.appendChild(defaultOption);
+        selectElement.setAttribute('disabled', true);
+
+        document.getElementById('textAreaDescriptionRA').value = '';
+        $('#bodyComponent').empty();
     }
 
     function reset() {
@@ -123,29 +134,65 @@ document.addEventListener('DOMContentLoaded', function () {
 
     }
 
+    function resetForm() {
+        document.getElementById('textAreaDescriptionRA').value = '';
+        document.querySelectorAll('.readonlyCheck').forEach(function (element) {
+            if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                element.value = '';
+            }
+        });
+    }
+
     // BLOCK ATRTRIBUTES
     function blockAttributes() {
         const selects = document.querySelectorAll(".selectsFrom");
+        let buttonSearchCourse = document.getElementById('buttonSearchCourse');
+
+        document.querySelectorAll('.readonlyCheck').forEach(function (element) {
+            if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                element.readOnly = true;
+            }
+        });
 
         selects.forEach(select => {
-            select.disabled = true;    // Desactiva el campo
+            select.disabled = true;
         });
+
+        buttonSearchCourse.disabled = true;
+
     }
 
     function blockCampos(showField, showComponent) {
         // Muestra u oculta la columna de "Campo"
         if (showField) {
-            $('#tableFieldStudy th:nth-child(1), #tableFieldStudy td:nth-child(1)').show();
+            $('#tableFieldStudy th:nth-child(1), #tableFieldStudy td:nth-child(1)').css('display', '');
         } else {
-            $('#tableFieldStudy th:nth-child(1), #tableFieldStudy td:nth-child(1)').hide();
+            $('#tableFieldStudy th:nth-child(1), #tableFieldStudy td:nth-child(1)').css('display', 'none');
         }
 
         // Muestra u oculta la columna de "Componente"
         if (showComponent) {
-            $('#tableFieldStudy th:nth-child(2), #tableFieldStudy td:nth-child(2)').show();
+            $('#tableFieldStudy th:nth-child(2), #tableFieldStudy td:nth-child(2)').css('display', '');
         } else {
-            $('#tableFieldStudy th:nth-child(2), #tableFieldStudy td:nth-child(2)').hide();
+            $('#tableFieldStudy th:nth-child(2), #tableFieldStudy td:nth-child(2)').css('display', 'none');
         }
+    }
+
+    function unlockAttributes() {
+        const selects = document.querySelectorAll(".selectsFrom");
+        let buttonSearchCourse = document.getElementById('buttonSearchCourse');
+
+        document.querySelectorAll('.readonlyCheck').forEach(function (element) {
+            if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                element.readOnly = false;
+            }
+        });
+
+        selects.forEach(select => {
+            select.disabled = true;
+        });
+
+        buttonSearchCourse.disabled = true;
     }
 
     // SEARCH
@@ -236,52 +283,58 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function searchInfoCourse(courseId, programId) {
-        $.ajax({
-            url: '/classroom-plan/search-info-course',
-            type: 'POST',
-            data: {
-                courseId: courseId,
-                programId: programId,
-            },
-            success: function (response) {
-                if (response.check == true) {
-                    if (componentId = response.relationInfo[0].course.id_component !== null) {
-                        componentId = response.relationInfo[0].course.id_component;
-                        viewInfoPensum(response);
-                    } else {
-                        viewInfoSpecialization(response)
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: '/classroom-plan/search-info-course',
+                type: 'POST',
+                data: {
+                    courseId: courseId,
+                    programId: programId,
+                },
+                success: function (response) {
+                    if (response.check == true) {
+                        if (componentId = response.relationInfo[0].course.id_component !== null) {
+                            componentId = response.relationInfo[0].course.id_component;
+                            viewInfoPensum(response);
+                        } else {
+                            viewInfoSpecialization(response);
+                        }
+                    } else if (response.check == false) {
+                        componentId = response.courseInfo[0].id_component;
+                        viewInfoCampoComun(response);
                     }
-
-                } else if (response.check == false) {
-                    componentId = response.courseInfo[0].id_component;
-                    viewInfoCampoComun(response);
+                    resolve(componentId);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error al obtener:', xhr);
+                    console.error('Estado:', status);
+                    console.error('Error:', error);
+                    reject(error);
                 }
-            },
-            error: function (xhr, status, error) {
-                console.error('Error al obtener:', xhr);
-                console.error('Estado:', status);
-                console.error('Error:', error);
-            }
+            });
         });
     }
 
-    //TERMINAR...................
-    function searchComponent(componentId, programId) {
+    function searchComponent(checkin, componentId, programId) {
+        console.log('CASO', componentId, programId)
         $.ajax({
             url: '/classroom-plan/search-list-courses',
             type: 'POST',
             data: {
+                checkin: checkin,
                 componentId: componentId,
                 programId: programId,
             },
             success: function (response) {
-                console.log(response);
-                if (response.check == true) {
+                if (response.check == '1') {
+                    console.log(response)
                     viewListComponent(response);
+                } else if (response.check == '2') {
                     console.log(response)
-                } else if (response.check == false) {
                     viewListSpecialization(response);
+                } else if (response.check == '3') {
                     console.log(response)
+                    viewListComponent(response);
                 }
             },
             error: function (xhr, status, error) {
@@ -292,10 +345,10 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function searchLearning(programId) {
+    function searchLearning(programId, check) {
         return new Promise((resolve, reject) => {
             $.ajax({
-                url: '/classroom-plan/search-learning', 
+                url: '/classroom-plan/search-learning',
                 method: 'POST',
                 data: {
                     programId: programId,
@@ -303,6 +356,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 success: function (response) {
                     console.log(response);
                     resolve(response);
+                    viewSelectLearningResult(response, check);
                 },
                 error: function (xhr, status, error) {
                     console.error('Error al eliminar el grupo:', xhr);
@@ -316,22 +370,23 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // VALIDATIONS
-    function validateClassroomPlan(courseId, program, typeCourseId) {
+    // TERMINAR........................
+    function searchClassroomPlan(courseId, programId) {
         $.ajax({
-            url: '/classroom-plan/validate-classroom-plans',
+            url: '/classroom-plan/search-classroom-plans',
             method: 'POST',
             data: {
                 courseId: courseId,
+                programId: programId,
             },
             success: function (response) {
-                if (response.confirm == false) {
-                    //loadResultsSelect(program, false);
-                    //validateEvaluation(typeCourseId, false);
+                let check = response.check;
+                if (check == false) {
+                    searchLearning(programId, check);
                     validateResfresh(false);
                 } else {
-                    let learningId = response.classroomPlanId[0].learning_result;
-                    //selectRA(learningId, true);
-                    //viewClassroom(response);
+                    viewSelectLearningResult(response, check);
+                    viewClassroom(response);
                     validateResfresh(true);
                 }
             },
@@ -371,6 +426,7 @@ document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('.nextCard').forEach(function (button) {
                 button.classList.add('d-none');
             });
+
         } else {
             document.querySelectorAll('.nextCard').forEach(function (button) {
                 button.classList.remove('d-none');
@@ -378,6 +434,7 @@ document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('.confirmationSave').forEach(function (button) {
                 button.classList.add('d-none');
             });
+
         }
     }
 
@@ -663,7 +720,7 @@ document.addEventListener('DOMContentLoaded', function () {
         blockCampos(true, true);
 
         let coursesInfo = response.classroomPlanInfo;
-
+        console.log('ACCESO', coursesInfo)
         let bodyComponent = $('#bodyComponent');
         bodyComponent.empty();
 
@@ -674,43 +731,43 @@ document.addEventListener('DOMContentLoaded', function () {
                             <td class="detalle-user" class="detalle-courses" data-course-id="${course.id}"
                                 data-toggle="modal" data-target="#modalListCourses">
                                 <a href="#" class="text-dark">
-                                    ${capitalizeOrDefault(course.component.study_field.name_study_field)}
+                                    ${capitalizeOrDefault(course.courses.component.study_field.name_study_field)}
                                 </a>
                             </td>
                             <td class="detalle-user" class="detalle-courses" data-course-id="${course.id}"
                                 data-toggle="modal" data-target="#modalListCourses">
                                 <a href="#" class="text-dark">
-                                    ${capitalizeOrDefault(course.component.name_component)}
+                                    ${capitalizeOrDefault(course.courses.component.name_component)}
                                 </a>
                             </td>
                             <td class="detalle-user" class="detalle-courses" data-course-id="${course.id}"
                                 data-toggle="modal" data-target="#modalListCourses">
                                 <a href="#" class="text-dark">
-                                    ${capitalizeOrDefault(course.course_code)}                        
+                                    ${capitalizeOrDefault(course.courses.course_code)}                        
                                 </a>
                             </td>
                             <td class="detalle-user" class="detalle-courses" data-course-id="${course.id}"
                                 data-toggle="modal" data-target="#modalListCourses">
                                 <a href="#" class="text-dark">
-                                    ${capitalizeOrDefault(course.name_course)}                        
+                                    ${capitalizeOrDefault(course.courses.name_course)}                        
                                 </a>
                             </td>
                             <td class="detalle-user" class="detalle-courses" data-course-id="${course.id}"
                                 data-toggle="modal" data-target="#modalListCourses">
                                 <a href="#" class="text-dark">
-                                    ${capitalizeOrDefault(course.semester.name_semester)}                                
+                                    ${capitalizeOrDefault(course.courses.semester.name_semester)}                                
                                 </a>
                             </td>
                             <td class="detalle-user" class="detalle-courses" data-course-id="${course.id}"
                                 data-toggle="modal" data-target="#modalListCourses">
                                 <a href="#" class="text-dark">
-                                    ${course.credit}
+                                    ${course.courses.credit}
                                 </a>
                             </td>
                             <td class="detalle-user" class="detalle-courses" data-course-id="${course.id}"
                                 data-toggle="modal" data-target="#modalListCourses">
                                 <a href="#" class="text-dark">
-                                    ${capitalizeOrDefault(course.course_type.name_course_type)}
+                                    ${capitalizeOrDefault(course.courses.course_type.name_course_type)}
                                 </a>
                             </td>
                         </tr>
@@ -727,7 +784,7 @@ document.addEventListener('DOMContentLoaded', function () {
         blockCampos(false, false);
 
         let coursesInfo = response.classroomPlanInfo;
-
+        console.log('EQUIVA', coursesInfo);
         let bodyComponent = $('#bodyComponent');
         bodyComponent.empty();
 
@@ -738,31 +795,31 @@ document.addEventListener('DOMContentLoaded', function () {
                             <td class="detalle-user" class="detalle-courses" data-course-id="${course.id}"
                                 data-toggle="modal" data-target="#modalListCourses">
                                 <a href="#" class="text-dark">
-                                    ${capitalizeOrDefault(course.course_code)}                        
+                                    ${capitalizeOrDefault(course.courses.course_code)}                        
                                 </a>
                             </td>
                             <td class="detalle-user" class="detalle-courses" data-course-id="${course.id}"
                                 data-toggle="modal" data-target="#modalListCourses">
                                 <a href="#" class="text-dark">
-                                    ${capitalizeOrDefault(course.name_course)}                        
+                                    ${capitalizeOrDefault(course.courses.name_course)}                        
                                 </a>
                             </td>
                             <td class="detalle-user" class="detalle-courses" data-course-id="${course.id}"
                                 data-toggle="modal" data-target="#modalListCourses">
                                 <a href="#" class="text-dark">
-                                    ${capitalizeOrDefault(course.semester.name_semester)}                                
+                                    ${capitalizeOrDefault(course.courses.semester.name_semester)}                                
                                 </a>
                             </td>
                             <td class="detalle-user" class="detalle-courses" data-course-id="${course.id}"
                                 data-toggle="modal" data-target="#modalListCourses">
                                 <a href="#" class="text-dark">
-                                    ${course.credit}
+                                    ${course.courses.credit}
                                 </a>
                             </td>
                             <td class="detalle-user" class="detalle-courses" data-course-id="${course.id}"
                                 data-toggle="modal" data-target="#modalListCourses">
                                 <a href="#" class="text-dark">
-                                    ${capitalizeOrDefault(course.course_type.name_course_type)}
+                                    ${capitalizeOrDefault(course.courses.course_type.name_course_type)}
                                 </a>
                             </td>
                         </tr>
@@ -774,11 +831,149 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    function viewSelectLearningResult(response, check) {
+        const selectElement = document.getElementById('selectLearning');
+        selectElement.innerHTML = '';
+
+        if (check == true) {
+            const learning = response.classroomPlanId[0].learning_result;
+            const option = document.createElement('option');
+            option.value = learning.id;
+            option.text = learning.name_learning_result;
+            option.selected = true;
+            selectElement.appendChild(option);
+
+            document.getElementById('selectLearning').disabled = true;
+            document.getElementById('textAreaDescriptionRA').value = learning.description_learning_result;
+        } else {
+            const defaultOption = document.createElement('option');
+            defaultOption.disabled = false;
+            defaultOption.selected = true;
+            defaultOption.value = '';
+            defaultOption.text = 'Seleccione un resultado de aprendizaje';
+            selectElement.appendChild(defaultOption);
+
+            if (response.learningResultsId && response.learningResultsId.length > 0) {
+                response.learningResultsId.forEach(function (learningArray) {
+                    learningArray.forEach(function (learning) {
+                        const option = document.createElement('option');
+                        option.value = learning.id;
+                        option.text = learning.name_learning_result;
+                        selectElement.appendChild(option);
+                    });
+                });
+                selectElement.removeAttribute('disabled');
+            } else {
+                selectElement.setAttribute('disabled', true);
+            }
+        }
+
+    }
+
+    function viewDescriptionLearning(learningId) {
+
+        $.ajax({
+            url: '/classroom-plan/search-description-Learning',
+            method: 'POST',
+            data: {
+                learningId: learningId,
+            },
+            success: function (response) {
+                document.getElementById('textAreaDescriptionRA').value = response.learningResult[0].description_learning_result;
+            },
+            error: function (xhr, status, error) {
+                console.error('Error al eliminar el grupo:', xhr);
+                console.error('Estado:', status);
+                console.error('Error:', error);
+                console.error('Respuesta del servidor:', xhr.responseText);
+            }
+        });
+
+    }
+
+    function viewInfoEvaluation(response) {
+
+        let evaluations1 = [];
+        let evaluations2 = [];
+        let evaluations3 = [];
+
+        // Verificar si se encontraron cursos en la respuesta
+        if (response.length > 0) {
+            response.forEach(function (resp) {
+                var percentageId = resp.id_percentage;
+
+                if (percentageId === 1) {
+                    var evaluationInfo = (resp.evaluation && resp.evaluation.name_evaluation)
+                        ? capitalizeOrDefault(resp.evaluation.name_evaluation) + '-' + resp.percentage_number + '%' // Capitalizar
+                        : 'Nombre de evaluación no disponible'; // Valor alternativo si no existe
+                    evaluations1.push(evaluationInfo); // Agregar al arreglo de evaluaciones 1
+                } else if (percentageId === 2) {
+                    var evaluationInfo = (resp.evaluation && resp.evaluation.name_evaluation)
+                        ? capitalizeOrDefault(resp.evaluation.name_evaluation) + '-' + resp.percentage_number + '%' // Capitalizar
+                        : 'Nombre de evaluación no disponible'; // Valor alternativo
+                    evaluations2.push(evaluationInfo); // Agregar al arreglo de evaluaciones 2
+                } else if (percentageId === 3) {
+                    var evaluationInfo = (resp.evaluation && resp.evaluation.name_evaluation)
+                        ? capitalizeOrDefault(resp.evaluation.name_evaluation) + '-' + resp.percentage_number + '%' // Capitalizar
+                        : 'Nombre de evaluación no disponible'; // Valor alternativo
+                    evaluations3.push(evaluationInfo); // Agregar al arreglo de evaluaciones 3
+                }
+            });
+
+            // Mostrar todos los nombres de evaluación en los elementos correspondientes, separados por salto de línea
+            document.getElementById('percentage1').innerText = evaluations1.join('\n') || 'Sin evaluaciones';
+            document.getElementById('percentage2').innerText = evaluations2.join('\n') || 'Sin evaluaciones';
+            document.getElementById('percentage3').innerText = evaluations3.join('\n') || 'Sin evaluaciones';
+        } else {
+            document.getElementById('percentage1').innerText = 'Sin evaluaciones';
+            document.getElementById('percentage2').innerText = 'Sin evaluaciones';
+            document.getElementById('percentage3').innerText = 'Sin evaluaciones';
+        }
+
+    }
+
+    function viewClassroom(response) {
+
+        //console.log('REFERENCIAS', response.referencesId);
+
+        let general = response.classroomPlanId[0].general_objective.description_general_objective;
+        let specifics = response.specificsId;
+        let topics = response.topicsId;
+        let evaluation = response.evaluationsId;
+        //let reference = response.referencesId;
+
+        document.getElementById('textAreaObjective').value = general;
+
+        specifics.forEach((specific, index) => {
+            let description = specific.description_specific_objective;
+            let specificTextArea = document.getElementById(`textAreaSpecific${index + 1}`);
+            if (specificTextArea) {
+                specificTextArea.value = description;
+            }
+
+            let collapseCardBody = document.querySelector(`#collapse${index + 1} .card-body`);
+            if (collapseCardBody) {
+                collapseCardBody.innerText = description;
+            }
+        });
+
+        topics.forEach((topic, index) => {
+            let description = topic.description_topic;
+            let topicsTextArea = document.getElementById(`textAreaTheme${index + 1}`);
+            if (topicsTextArea) {
+                topicsTextArea.value = description;
+            }
+        });
+
+        viewInfoEvaluation(evaluation);
+
+    }
+
     // COMFIRMATIONS
     function confirmationSave(dataConfirmation) {
         if (dataConfirmation == '1') {
             validate(
-                ['pillSelectLearning'],
+                ['selectLearning'],
                 'Por favor, selecciona un resultado de aprendizaje.'
             );
         } else if (dataConfirmation == '2') {
@@ -807,10 +1002,322 @@ document.addEventListener('DOMContentLoaded', function () {
                 'Los campos de temas no pueden estar vacíos.'
             );
         } else if (dataConfirmation == '7') {
-            validateCheckbox();
+
         } else if (dataConfirmation == '8') {
-            validateReferences();
+
         }
+    }
+
+    function confirmButton(dataConfirmation, learningId, courseId) {
+        // Cambiar a la siguiente card
+        showNextCard();
+
+        // Cerrar el modal
+        $('#modalConfirmation').modal('hide');
+
+        if (dataConfirmation == 1) {
+            // Guardar el perfil si el contenido no está vacío
+            if (learningId !== '' && courseId !== '') {
+                //blockAttributes(false, true);
+                saveClassroomPlan(courseId, learningId).then(response => {
+                    classroomId = response.createClassroom.id;
+                    assigEvaId = response.assignmentEvaluations;
+                    referencesId = response.references;
+                    specificId = response.specificObjectives;
+                    learningId = '';
+                    courseId = '';
+                }).catch(error => {
+                    console.error("Error en la solicitud AJAX:", error);
+                });
+            }
+        } else if (dataConfirmation == 2) {
+            let generalObjective = document.getElementById('textAreaObjective').value;
+
+            if (generalObjective !== '') {
+                saveObjGeneral(classroomId, generalObjective).then(response => {
+                    generalObjective = '';
+                }).catch(error => {
+                    console.error("Error en la solicitud AJAX:", error);
+                });
+            }
+        } else if (dataConfirmation == 3) {
+            let specificObjectives = [];
+
+            for (let i = 1; i <= 3; i++) {
+                let objectiveValue = document.getElementById(`textAreaSpecific${i}`).value;
+                if (objectiveValue !== '') {
+                    specificObjectives.push(objectiveValue);
+                    document.querySelector(`#collapse${i} .card-body`).innerText = objectiveValue;
+                }
+            }
+
+            // Verificar si todos los objetivos específicos tienen valor antes de guardar
+            if (specificObjectives.length === 3) {
+                saveObjSpecific(classroomId, specificId, specificObjectives).then(response => {
+                    specificId = response;
+                    // Reiniciar los valores después de guardar
+                    specificObjectives.forEach((_, index) => {
+                        document.getElementById(`textAreaSpecific${index + 1}`).value = '';
+                    });
+                }).catch(error => {
+                    console.error("Error en la solicitud AJAX:", error);
+                });
+            }
+        } else if (dataConfirmation == 4) {
+            let topics = [];
+
+            for (let i = 1; i <= 5; i++) {
+                let TopicValue = document.getElementById(`textAreaTheme${i}`).value;
+                if (TopicValue !== '') {
+                    topics.push(TopicValue);
+                }
+            }
+
+            // Verificar si todos los objetivos específicos tienen valor antes de guardar
+            if (topics.length === 5) {
+                saveTopic(specificId[0], topics).then(response => {
+
+                    // Reiniciar los valores después de guardar
+                    topics.forEach((_, index) => {
+                        document.getElementById(`textAreaTheme${index + 1}`).value = '';
+                    });
+                }).catch(error => {
+                    console.error("Error en la solicitud AJAX:", error);
+                });
+            }
+        } else if (dataConfirmation == 5) {
+            let topics2 = [];
+
+            for (let i = 6; i <= 10; i++) {
+                let TopicValue2 = document.getElementById(`textAreaTheme${i}`).value;
+                if (TopicValue2 !== '') {
+                    topics2.push(TopicValue2);
+                }
+            }
+
+            // Verificar si todos los objetivos específicos tienen valor antes de guardar
+            if (topics2.length === 5) {
+                saveTopic(specificId[1], topics2).then(response => {
+
+                    // Reiniciar los valores después de guardar
+                    topics2.forEach((_, index) => {
+                        document.getElementById(`textAreaTheme${index + 1}`).value = '';
+                    });
+                }).catch(error => {
+                    console.error("Error en la solicitud AJAX:", error);
+                });
+            }
+        } else if (dataConfirmation == 6) {
+            let topics3 = [];
+
+            for (let i = 11; i <= 16; i++) {
+                let TopicValue3 = document.getElementById(`textAreaTheme${i}`).value;
+                if (TopicValue3 !== '') {
+                    topics3.push(TopicValue3);
+                }
+            }
+
+            // Verificar si todos los objetivos específicos tienen valor antes de guardar
+            if (topics3.length === 6) {
+                saveTopic(specificId[2], topics3).then(response => {
+
+                    // Reiniciar los valores después de guardar
+                    topics3.forEach((_, index) => {
+                        document.getElementById(`textAreaTheme${index + 1}`).value = '';
+                    });
+                }).catch(error => {
+                    console.error("Error en la solicitud AJAX:", error);
+                });
+            }
+        } else if (dataConfirmation == 7) {
+            // CONTINUAR EVALUATIONS
+            if (selectedEvaluations !== '' && selectedEvaluations2 !== '' && selectedEvaluations3 !== '') {
+                saveAsEvaluation(classroomId, assigEvaId, selectedEvaluations, selectedEvaluations2, selectedEvaluations3);
+            }
+
+        } else if (dataConfirmation == 8) {
+            if (institutionalLinks !== '' && generalLinks !== '') {
+                saveReference(classroomId, referencesId, institutionalLinks, generalLinks).then(response => {
+                    console.log('ARREGLO', response);
+                }).catch(error => {
+                    console.error("Error en la solicitud AJAX:", error);
+                });
+            }
+        }
+    }
+
+    // CREATE
+    function saveClassroomPlan(courseId, learningId) {
+
+        const nameGeneral = 'Objetivo general';
+
+        const nameSpecific = [
+            'Objetivo especifico #1',
+            'Objetivo especifico #2',
+            'Objetivo especifico #3'
+        ];
+
+        const nameReference = [
+            'Referencia institucional',
+            'Referencia general',
+        ];
+
+        const content = 'No se registro contenido';
+
+        return new Promise((resolve, reject) => {
+
+            $.ajax({
+                url: '/classroom-plan/create-classroom-plans', // URL 
+                method: 'POST', // Método de la solicitud: POST
+                data: {
+                    courseId: courseId,
+                    learningId: learningId,
+                    nameGeneral: nameGeneral,
+                    nameSpecificOne: nameSpecific[0],
+                    nameSpecificTwo: nameSpecific[1],
+                    nameSpecificThree: nameSpecific[2],
+                    nameReferenceOne: nameReference[0],
+                    nameReferenceTwo: nameReference[1],
+                    content: content,
+                },
+                // Función que se ejecuta en caso de éxito en la solicitud
+                success: function (response) {
+
+                    resolve(response);
+
+                },
+                // Función que se ejecuta en caso de error en la solicitud
+                error: function (xhr, status, error) {
+                    // Imprimir mensajes de error en la consola
+                    console.error('Error al eliminar el grupo:', xhr);
+                    console.error('Estado:', status);
+                    console.error('Error:', error);
+                    console.error('Respuesta del servidor:', xhr.responseText);
+
+                    // Rechazamos la promesa en caso de error
+                    reject(error);
+                }
+            });
+        });
+    }
+
+    function saveObjGeneral(classroomId, generalObjective) {
+        return new Promise((resolve, reject) => {
+            // Realizar la petición AJAX
+            $.ajax({
+                url: '/classroom-plan/save-general-objective',
+                type: 'PUT',
+                data: {
+                    classroomId: classroomId,
+                    generalObjective: generalObjective,
+                },
+                success: function (response) {
+                    resolve(response);
+
+                },
+                // Función que se ejecuta en caso de error en la solicitud
+                error: function (xhr, status, error) {
+                    // Imprimir mensajes de error en la consola
+                    console.error('Error al obtener:', xhr);
+                    console.error('Estado:', status);
+                    console.error('Error:', error);
+                    reject(error);
+
+                }
+            });
+        });
+
+    }
+
+    function saveObjSpecific(classroomId, specificId, specificObjectives) {
+        return new Promise((resolve, reject) => {
+            // Realizar la petición AJAX
+            $.ajax({
+                url: '/classroom-plan/save-specific-objective',
+                type: 'PUT',
+                data: {
+                    specificId: specificId,
+                    classroomId: classroomId,
+                    specificObjectiveOne: specificObjectives[0],
+                    specificObjectiveTwo: specificObjectives[1],
+                    specificObjectiveThree: specificObjectives[2],
+                },
+                success: function (response) {
+                    resolve(response.specificId);
+
+                },
+                // Función que se ejecuta en caso de error en la solicitud
+                error: function (xhr, status, error) {
+                    // Imprimir mensajes de error en la consola
+                    console.error('Error al obtener:', xhr);
+                    console.error('Estado:', status);
+                    console.error('Error:', error);
+                    reject(error);
+
+                }
+            });
+        });
+    }
+
+    function saveTopic(specificId, topics) {
+        return new Promise((resolve, reject) => {
+            // Realizar la petición AJAX
+            $.ajax({
+                url: '/classroom-plan/save-topic',
+                type: 'PUT',
+                data: {
+                    specificId: specificId,
+                    topics: topics,
+                },
+                success: function (response) {
+                    resolve(response);
+
+                },
+                // Función que se ejecuta en caso de error en la solicitud
+                error: function (xhr, status, error) {
+                    // Imprimir mensajes de error en la consola
+                    console.error('Error al obtener:', xhr);
+                    console.error('Estado:', status);
+                    console.error('Error:', error);
+                    reject(error);
+
+                }
+            });
+        });
+    }
+
+    function saveReference(classroomId, referencesId, institutionalLinks, generalLinks) {
+
+        const nameReferences = [
+            'Referencia institucional',
+            'Referencia general',
+        ];
+
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: '/classroom-plan/save-references',
+                type: 'PUT',
+                data: {
+                    classroomId: classroomId,
+                    referencesId: referencesId,
+                    nameReferences: nameReferences,
+                    institutionalLinks: institutionalLinks,
+                    generalLinks: generalLinks,
+                },
+                success: function (response) {
+                    resolve(response);
+                },
+                // Función que se ejecuta en caso de error en la solicitud
+                error: function (xhr, status, error) {
+                    // Imprimir mensajes de error en la consola
+                    console.error('Error al obtener:', xhr);
+                    console.error('Estado:', status);
+                    console.error('Error:', error);
+                    reject(error);
+
+                }
+            });
+        });
     }
 
     /*
@@ -819,7 +1326,6 @@ document.addEventListener('DOMContentLoaded', function () {
         *
     */
     document.getElementById('selectEducation').addEventListener('change', function () {
-
         educationId = this.options[this.selectedIndex].value;
         if (educationId == 1) {
             reset();
@@ -851,40 +1357,196 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('tableCampoComun').addEventListener('click', async function (event) {
         if (event.target.classList.contains('campoComunSelect')) {
             const campoComunId = event.target.dataset.id;
-            await searchInfoCourse(campoComunId, null);
-            await searchComponent(componentId, null);
-            await searchLearning(programId);
-        }
-    });
-
-    document.getElementById('tablePensum').addEventListener('click', async function (event) {
-        if (event.target.classList.contains('pensumSelect')) {
-            const pensumId = event.target.dataset.id;
-            await searchInfoCourse(pensumId, programId);
-            await searchComponent(componentId, null);
-            await searchLearning(programId);
+            courseId = campoComunId;
+            await resetForm();
+            await searchInfoCourse(campoComunId, null).then(response => {
+                componentId = response;
+            }).catch(error => {
+                console.error("Error en la solicitud AJAX:", error);
+            });
+            await searchComponent(1, componentId, null);
+            await searchClassroomPlan(courseId, null);
         }
     });
 
     document.getElementById('tableSpecialization').addEventListener('click', async function (event) {
         if (event.target.classList.contains('specializationSelect')) {
             const specializationId = event.target.dataset.id;
+            courseId = specializationId;
+            await resetForm();
             await searchInfoCourse(specializationId, programId);
-            await searchComponent(null, programId);
-            await searchLearning(programId);
+            await searchComponent(2, null, programId);
+            await searchClassroomPlan(courseId, programId);
         }
+    });
+
+    document.getElementById('tablePensum').addEventListener('click', async function (event) {
+        if (event.target.classList.contains('pensumSelect')) {
+            const pensumId = event.target.dataset.id;
+            courseId = pensumId;
+            await resetForm();
+            await searchInfoCourse(pensumId, programId).then(response => {
+                componentId = response;
+            }).catch(error => {
+                console.error("Error en la solicitud AJAX:", error);
+            });;
+            await searchComponent(3, componentId, programId);
+            await searchClassroomPlan(courseId, programId);
+        }
+    });
+
+    document.getElementById('selectLearning').addEventListener('change', function () {
+        learningId = this.value;
+        viewDescriptionLearning(learningId);
+    });
+
+    // TERMINAR..................................
+    function alert() {
+        Swal.fire({
+            title: 'Advertencia',
+            icon: 'warning',
+            text: '¿Seguro que deseas agregar?',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#1572E8',
+            confirmButtonText: 'Eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                console.log('ACEPTADO');
+            } else {
+                console.log('CANCELAR');
+            }
+        });
+    }
+
+    function saveAsEvaluation(classroomId, assigEvaId, selectedEvaluations, selectedEvaluations2, selectedEvaluations3) {
+        const percentageId = [1, 2, 3]
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: '/classroom-plan/save-evaluations',
+                type: 'PUT',
+                data: {
+                    classroomId: classroomId,
+                    assigEvaId: assigEvaId,
+                    percentageId1: percentageId[0],
+                    percentageId2: percentageId[1],
+                    percentageId3: percentageId[2],
+                    selectedEvaluations: selectedEvaluations,
+                    selectedEvaluations2: selectedEvaluations2,
+                    selectedEvaluations3: selectedEvaluations3,
+                },
+                success: function (response) {
+                    resolve(response);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error al obtener:', xhr);
+                    console.error('Estado:', status);
+                    console.error('Error:', error);
+                    reject(error);
+
+                }
+            });
+        });
+    }
+
+    function validateEvaluation(data) {
+
+        if (data == '1') {
+            let percentageContent = document.getElementById('inputPercentage1').value
+            console.log(percentageContent)
+            if (percentageContent !== '') {
+                if (percentageContent >= 0 && percentageContent <= 30) {
+                    alert();
+                } else {
+                    Swal.fire({
+                        title: 'Advertencia',
+                        icon: 'warning',
+                        text: 'Los porcentajes tienen que ser mayor a 0 y menor a 30',
+                        confirmButtonColor: '#1572E8',
+                        confirmButtonText: 'Aceptar',
+                    })
+                }
+            } else {
+                Swal.fire({
+                    title: 'Advertencia',
+                    icon: 'warning',
+                    text: 'Los campos no pueden estar vacios',
+                    confirmButtonColor: '#1572E8',
+                    confirmButtonText: 'Aceptar',
+                })
+            }
+        } else if (data == '2') {
+            let percentageContent = document.getElementById('inputPercentage2').value
+            if (percentageContent !== '') {
+                if (percentageContent >= 0 && percentageContent <= 30) {
+                    alert();
+                } else {
+                    Swal.fire({
+                        title: 'Advertencia',
+                        icon: 'warning',
+                        text: 'Los porcentajes tienen que ser mayor a 0 y menor a 30',
+                        confirmButtonColor: '#1572E8',
+                        confirmButtonText: 'Aceptar',
+                    })
+                }
+            } else {
+                Swal.fire({
+                    title: 'Advertencia',
+                    icon: 'warning',
+                    text: 'Los campos no pueden estar vacios',
+                    confirmButtonColor: '#1572E8',
+                    confirmButtonText: 'Aceptar',
+                })
+            }
+        } else if (data == '3') {
+            let percentageContent = document.getElementById('inputPercentage3').value
+            if (percentageContent !== '') {
+                if (percentageContent >= 0 && percentageContent <= 40) {
+                    alert();
+                } else {
+                    Swal.fire({
+                        title: 'Advertencia',
+                        icon: 'warning',
+                        text: 'Los porcentajes tienen que ser mayor a 0 y menor a 40',
+                        confirmButtonColor: '#1572E8',
+                        confirmButtonText: 'Aceptar',
+                    })
+                }
+            } else {
+                Swal.fire({
+                    title: 'Advertencia',
+                    icon: 'warning',
+                    text: 'Los campos no pueden estar vacios',
+                    confirmButtonColor: '#1572E8',
+                    confirmButtonText: 'Aceptar',
+                })
+            }
+        }
+    }
+
+    document.querySelectorAll('.saveEvaluation').forEach(function (button) {
+        button.addEventListener('click', function () {
+            let data = this.getAttribute('data-evaluation');
+            validateEvaluation(data);
+        });
+    });
+
+    document.getElementById('confirm-button').addEventListener('click', function () {
+        confirmButton(dataConfirmation, learningId, courseId);
+        unlockAttributes();
     });
 
     document.querySelectorAll('.confirmationSave').forEach(function (button) {
         button.addEventListener('click', function () {
             dataConfirmation = this.getAttribute('data-confirmation');
-            //confirmationSave(dataConfirmation, courseId, learningId);
+            confirmationSave(dataConfirmation, courseId, learningId);
         });
     });
 
     document.querySelectorAll('.nextCard').forEach(function (button) {
         button.addEventListener('click', function () {
-            //blockAttributes(true, true);
+            blockAttributes();
             showNextCard();
         });
     });

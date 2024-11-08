@@ -302,8 +302,8 @@
             <form>
                 <div class="form-group">
                     <div class="form-group">
-                        <label for="pillSelectLearning">Selección de resultados de aprendizaje</label>
-                        <select class="form-control input-pill" id="pillSelectLearning" disabled>
+                        <label for="selectLearning">Selección de resultados de aprendizaje</label>
+                        <select class="form-control input-pill" id="selectLearning" disabled>
                             <option disabled selected value="">Seleccione un resultado de aprendizaje</option>
 
                         </select>
@@ -312,7 +312,7 @@
 
                 <div class="form-group">
                     <label for="exampleFormControlTextarea1">Descripción</label>
-                    <textarea class="form-control" id="textareaDescriptionRA" rows="10" readonly></textarea>
+                    <textarea class="form-control" id="textAreaDescriptionRA" rows="10" readonly></textarea>
                 </div>
 
                 <button type="button" class="btn btn-primary btn-lg btn-block confirmationSave d-none" style="margin-top: 10px;"
@@ -629,7 +629,7 @@
     <!-- End Card -->
 
     <!-- Card Evaluations -->
-    <div class="card" id="card-7" style="display:none;">
+    <div class="card" id="card-7">
 
         <div class="card-header">
             <div class="row">
@@ -646,9 +646,8 @@
         </div>
 
         <div class="card-body">
-
             <from>
-                <div class="row d-none" id="percentageView">
+                <div class="row">
                     <div class="col-sm-12 col-md-4">
                         <div class="form-group text-center">
                             <label>PORCENTAJE 30%</label>
@@ -668,43 +667,74 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="row " id="percentageContainer">
+                <div class="row " id="viewSelectEvaluation">
                     <div class="col-sm-12 col-md-4">
-                        <div class="form-group text-center">
-                            <label>PORCENTAJE 30%</label>
-
-                            <div class="form-group" id="evaluationsCheckbox1">
-
+                        <div class="form-group">
+                            <label for="selectProgram">Selección de evaluaciones</label>
+                            <select class="form-control input-pill selectsFrom" id="selectEvaluation1">
+                                <option disabled selected value="">Seleccione una evaluación</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="pillInput" style="margin-left: 10px;">Ingrese el prorcentaje:</label>
+                            <div class="input-group">
+                                <input type="number" max="30" class="form-control input-pill readonlyCheck" id="inputPercentage1" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary btn-round saveEvaluation" data-evaluation="1" type="button" id="savePercentage1"
+                                        data-links="1">
+                                        Guardar
+                                    </button>
+                                </div>
                             </div>
-
                         </div>
                     </div>
                     <div class="col-sm-12 col-md-4">
-                        <div class="form-group text-center">
-                            <label>PORCENTAJE 30%</label>
-                            <div class="form-group" id="evaluationsCheckbox2">
-
+                        <div class="form-group">
+                            <label for="selectProgram">Selección de evaluaciones</label>
+                            <select class="form-control input-pill selectsFrom" id="selectEvaluation1">
+                                <option disabled selected value="">Seleccione una evaluación</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="pillInput" style="margin-left: 10px;">Ingrese el prorcentaje:</label>
+                            <div class="input-group">
+                                <input type="number" max="30" class="form-control input-pill readonlyCheck" id="inputPercentage2" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary btn-round saveEvaluation" data-evaluation="2" type="button" id="savePercentage2"
+                                        data-links="2">
+                                        Guardar
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-12 col-md-4">
-                        <div class="form-group text-center">
-                            <label>PORCENTAJE 40%</label>
-                            <div class="form-group" id="evaluationsCheckbox3">
-
+                        <div class="form-group">
+                            <label for="selectProgram">Selección de evaluaciones</label>
+                            <select class="form-control input-pill selectsFrom" id="selectProgram">
+                                <option disabled selected value="">Seleccione una evaluación</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="pillInput" style="margin-left: 10px;">Ingrese el prorcentaje:</label>
+                            <div class="input-group">
+                                <input type="number" max="40" class="form-control input-pill readonlyCheck" id="inputPercentage3" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary btn-round saveEvaluation" data-evaluation="3" type="button" id="savePercentage3"
+                                        data-links="3">
+                                        Guardar
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
                 <button type="button" class="btn btn-primary btn-lg btn-block confirmationSave d-none" style="margin-top: 10px;"
                     data-confirmation="7">
                     Guardar
                 </button>
                 <button type="button" class="btn btn-primary btn-lg btn-block nextCard d-none">Siguiente</button>
             </from>
-
         </div>
     </div>
     <!-- End Card -->
@@ -719,62 +749,6 @@
         <div class="card-body">
 
             <form>
-                <div class="table-responsive d-none" id="tableReferent">
-                    <table class="table table-head-bg-primary">
-                        <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Referencias</th>
-                                <th scope="col">Links</th>
-                            </tr>
-                        </thead>
-                        <tbody id="bodyReferences">
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="" id="createReferent">
-                    <div class="" id="institutionalContainer">
-                        <div class="form-group">
-                            <label>Referencias institucionales</label>
-                            <p id="institutionalView"></p>
-                        </div>
-                    </div>
-
-                    <label for="pillInput" style="margin-left: 10px;">Ingrese la referencia institucional:</label>
-                    <div class="form-group">
-                        <div class="input-group">
-                            <input type="text" class="form-control readonlyCheck" id="linkInstitutionalReferences" placeholder="" aria-label="" aria-describedby="basic-addon1">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary referenceLinks" type="button" id="saveInstitutional"
-                                    data-links="1">
-                                    Guardar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="" id="generalContainer">
-                        <div class="form-group">
-                            <label>Referencias generales</label>
-                            <p id="generalView"></p>
-                        </div>
-                    </div>
-
-                    <label for="pillInput" style="margin-left: 10px;">Ingrese la referencia general:</label>
-                    <div class="form-group">
-                        <div class="input-group">
-                            <input type="text" class="form-control readonlyCheck" id="linkGeneralReferences" placeholder="" aria-label="" aria-describedby="basic-addon1">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary referenceLinks" type="button" id="saveGeneral"
-                                    data-links="2">
-                                    Guardar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <button type="button" class="btn btn-primary btn-lg btn-block confirmationSave d-none" style="margin-top: 10px;"
                     data-confirmation="8">
                     Guardar
@@ -824,7 +798,7 @@
                 <div class="modal-body">
 
                     <!-- Table Specialization -->
-                    <div class="table-responsive" id="specializationContainer">
+                    <div class="table-responsive d-none" id="specializationContainer">
                         <table class="table table-head-bg-primary table-hover" cellspacing="0" width="100%"
                             style="margin-top: 10px;" id="tableSpecialization">
                             <thead>
@@ -844,7 +818,7 @@
                     </div>
 
                     <!-- Table Pensum -->
-                    <div class="table-responsive" id="pensumContainer">
+                    <div class="table-responsive d-none" id="pensumContainer">
                         <table class="table table-head-bg-primary table-hover" cellspacing="0"
                             width="100%" style="margin-top: 10px;" id="tablePensum">
                             <thead>
@@ -866,7 +840,7 @@
                     </div>
 
                     <!-- Table CampoComun -->
-                    <div class="table-responsive" id="campoComunContainer">
+                    <div class="table-responsive d-none" id="campoComunContainer">
                         <table class="table table-head-bg-primary table-hover" cellspacing="0" width="100%"
                             style="margin-top: 10px;" id="tableCampoComun">
                             <thead>

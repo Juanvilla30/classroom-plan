@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('assignments_evaluations', function (Blueprint $table) {
             $table->id();
+            $table->integer('percentage_number');
 
             // Llaves foraneas
             $table->unsignedBigInteger('id_evaluation');
