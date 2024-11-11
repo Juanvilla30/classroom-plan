@@ -127,21 +127,15 @@
                                                         src="https://themekita.com/demo-atlantis-lite-bootstrap/livepreview/examples/assets/img/profile.jpg"
                                                         alt="image profile" class="avatar-img rounded"></div>
                                                 <div class="u-text">
-                                                    <h4>Hizrian</h4>
-                                                    <p class="text-muted">hello@example.com</p><a href="#"
-                                                        class="btn btn-xs btn-secondary btn-sm">View Profile</a>
+                                                    <h4>{{ auth()->user()->name }}</h4>
+                                                    <p class="text-muted">{{ auth()->user()->email }}</p>
                                                 </div>
                                             </div>
                                         </li>
-                                        <li>
+                                        <li>                                        
                                             <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">My Profile</a>
-                                            <a class="dropdown-item" href="#">My Balance</a>
-                                            <a class="dropdown-item" href="#">Inbox</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Account Setting</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Logout</a>
+                                            <a class="dropdown-item" href="#" data-toggle="modal"
+                                                data-target="#logoutModal">Cerrar sesión</a>
                                         </li>
                                     </div>
                                     <div class="scroll-element scroll-x">
@@ -182,8 +176,8 @@
                         <div class="info">
                             <a data-toggle="collapse" href="#logoutDropdown" aria-expanded="false" class="collapsed">
                                 <span>
-                                    <span class="username">User</span>
-                                    <span class="user-level text-uppercase">Rol</span>
+                                    <span class="username">{{ auth()->user()->name }}</span>
+                                    <span class="user-level text-uppercase">roles</span>
                                     <span class="caret"></span>
                                 </span>
                             </a>
@@ -192,7 +186,8 @@
                             <div class="in collapse" id="logoutDropdown">
                                 <ul class="nav">
                                     <li>
-                                        <a class="nav-link" href="" data-toggle="modal" data-target="#logoutModal">
+                                        <a class="nav-link" href="" data-toggle="modal"
+                                            data-target="#logoutModal">
                                             <span class="link-collapse">Cerrar sesión</span>
                                         </a>
                                         <form id="logout-form" action="" style="display: none;">
@@ -358,6 +353,31 @@
         <!-- End Contenido and footer -->
     </div>
     <!-- End of Content Wrapper -->
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ¿Seguro que deseas cerrar sesión?
+                </div>
+                <div class="modal-footer">
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-inline">
+                        @csrf
+                        <button type="submit" class="btn btn-primary">Aceptar</button>
+                    </form>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END Modal -->
 
 </body>
 

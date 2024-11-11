@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
 
             // Llaves foraneas
-            $table->unsignedBigInteger('id_course');
-            $table->foreign('id_course')->references('id')->on('courses');
+            $table->unsignedBigInteger('id_relations');
+            $table->foreign('id_relations')->references('id')->on('programs_courses_relationships');
 
             $table->unsignedBigInteger('id_learning_result')->nullable();
             $table->foreign('id_learning_result')->references('id')->on('learning_results');

@@ -10,308 +10,308 @@ $.ajaxSetup({
     * VARIABLES
     *
 */
+let classroomTypeId;
 let facultyId;
 let programId;
-let originalClassroomList = []; // Para almacenar la lista original de cursos
-let itemsPerPage = 6; // Número de elementos por página
-let currentPage = 1; // Página actual
 
 document.addEventListener('DOMContentLoaded', function () {
-    /*
-        *
-        * ARREGLOS
-        *
-    */
-
-
-
     /*
         *
         * FUNCIONES
         *
     */
-
-    // Función para capitalizar el primer carácter de un texto
-    function capitalizeText(text) {
-        return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+    function capitalizeOrDefault(value) {
+        if (value && value.trim() !== '') {
+            return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+        }
+        return 'Sin asignación';
     }
 
-    // Función de redirección
-    function redirect(id) {
-        window.location.href = '/view-classroom-plan/' + id; // Cambia esto a la URL correcta
-    }
-
-    function deleteClassroom(deleteId) {
-        Swal.fire({
-            title: 'Advertencia',
-            text: '¿Estás seguro de que deseas eliminar el plan de aula?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#1572E8',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Aceptar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            // Si el usuario confirma la acción
-            if (result.isConfirmed) {
-                // Realizar la petición AJAX
-                $.ajax({
-                    url: '/list-classroom-plan/delete-classroom-plan',
-                    type: 'DELETE',
-                    data: {
-                        deleteId: deleteId
-                    },
-                    success: function (response) {
-                        console.log(response)
-                        if (response.check == true) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Exito',
-                                text: response.message,
-                                confirmButtonColor: '#1269DB',
-                                confirmButtonText: 'Entendido'
-                            }).then((result) => {
-                                // Si el usuario confirma la acción
-                                if (result.isConfirmed) {
-                                    // Recargar la página cuando llegues a la última card
-                                    location.reload();
-                                } else {
-                                    location.reload();
-                                    console.log('Eliminacion cancelada por el usuario'); // Mensaje en consola si el usuario cancela la acción
-                                }
-                            });
-
-                        } else {
-                            Swal.fire({
-                                icon: 'warning',
-                                title: 'Error',
-                                text: response.error,
-                                confirmButtonColor: '#1269DB',
-                                confirmButtonText: 'Entendido'
-                            })
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('Error al obtener:', xhr);
-                        console.error('Estado:', status);
-                        console.error('Error:', error);
-                    }
-                });
-            } else {
-                console.log('Eliminacion cancelada por el usuario'); // Mensaje en consola si el usuario cancela la acción
-            }
-        });
-    }
-
-    function viewClassroom(programId) {
-        document.getElementById('card-1').classList.remove('d-none');
-
-        $.ajax({
-            url: '/list-classroom-plan/select-classroom',
-            type: 'POST',
-            data: {
-                programId: programId
-            },
-            success: function (response) {
-                $('#viewClassroomPlan').empty();
-
-                if (response.check) {
-                    originalClassroomList = response.listClassroom; // Guardar la lista original
-                    paginateClassrooms(originalClassroomList, programId); // Paginar la lista original
-
-                    // Configurar el evento de búsqueda
-                    $('#searchCourse').off('input').on('input', function () {
-                        searchCourses(programId);
-                    });
-                } else {
-                    $('#viewClassroomPlan').append('<p class="text-center w-100">No hay Planes de aula disponibles.</p>');
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error('Error al obtener programas:', xhr);
-                console.error('Estado:', status);
-                console.error('Error:', error);
-            }
-        });
-    }
-
-    function paginateClassrooms(classroomList, programId) {
-        const totalItems = classroomList.length;
-        const totalPages = Math.ceil(totalItems / itemsPerPage);
-
-        // Filtrar los elementos para la página actual
-        const startIndex = (currentPage - 1) * itemsPerPage;
-        const endIndex = startIndex + itemsPerPage;
-        const classroomToShow = classroomList.slice(startIndex, endIndex);
-
-        // Llamar a la función displayClassrooms para mostrar los elementos filtrados
-        displayClassrooms(classroomToShow);
-
-        // Generar paginador
-        generatePagination(totalPages);
-    }
-
-    function displayClassrooms(classroomToShow) {
-        $('#viewClassroomPlan').empty(); // Limpiar el contenedor antes de añadir nuevos elementos
-
-        if (classroomToShow.length > 0) {
-            classroomToShow.forEach(function (classroom) {
-                let cardHTML = `
-                    <div class="col-sm-12 col-md-6">
-                        <div class="card-body custom-card-border">
-                            <h5 class="card-title mb-3 text-primary">Plan de aula de ${capitalizeText(classroom.courses.name_course)}</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">${capitalizeText(classroom.learning_result.name_learning_result)}:</h6>
-                            <p class="card-text">${capitalizeText(classroom.learning_result.description_learning_result.substring(0, 250))}...</p>
-                            <h6 class="card-subtitle mb-2 text-muted">Objetivo general descripción:</h6>
-                            <p class="card-text">${capitalizeText(classroom.general_objective.description_general_objective.substring(0, 250))}...</p>
-                            <a href="#" class="card-link info-profile-plan" data-id="${classroom.id}">Seleccionar</a>
-                            <a href="#" class="card-link link-delete text-danger" data-id="${classroom.id}">Eliminar</a>
-                        </div>
-                    </div>
-                `;
-                $('#viewClassroomPlan').append(cardHTML);
-            });
-
-            // Agregar los event listeners a los enlaces de las tarjetas
-            $('.info-profile-plan').on('click', function (e) {
-                e.preventDefault();
-                const id = $(this).data('id');
-                redirect(id);
-            });
-
-            $('.link-delete').on('click', function (e) {
-                e.preventDefault();
-                const deleteId = $(this).data('id');
-                deleteClassroom(deleteId);
-            });
-
+    // BLOCK ATRTRIBUTES
+    function blockCampos(showField, showComponent) {
+        // Muestra u oculta la columna de "Campo"
+        if (showField) {
+            $('#tableClassroom th:nth-child(1), #tableClassroom td:nth-child(1)').css('display', '');
         } else {
-            $('#viewClassroomPlan').append('<p class="text-center w-100">No se encontraron resultados.</p>');
+            $('#tableClassroom th:nth-child(1), #tableClassroom td:nth-child(1)').css('display', 'none');
+        }
+
+        // Muestra u oculta la columna de "Componente"
+        if (showComponent) {
+            $('#tableClassroom th:nth-child(2), #tableClassroom td:nth-child(2)').css('display', '');
+        } else {
+            $('#tableClassroom th:nth-child(2), #tableClassroom td:nth-child(2)').css('display', 'none');
         }
     }
 
-    function generatePagination(totalPages) {
-        $('#pagination').empty(); // Limpiar el contenedor de paginación
+    // RESETS
+    function resetContent() {
+        const facultyField = document.getElementById('selectFacultyInfo');
+        facultyField.classList.add('d-none');
+        facultyField.value = '';
 
-        // Botón "Previous"
-        const prevButton = $('<li>')
-            .addClass('page-item ' + (currentPage === 1 ? 'disabled' : ''))
-            .append($('<a>')
-                .addClass('page-link')
-                .attr('href', '#')
-                .text('Previous')
-                .on('click', function (e) {
-                    e.preventDefault();
-                    if (currentPage > 1) {
-                        currentPage--;
-                        paginateClassrooms(originalClassroomList, programId);
-                    }
-                })
-            );
-        $('#pagination').append(prevButton);
+        const programField = document.getElementById('selectProgramInfo');
+        programField.classList.add('d-none');
+        programField.value = '';
 
-        // Botones de páginas
-        for (let i = 1; i <= totalPages; i++) {
-            const pageButton = $('<li>')
-                .addClass('page-item ' + (i === currentPage ? 'active' : ''))
-                .append($('<a>')
-                    .addClass('page-link')
-                    .attr('href', '#')
-                    .text(i)
-                    .on('click', function (e) {
-                        e.preventDefault();
-                        currentPage = i;
-                        paginateClassrooms(originalClassroomList, programId);
-                    })
-                );
-            $('#pagination').append(pageButton);
-        }
-
-        // Botón "Next"
-        const nextButton = $('<li>')
-            .addClass('page-item ' + (currentPage === totalPages ? 'disabled' : ''))
-            .append($('<a>')
-                .addClass('page-link')
-                .attr('href', '#')
-                .text('Next')
-                .on('click', function (e) {
-                    e.preventDefault();
-                    if (currentPage < totalPages) {
-                        currentPage++;
-                        paginateClassrooms(originalClassroomList, programId);
-                    }
-                })
-            );
-        $('#pagination').append(nextButton);
+        document.getElementById('card-1').classList.add('d-none');
     }
 
-    function searchCourses(programId) {
-        const searchTerm = $('#searchCourse').val().toLowerCase(); // Obtén el término de búsqueda
-        const filteredCourses = originalClassroomList.filter(course =>
-            course.courses.name_course.toLowerCase().includes(searchTerm) // Filtra por nombre del curso
-        );
-
-        // Actualiza la visualización con los cursos filtrados
-        paginateClassrooms(filteredCourses, programId); // Usar la lista filtrada para la paginación
-    }
-
-    // SELECTS
-    function selectProgram(facultyId) {
+    function searchFaculty() {
         $.ajax({
-            url: '/list-classroom-plan/select-program',
-            type: 'POST',
+            url: '/list-classroom-plan/search-faculty',
+            method: 'GET',
+            success: function (response) {
+                viewSelectFaculty(response);
+            },
+            error: function (xhr, status, error) {
+                console.error('Error al eliminar el grupo:', xhr);
+                console.error('Estado:', status);
+                console.error('Error:', error);
+                console.error('Respuesta del servidor:', xhr.responseText);
+            }
+        });
+    }
+
+    function searchProgram(facultyId, classroomTypeId) {
+        let educationId;
+        if (classroomTypeId == 2) {
+            educationId = 1;
+        } else {
+            educationId = 2;
+        }
+
+        $.ajax({
+            url: '/list-classroom-plan/search-program',
+            method: 'POST',
             data: {
-                facultyId: facultyId
+                facultyId: facultyId,
+                educationId: educationId,
             },
             success: function (response) {
-                // Limpiar el contenedor antes de añadir nuevos elementos
-                $('#cardProgram').empty();
+                viewSelectProgram(response)
+            },
+            error: function (xhr, status, error) {
+                console.error('Error al eliminar el grupo:', xhr);
+                console.error('Estado:', status);
+                console.error('Error:', error);
+                console.error('Respuesta del servidor:', xhr.responseText);
+            }
+        });
+    }
 
-                // Verificar si la respuesta contiene programas
-                if (response.check) {
-                    // Generar y agregar tarjetas al contenedor
-                    response.listPrograms.forEach(function (program) {
-                        let cardHTML = `
-                            <div class="col-sm-6 col-lg-3">
-                                <div class="card p-3">
-                                    <div class="d-flex align-items-center">
-                                        <span class="stamp stamp-md bg-primary mr-3">
-                                            <i class="far fa-building"></i>
-                                        </span>
-                                        <div>    
-                                            <h5 class="mb-1">
-                                                <a href="#" class="card-link info-classroom" data-id="${program.id}>
-                                                    <small class="text-muted">
-                                                        Programa ${program.name_program}
-                                                    </small>
-                                                </a>
-                                            </h5>
-                                        </div>  
-                                    </div>
-                                </div>
-                            </div>  
-                        `;
-                        $('#cardProgram').append(cardHTML);
+    function searchCampoComun(studyFieldId) {
+        $.ajax({
+            url: '/list-classroom-plan/search-campo-comun',
+            method: 'POST',
+            data: {
+                studyFieldId: studyFieldId,
+            },
+            success: function (response) {
+                viewClassroomPlan(response);
+            },
+            error: function (xhr, status, error) {
+                console.error('Error al eliminar el grupo:', xhr);
+                console.error('Estado:', status);
+                console.error('Error:', error);
+                console.error('Respuesta del servidor:', xhr.responseText);
+            }
+        });
+    }
 
-                        // Asegúrate de que el evento se asigne a los elementos existentes y futuros con un delegado
-                        $(document).on('click', '.info-classroom', function (e) {
-                            e.preventDefault(); // Prevenir el comportamiento predeterminado del enlace
-                            const id = $(this).data('id'); // Obtener el ID desde el atributo data-id
-                            viewClassroom(id);
-                        });
-
-                    });
+    function searchClassroomPlan(programId, classroomTypeId) {
+        let educationId;
+        if (classroomTypeId == 2) {
+            educationId = 1;
+        } else {
+            educationId = 2;
+        }
+        console.log(educationId)
+        $.ajax({
+            url: '/list-classroom-plan/search-classroom-plan',
+            method: 'POST',
+            data: {
+                programId: programId,
+            },
+            success: function (response) {
+                if (educationId == 1) {
+                    viewClassroomPlan(response);
                 } else {
-                    // Mostrar mensaje si no hay programas
-                    $('#cardProgram').append('<p class="text-center w-100">No hay programas disponibles.</p>');
+                    viewSpecialization(response);
                 }
             },
             error: function (xhr, status, error) {
-                console.error('Error al obtener programas:', xhr);
+                console.error('Error al eliminar el grupo:', xhr);
                 console.error('Estado:', status);
                 console.error('Error:', error);
+                console.error('Respuesta del servidor:', xhr.responseText);
             }
         });
+    }
+
+    // VIEWS
+    function viewSelectFaculty(response) {
+        const facultyField = document.getElementById('selectFacultyInfo');
+        facultyField.classList.remove('d-none');
+
+        const selectElement = document.getElementById('selectFaculty');
+        selectElement.innerHTML = '';
+
+        const defaultOption = document.createElement('option');
+        defaultOption.disabled = false;
+        defaultOption.selected = true;
+        defaultOption.value = '';
+        defaultOption.text = 'Seleccione una facultad';
+        selectElement.appendChild(defaultOption);
+
+        if (response.facultyInfo && response.facultyInfo.length > 0) {
+            response.facultyInfo.forEach(function (facultyArray) {
+                const option = document.createElement('option');
+                option.value = facultyArray.id;
+                option.text = capitalizeOrDefault(facultyArray.name_faculty);
+                selectElement.appendChild(option);
+            });
+            selectElement.removeAttribute('disabled');
+        } else {
+            selectElement.setAttribute('disabled', true);
+        }
+    }
+
+    function viewSelectProgram(response) {
+        const facultyField = document.getElementById('selectProgramInfo');
+        facultyField.classList.remove('d-none');
+
+        const selectElement = document.getElementById('selectProgram');
+        selectElement.innerHTML = '';
+
+        const defaultOption = document.createElement('option');
+        defaultOption.disabled = false;
+        defaultOption.selected = true;
+        defaultOption.value = '';
+        defaultOption.text = 'Seleccione una facultad';
+        selectElement.appendChild(defaultOption);
+
+        if (response.programInfo && response.programInfo.length > 0) {
+            response.programInfo.forEach(function (programArray) {
+                const option = document.createElement('option');
+                option.value = programArray.id;
+                option.text = capitalizeOrDefault(programArray.name_program);
+                selectElement.appendChild(option);
+            });
+            selectElement.removeAttribute('disabled');
+        } else {
+            selectElement.setAttribute('disabled', true);
+        }
+    }
+
+    function viewClassroomPlan(response) {
+        document.getElementById("card-1").classList.remove('d-none');
+        blockCampos(true, true);
+        console.log(response);
+        let bodyContent = $('#bodyTableClassroom');
+        bodyContent.empty();
+
+        if (response.classroomInfo && response.classroomInfo.length > 0) {
+            response.classroomInfo.forEach(function (classroom) {
+                let row = `
+                        <tr>                
+                            <td>
+                                <a href="/view-classroom-plan/${classroom.id}" class="text-dark">
+                                    ${capitalizeOrDefault(classroom.courses.component.study_field.name_study_field)}
+                                </a>
+                            </td>
+                            <td>
+                                <a href="/view-classroom-plan/${classroom.id}" class="text-dark">
+                                    ${capitalizeOrDefault(classroom.courses.component.name_component)}
+                                </a>
+                            </td>
+                            <td>
+                                <a href="/view-classroom-plan/${classroom.id}" class="text-dark">
+                                    ${capitalizeOrDefault(classroom.courses.course_code)}                        
+                                </a>
+                            </td>
+                            <td>
+                                <a href="/view-classroom-plan/${classroom.id}" class="text-dark">
+                                    ${capitalizeOrDefault(classroom.courses.name_course)}                        
+                                </a>
+                            </td>
+                            <td>
+                                <a href="/view-classroom-plan/${classroom.id}" class="text-dark">
+                                    ${capitalizeOrDefault(classroom.courses.semester.name_semester)}                                
+                                </a>
+                            </td>
+                            <td align="center">
+                                <a href="/view-classroom-plan/${classroom.id}" class="text-dark">
+                                    ${classroom.courses.credit}
+                                </a>
+                            </td>
+                            <td>
+                                <a href="/view-classroom-plan/${classroom.id}" class="text-dark">
+                                    ${capitalizeOrDefault(classroom.courses.course_type.name_course_type)}
+                                </a>
+                            </td>
+                            <td>
+                                <a href="/view-classroom-plan/${classroom.id}" class="text-dark">
+                                    ${capitalizeOrDefault(classroom.state.name_state)}
+                                </a>
+                            </td>
+                        </tr>
+                `;
+                bodyContent.append(row);
+            });
+        } else {
+            bodyContent.append('<tr><td colspan="6">No se encontraron resultados.</td></tr>');
+        }
+    }
+
+    function viewSpecialization(response) {
+        document.getElementById("card-1").classList.remove('d-none');
+        blockCampos(false, false);
+        console.log(response);
+        let bodyContent = $('#bodyTableClassroom');
+        bodyContent.empty();
+
+        if (response.classroomInfo && response.classroomInfo.length > 0) {
+            response.classroomInfo.forEach(function (classroom) {
+                let row = `
+                        <tr>                       
+                            <td>
+                                <a href="/view-classroom-plan/${classroom.id}" class="text-dark">
+                                    ${capitalizeOrDefault(classroom.courses.course_code)}                        
+                                </a>
+                            </td>
+                            <td>
+                                <a href="/view-classroom-plan/${classroom.id}" class="text-dark">
+                                    ${capitalizeOrDefault(classroom.courses.name_course)}                        
+                                </a>
+                            </td>
+                            <td>
+                                <a href="/view-classroom-plan/${classroom.id}" class="text-dark">
+                                    ${capitalizeOrDefault(classroom.courses.semester.name_semester)}                                
+                                </a>
+                            </td>
+                            <td align="center">
+                                <a href="/view-classroom-plan/${classroom.id}" class="text-dark">
+                                    ${classroom.courses.credit}
+                                </a>
+                            </td>
+                            <td>
+                                <a href="/view-classroom-plan/${classroom.id}" class="text-dark">
+                                    ${capitalizeOrDefault(classroom.courses.course_type.name_course_type)}
+                                </a>
+                            </td>
+                            <td>
+                                <a href="/view-classroom-plan/${classroom.id}" class="text-dark">
+                                    ${capitalizeOrDefault(classroom.state.name_state)}
+                                </a>
+                            </td>
+                        </tr>
+                `;
+                bodyContent.append(row);
+            });
+        } else {
+            bodyContent.append('<tr><td colspan="6">No se encontraron resultados.</td></tr>');
+        }
     }
 
     /*
@@ -319,22 +319,23 @@ document.addEventListener('DOMContentLoaded', function () {
         * Event Listener
         *
     */
-
-    // Asignar evento click a cada enlace con la clase 'nav-link sede-tab' para actualizar el enlace seleccionado y mostrar el ID de la facultad
-    document.querySelectorAll('.nav-link.sede-tab').forEach(link => {
-        // Agregar un listener de evento 'click' a cada enlace
-        link.addEventListener('click', function () {
-            // Desactivar la selección de todos los enlaces eliminando 'aria-selected' en cada uno
-            document.querySelectorAll('.nav-link.sede-tab').forEach(l => l.setAttribute('aria-selected', 'false'));
-
-            // Marcar el enlace actual como seleccionado asignando 'aria-selected' a 'true'
-            this.setAttribute('aria-selected', 'true');
-
-            // Obtener el valor de 'data-value' del enlace seleccionado o mostrar un mensaje en caso de que no haya enlace seleccionado
-            facultyId = this.getAttribute('data-value') || 'No hay enlace seleccionado';
-            selectProgram(facultyId);
-        });
+    document.getElementById('selectTypeClassroom').addEventListener('change', function () {
+        classroomTypeId = this.options[this.selectedIndex].value;
+        resetContent();
+        if (classroomTypeId !== '1') {
+            searchFaculty();
+        } else {
+            searchCampoComun(classroomTypeId);
+        }
     });
 
+    document.getElementById('selectFaculty').addEventListener('change', function () {
+        facultyId = this.options[this.selectedIndex].value;
+        searchProgram(facultyId, classroomTypeId);
+    });
 
+    document.getElementById('selectProgram').addEventListener('change', function () {
+        programId = this.options[this.selectedIndex].value;
+        searchClassroomPlan(programId, classroomTypeId);
+    });
 });

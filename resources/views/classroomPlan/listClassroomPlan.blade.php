@@ -38,56 +38,58 @@
         </div>
 
         <div class="card-body">
-            <ul class="nav nav-pills nav-primary" id="pills-tab" role="tablist">
-
-                @foreach ($facultys as $faculty)
-                <li class="nav-item">
-                    <a class="nav-link sede-tab" id="pills-home-tab-nobd" data-toggle="pill"
-                        href="#pills-horarios-nobd" role="tab" aria-controls="pills-home-nobd" aria-selected="true"
-                        data-value="{{ $faculty->id }}">
-                        {{ ucfirst(strtolower($faculty->name_faculty)) }}
-                    </a>
-                </li>
-                @endforeach
-
-            </ul>
+            <form>
+                <div class="form-group">
+                    <label for="selectTypeClassroom">Selección tipo de plan de aula</label>
+                    <select class="form-control input-pill" id="selectTypeClassroom">
+                        <option disabled selected value="">Seleccione un tipo de plan de aula</option>
+                        <option value="1">Planes de aula campo comun</option>
+                        <option value="2">Planes de aula pensum</option>
+                        <option value="3">Planes de aula especializaciones</option>
+                    </select>
+                </div>
+                <div class="form-group d-none" id="selectFacultyInfo">
+                    <label for="selectFaculty">Selección facultad</label>
+                    <select class="form-control input-pill" id="selectFaculty">
+                        <option disabled selected value="">Seleccione una facultad</option>
+                    </select>
+                </div>
+                <div class="form-group d-none" id="selectProgramInfo">
+                    <label for="selectProgram">Selección programa</label>
+                    <select class="form-control input-pill" id="selectProgram" disabled>
+                        <option disabled selected value="">Seleccione un programa</option>
+                    </select>
+                </div>
+            </form>
         </div>
     </div>
     <!-- End Card -->
-
-    <div class="row" id="cardProgram">
-    </div>
 
     <!-- Card -->
     <div class="card d-none" id="card-1">
 
         <div class="card-header">
-            <h5 class="card-title font-weight-bold text-primary">Listado de planes de aula</h5>
+            <h5 class="card-title font-weight-bold text-primary">Listado de plan de aula</h5>
         </div>
 
         <div class="card-body">
-
-            <div class="mb-3">
-                <input type="text" id="searchCourse" class="form-control" placeholder="Buscar por nombre del curso">
-            </div>
-
-
-            <div class="tab-content mt-2 mb-3" id="pills-without-border-tabContent">
-                <div class="tab-pane fade show active" id="pills-horarios-nobd" role="tabpanel"
-                    aria-labelledby="pills-home-tab-nobd">
-                    <div id="viewClassroomPlan" class="row">
-                        <div class="col-12 text-center">
-                            <h4>Por favor, selecciona una facultad para visualizar los perfiles de egreso disponibles.</h4>
-                        </div>
-                    </div>
-
-                    <div id="paginationContainer" class="d-flex justify-content-center my-3">
-                        <nav aria-label="...">
-                            <ul class="pagination mb-0" id="pagination"></ul>
-                        </nav>
-                    </div>
-
-                </div>
+            <div class="table-responsive">
+                <table class="table table-head-bg-primary table-hover" id="tableClassroom">
+                    <thead>
+                        <tr>
+                            <th scope="col">Campo</th>
+                            <th scope="col">Componente</th>
+                            <th scope="col">Codigo de curso</th>
+                            <th scope="col">Curso</th>
+                            <th scope="col">Semestre</th>
+                            <th scope="col">Creditos</th>
+                            <th scope="col">Tipo de curso</th>
+                            <th scope="col">Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bodyTableClassroom">
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

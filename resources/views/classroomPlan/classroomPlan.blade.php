@@ -42,16 +42,15 @@
             <!-- Forms -->
             <form>
                 <div class="form-group">
-                    <label for="selectEducation">Selección nivel de educación</label>
-                    <select class="form-control input-pill selectsFrom" id="selectEducation">
-                        <option disabled selected value="">Seleccione un nivel de educación</option>
-                        @foreach ($educationInfo as $education)
-                        <option value="{{ $education->id }}">{{ ucfirst(strtolower($education->name_education_level)) }}
-                        </option>
-                        @endforeach
+                    <label for="selectTypeClassroom">Selección tipo de plan de aula</label>
+                    <select class="form-control input-pill selectsFrom" id="selectTypeClassroom">
+                        <option disabled selected value="">Seleccione un tipo de plan de aula</option>
+                        <option value="1">Planes de aula campo comun</option>
+                        <option value="2">Planes de aula pensum</option>
+                        <option value="3">Planes de aula especializaciones</option>
                     </select>
                 </div>
-                <div class="form-group">
+                <div class="form-group d-none" id="fromSelectFaculty">
                     <label for="selectFaculty">Selección facultad</label>
                     <select class="form-control input-pill selectsFrom" id="selectFaculty" disabled>
                         <option disabled selected value="">Seleccione una facultad</option>
@@ -61,17 +60,15 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="form-group">
+                <div class="form-group d-none" id="fromSelectProgram">
                     <label for="selectProgram">Selección programa</label>
                     <select class="form-control input-pill selectsFrom" id="selectProgram" disabled>
                         <option disabled selected value="">Seleccione un programa</option>
                     </select>
                 </div>
-            </form>
-            <form id="fromSelectStudyFields" class="d-none">
-            </form>
-            <form id="fromButtonSearch">
-                <h3 style="text-align: center; font-weight: bold;">Selecciona los filtros para poder seleccionar un curso</h3>
+                <button type="button" class="btn btn-primary btn-lg btn-block d-none" style="margin-top: 20px;" id="buttonSearchCourse">
+                    Seleccione el curso
+                </button>
             </form>
             <!-- End Forms -->
 
@@ -629,20 +626,10 @@
     <!-- End Card -->
 
     <!-- Card Evaluations -->
-    <div class="card" id="card-7">
+    <div class="card" id="card-7" style="display:none;">
 
         <div class="card-header">
-            <div class="row">
-                <div class="col-sm-12 col-md-6">
-                    <h5 class="card-title font-weight-bold text-primary">Evaluaciones</h5>
-                </div>
-                <div class="col-sm-12 col-md-6 text-md-right">
-                    <button class="btn btn-primary btn-round" id="createEvaluation"
-                        data-toggle="modal" data-target="#modalNewEvaluation">
-                        Nueva evaluación
-                    </button>
-                </div>
-            </div>
+            <h5 class="card-title font-weight-bold text-primary">Evaluaciones</h5>
         </div>
 
         <div class="card-body">
@@ -651,27 +638,27 @@
                     <div class="col-sm-12 col-md-4">
                         <div class="form-group text-center">
                             <label>PORCENTAJE 30%</label>
-                            <p id="percentage1"></p>
+                            <p class="percentage" id="percentage1"></p>
                         </div>
                     </div>
                     <div class="col-sm-12 col-md-4">
                         <div class="form-group text-center">
                             <label>PORCENTAJE 30%</label>
-                            <p id="percentage2"></p>
+                            <p class="percentage" id="percentage2"></p>
                         </div>
                     </div>
                     <div class="col-sm-12 col-md-4">
                         <div class="form-group text-center">
                             <label>PORCENTAJE 40%</label>
-                            <p id="percentage3"></p>
+                            <p class="percentage" id="percentage3"></p>
                         </div>
                     </div>
                 </div>
-                <div class="row " id="viewSelectEvaluation">
+                <div class="row d-none" id="viewSelectEvaluation">
                     <div class="col-sm-12 col-md-4">
                         <div class="form-group">
                             <label for="selectProgram">Selección de evaluaciones</label>
-                            <select class="form-control input-pill selectsFrom" id="selectEvaluation1">
+                            <select class="form-control input-pill selectEvaluation" data-select-evaluation="1" id="selectEvaluation1">
                                 <option disabled selected value="">Seleccione una evaluación</option>
                             </select>
                         </div>
@@ -691,7 +678,7 @@
                     <div class="col-sm-12 col-md-4">
                         <div class="form-group">
                             <label for="selectProgram">Selección de evaluaciones</label>
-                            <select class="form-control input-pill selectsFrom" id="selectEvaluation1">
+                            <select class="form-control input-pill selectEvaluation" data-select-evaluation="2" id="selectEvaluation2">
                                 <option disabled selected value="">Seleccione una evaluación</option>
                             </select>
                         </div>
@@ -711,7 +698,7 @@
                     <div class="col-sm-12 col-md-4">
                         <div class="form-group">
                             <label for="selectProgram">Selección de evaluaciones</label>
-                            <select class="form-control input-pill selectsFrom" id="selectProgram">
+                            <select class="form-control input-pill selectEvaluation" data-select-evaluation="3" id="selectEvaluation3">
                                 <option disabled selected value="">Seleccione una evaluación</option>
                             </select>
                         </div>
@@ -749,6 +736,62 @@
         <div class="card-body">
 
             <form>
+                <div class="table-responsive" id="tableReferent">
+                    <table class="table table-head-bg-primary">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Referencias</th>
+                                <th scope="col">Links</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodyReferences">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="d-none" id="createReferent">
+                    <div class="" id="institutionalContainer">
+                        <div class="form-group">
+                            <label>Referencias institucionales</label>
+                            <p id="institutionalView"></p>
+                        </div>
+                    </div>
+
+                    <label for="pillInput" style="margin-left: 10px;">Ingrese la referencia institucional:</label>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="text" class="form-control readonlyCheck" id="linkInstitutionalReferences" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary referenceLinks" type="button" id="saveInstitutional"
+                                    data-links="1">
+                                    Guardar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="" id="generalContainer">
+                        <div class="form-group">
+                            <label>Referencias generales</label>
+                            <p id="generalView"></p>
+                        </div>
+                    </div>
+
+                    <label for="pillInput" style="margin-left: 10px;">Ingrese la referencia general:</label>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="text" class="form-control readonlyCheck" id="linkGeneralReferences" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary referenceLinks" type="button" id="saveGeneral"
+                                    data-links="2">
+                                    Guardar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <button type="button" class="btn btn-primary btn-lg btn-block confirmationSave d-none" style="margin-top: 10px;"
                     data-confirmation="8">
                     Guardar
@@ -799,7 +842,7 @@
 
                     <!-- Table Specialization -->
                     <div class="table-responsive d-none" id="specializationContainer">
-                        <table class="table table-head-bg-primary table-hover" cellspacing="0" width="100%"
+                        <table class="table table-head-bg-primary" cellspacing="0" width="100%"
                             style="margin-top: 10px;" id="tableSpecialization">
                             <thead>
                                 <tr>
@@ -819,7 +862,7 @@
 
                     <!-- Table Pensum -->
                     <div class="table-responsive d-none" id="pensumContainer">
-                        <table class="table table-head-bg-primary table-hover" cellspacing="0"
+                        <table class="table table-head-bg-primary" cellspacing="0"
                             width="100%" style="margin-top: 10px;" id="tablePensum">
                             <thead>
                                 <tr>
@@ -841,7 +884,7 @@
 
                     <!-- Table CampoComun -->
                     <div class="table-responsive d-none" id="campoComunContainer">
-                        <table class="table table-head-bg-primary table-hover" cellspacing="0" width="100%"
+                        <table class="table table-head-bg-primary" cellspacing="0" width="100%"
                             style="margin-top: 10px;" id="tableCampoComun">
                             <thead>
                                 <tr>

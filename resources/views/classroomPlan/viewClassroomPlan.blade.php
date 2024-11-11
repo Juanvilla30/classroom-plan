@@ -56,69 +56,15 @@
 
         <div class="card-body">
 
-            <div class="row text-center">
-                <div class="col-sm-12 col-md-4 mx-auto">
-                    <div class="form-group">
-                        <label>Facultad:</label>
-                        <p>{{ucfirst(strtolower($classroomInfo->learningResult->competence->profileEgres->program->faculty->name_faculty))}}</p>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-4 mx-auto">
-                    <div class="form-group">
-                        <label>Programa:</label>
-                        <p>{{ucfirst(strtolower($classroomInfo->learningResult->competence->profileEgres->program->name_program))}}</p>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-4 mx-auto">
-                    <div class="form-group">
-                        <label>Semestre:</label>
-                        <p>{{ucfirst(strtolower($classroomInfo->courses->semester->name_semester))}}</p>
-                    </div>
-                </div>                
-                <div class="col-sm-12 col-md-4 mx-auto">
-                    <div class="form-group">
-                        <label>Codigo de curso:</label>
-                        <p>{{ucfirst(strtolower($classroomInfo->courses->course_code))}}</p>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-4 mx-auto">
-                    <div class="form-group">
-                        <label>Curso:</label>
-                        <p>{{ucfirst(strtolower($classroomInfo->courses->name_course))}}</p>
-                    </div>
-                </div>                
-                <div class="col-sm-12 col-md-4 mx-auto">
-                    <div class="form-group">
-                        <label>Nivel de educación:</label>
-                        <p>{{ucfirst(strtolower($classroomInfo->courses->educationLevel->name_education_level))}}</p>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-4 mx-auto">
-                    <div class="form-group">
-                        <label>Campo:</label>
-                        <p>{{ucfirst(strtolower($classroomInfo->courses->component->studyField->name_study_field))}}</p>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-4 mx-auto">
-                    <div class="form-group">
-                        <label>Componente:</label>
-                        <p>{{ucfirst(strtolower($classroomInfo->courses->component->name_component))}}</p>
-                    </div>
-                </div>                
-                <div class="col-sm-12 col-md-4 mx-auto">
-                    <div class="form-group">
-                        <label>Creditos:</label>
-                        <p>{{$classroomInfo->courses->credit}}</p>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-4 mx-auto">
-                    <div class="form-group">
-                        <label>Tipo de curso:</label>
-                        <p>{{ucfirst(strtolower($classroomInfo->courses->courseType->name_course_type))}}</p>
-                    </div>
-                </div>
+            <div class="row text-center" id="viewInfoCampoComun">
+                
             </div>
-
+            <div class="row text-center" id="viewInfoPensum">
+                
+            </div>
+            <div class="row text-center" id="viewInfoSpecializations">
+                
+            </div>
         </div>
     </div>
     <!-- End Card -->
@@ -294,34 +240,6 @@
         </div>
     </div>
     <!-- End Modal -->
-
-    <!-- Modal Confirm -->
-    <div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog"
-        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="card-title font-weight-bold text-primary">Advertencia</h5>
-
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    ¿Seguro que deseas guardar los cambios?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="confirm-button" data-card="1">Aceptar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End Modal -->
-
-    <!-- Styles -->
-    <link rel="stylesheet" href="../../css/classroomPlans.css">
-    <!-- End Styles -->
 
     <!-- Scripts -->
     <script src="{{ asset('js/viewClassroom.js') }}"></script>

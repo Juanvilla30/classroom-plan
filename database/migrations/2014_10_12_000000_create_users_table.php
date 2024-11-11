@@ -16,15 +16,15 @@ return new class extends Migration
             // Campos de tabla
             $table->id();
             $table->string('name');
-            $table->string('last_name');
-            $table->integer('phone');
+            $table->string('last_name')->nullable();
+            $table->integer('phone')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
 
             // Llaves foraneas
-            $table->unsignedBigInteger('id_role');
+            $table->unsignedBigInteger('id_role')->nullable();
             $table->foreign('id_role')->references('id')->on('roles');
 
             // CAMPOS DE ACTUALIZACION
