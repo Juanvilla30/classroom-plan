@@ -19,9 +19,6 @@ return new class extends Migration
             $table->string('degree_type');
 
             // Llaves foraneas
-            $table->unsignedBigInteger('id_user')->nullable();
-            $table->foreign('id_user')->references('id')->on('users');
-
             $table->unsignedBigInteger('id_education_level')->nullable(); 
             $table->foreign('id_education_level')->references('id')->on('education_levels');
             

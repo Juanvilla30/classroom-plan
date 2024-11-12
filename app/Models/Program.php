@@ -16,15 +16,9 @@ class Program extends Model
         'name_program',
         'anio',
         'degree_type',
-        'id_user',
         'id_education_level',
         'id_faculty',
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'id_user');
-    }
 
     public function educationLevel()
     {

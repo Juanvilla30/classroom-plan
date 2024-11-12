@@ -27,6 +27,9 @@ return new class extends Migration
             $table->unsignedBigInteger('id_role')->nullable();
             $table->foreign('id_role')->references('id')->on('roles');
 
+            $table->unsignedBigInteger('id_program')->nullable();
+            $table->foreign('id_program')->references('id')->on('programs');
+
             // CAMPOS DE ACTUALIZACION
             $table->timestamps();
         });

@@ -18,7 +18,8 @@ class ViewClassroomPlanController extends Controller
     public function index($id)
     {
         try {
-            return view('classroomPlan.viewClassroomPlan', compact(
+            return view('classroomPlan.viewClassroomPlan', 
+            compact(
                 'id'
             ));
         } catch (\Exception $e) {
@@ -77,37 +78,4 @@ class ViewClassroomPlanController extends Controller
         }
     }
 
-    public function searchData(Request $request)
-    {
-        try {
-            $programId = $request->input('programId');
-
-            // Obtener el primer perfil de egreso asociado al programa
-            $profileEgress = ProfileEgress::where('id_program', $programId)
-                ->orderBy('id')
-                ->first();
-
-            // Obtener las competencias asociadas al perfil de egreso encontrado
-            $competences = Competence::where('id_profile_egres', $profileEgress->id)
-                ->orderBy('id')
-                ->get();
-
-            // Obtener los resultados de aprendizaje asociados a las competencias
-            $learningResults = LearningResult::whereIn('id_competence', $competences->pluck('id'))
-                ->orderBy('id')
-                ->get();
-
-            return response()->json([
-                'check' => true,
-                'profileEgress' => $profileEgress,
-                'competences' => $competences,
-                'learningResult' => $learningResults,
-            ]);
-        } catch (\Exception $e) {
-            return redirect()->back()->with(
-                'error',
-                'Ocurrió un problema al cargar la información del perfil de egreso.'
-            );
-        }
-    }
 }
