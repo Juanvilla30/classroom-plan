@@ -100,12 +100,12 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function searchCampoComun(studyFieldId) {
+    function searchCampoComun(classroomTypeId) {
         $.ajax({
             url: '/list-classroom-plan/search-campo-comun',
             method: 'POST',
             data: {
-                studyFieldId: studyFieldId,
+                classroomTypeId: classroomTypeId,
             },
             success: function (response) {
                 viewClassroomPlan(response);
@@ -207,7 +207,6 @@ document.addEventListener('DOMContentLoaded', function () {
     function viewClassroomPlan(response) {
         document.getElementById("card-1").classList.remove('d-none');
         blockCampos(true, true);
-        console.log(response);
         let bodyContent = $('#bodyTableClassroom');
         bodyContent.empty();
 
@@ -217,37 +216,37 @@ document.addEventListener('DOMContentLoaded', function () {
                         <tr>                
                             <td>
                                 <a href="/view-classroom-plan/${classroom.id}" class="text-dark">
-                                    ${capitalizeOrDefault(classroom.courses.component.study_field.name_study_field)}
+                                    ${capitalizeOrDefault(classroom.relations.course.component.study_field.name_study_field)}
                                 </a>
                             </td>
                             <td>
                                 <a href="/view-classroom-plan/${classroom.id}" class="text-dark">
-                                    ${capitalizeOrDefault(classroom.courses.component.name_component)}
+                                    ${capitalizeOrDefault(classroom.relations.course.component.name_component)}
                                 </a>
                             </td>
                             <td>
                                 <a href="/view-classroom-plan/${classroom.id}" class="text-dark">
-                                    ${capitalizeOrDefault(classroom.courses.course_code)}                        
+                                    ${capitalizeOrDefault(classroom.relations.course.course_code)}                        
                                 </a>
                             </td>
                             <td>
                                 <a href="/view-classroom-plan/${classroom.id}" class="text-dark">
-                                    ${capitalizeOrDefault(classroom.courses.name_course)}                        
+                                    ${capitalizeOrDefault(classroom.relations.course.name_course)}                        
                                 </a>
                             </td>
                             <td>
                                 <a href="/view-classroom-plan/${classroom.id}" class="text-dark">
-                                    ${capitalizeOrDefault(classroom.courses.semester.name_semester)}                                
+                                    ${capitalizeOrDefault(classroom.relations.course.semester.name_semester)}                                
                                 </a>
                             </td>
                             <td align="center">
                                 <a href="/view-classroom-plan/${classroom.id}" class="text-dark">
-                                    ${classroom.courses.credit}
+                                    ${classroom.relations.course.credit}
                                 </a>
                             </td>
                             <td>
                                 <a href="/view-classroom-plan/${classroom.id}" class="text-dark">
-                                    ${capitalizeOrDefault(classroom.courses.course_type.name_course_type)}
+                                    ${capitalizeOrDefault(classroom.relations.course.course_type.name_course_type)}
                                 </a>
                             </td>
                             <td>
@@ -277,27 +276,27 @@ document.addEventListener('DOMContentLoaded', function () {
                         <tr>                       
                             <td>
                                 <a href="/view-classroom-plan/${classroom.id}" class="text-dark">
-                                    ${capitalizeOrDefault(classroom.courses.course_code)}                        
+                                    ${capitalizeOrDefault(classroom.relations.course.course_code)}                        
                                 </a>
                             </td>
                             <td>
                                 <a href="/view-classroom-plan/${classroom.id}" class="text-dark">
-                                    ${capitalizeOrDefault(classroom.courses.name_course)}                        
+                                    ${capitalizeOrDefault(classroom.relations.course.name_course)}                        
                                 </a>
                             </td>
                             <td>
                                 <a href="/view-classroom-plan/${classroom.id}" class="text-dark">
-                                    ${capitalizeOrDefault(classroom.courses.semester.name_semester)}                                
+                                    ${capitalizeOrDefault(classroom.relations.course.semester.name_semester)}                                
                                 </a>
                             </td>
                             <td align="center">
                                 <a href="/view-classroom-plan/${classroom.id}" class="text-dark">
-                                    ${classroom.courses.credit}
+                                    ${classroom.relations.course.credit}
                                 </a>
                             </td>
                             <td>
                                 <a href="/view-classroom-plan/${classroom.id}" class="text-dark">
-                                    ${capitalizeOrDefault(classroom.courses.course_type.name_course_type)}
+                                    ${capitalizeOrDefault(classroom.relations.course.course_type.name_course_type)}
                                 </a>
                             </td>
                             <td>

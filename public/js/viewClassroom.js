@@ -12,7 +12,7 @@ $.ajaxSetup({
 */
 const classroomId = document.getElementById('classroomId').getAttribute('data-id');
 let programId;
-
+let topicInfo;
 // UPDATE
 let selectLearningId;
 let contentCompetence;
@@ -23,10 +23,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /*
         *
-        * ARREGLOS
+        * LLAMADOS
         *
     */
-    searchClassroom(classroomId);
+    searchClassroom(classroomId).then(response => {
+        topicInfo = response;
+    }).catch(error => {
+        console.error("Error en la solicitud AJAX:", error);
+    });;
 
     /*
         *
@@ -44,35 +48,46 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // SEARCH
     function searchClassroom(classroomId) {
-        $.ajax({
-            url: '/view-classroom-plan/info-classroom-plans',
-            method: 'POST',
-            data: {
-                classroomId: classroomId,
-            },
-            success: function (response) {
-                let learningInfo = response.classroomInfo.learning_result;
-                let generalInfo = response.classroomInfo.general_objective;
-                let specificInfo = response.specificInfo;
-                let topicInfo = response.topicInfo;
-                let assignInfo = response.assigEvaluationInfo;
-                let referenceInfo = response.referencsInfo;
-                programId = response.classroomInfo.learning_result.competence.profile_egres.id_program
-                //viewInfoCampoComun(response);
-                viewInfoPensum(response);
-                //viewInfoSpecializations(response);
-                viewLearning(learningInfo);
-                viewObjetives(generalInfo, specificInfo);
-                viewTopics(topicInfo);
-                viewPercentage(assignInfo);
-                viewReferences(referenceInfo);
-            },
-            error: function (xhr, status, error) {
-                console.error('Error al eliminar el grupo:', xhr);
-                console.error('Estado:', status);
-                console.error('Error:', error);
-                console.error('Respuesta del servidor:', xhr.responseText);
-            }
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: '/view-classroom-plan/info-classroom-plans',
+                method: 'POST',
+                data: {
+                    classroomId: classroomId,
+                },
+                success: function (response) {
+                    console.log(response)
+                    let learningInfo = response.classroomInfo.learning_result;
+                    let generalInfo = response.classroomInfo.general_objective;
+                    let specificInfo = response.specificInfo;
+                    let topicInfo = response.topicInfo;
+                    let assignInfo = response.assigEvaluationInfo;
+                    let referenceInfo = response.referencsInfo;
+                    programId = response.classroomInfo.learning_result.competence.profile_egres.id_program
+                    educationId = response.classroomInfo.relations.program?.id_education_level || null;
+                    console.log(programId)
+                    if (educationId == null) {
+                        viewInfoCampoComun(response);
+                    } else if (educationId == 1) {
+                        viewInfoPensum(response);
+                    } else if (educationId == 2) {
+                        viewInfoSpecializations(response);
+                    }
+                    viewLearning(learningInfo);
+                    viewObjetives(generalInfo, specificInfo);
+                    viewTopics(topicInfo);
+                    resolve(topicInfo);
+                    viewPercentage(assignInfo);
+                    viewReferences(referenceInfo);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error al eliminar el grupo:', xhr);
+                    console.error('Estado:', status);
+                    console.error('Error:', error);
+                    console.error('Respuesta del servidor:', xhr.responseText);
+                    reject(error)
+                }
+            });
         });
     }
 
@@ -123,13 +138,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="col-sm-12 col-md-4 mx-auto">
                     <div class="form-group">
                         <label>Codigo de curso:</label>
-                        <p>${infoClassroom.courses.course_code}</p>
+                        <p>${infoClassroom.relations.course.course_code}</p>
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-4 mx-auto">
                     <div class="form-group">
                         <label>Curso:</label>
-                        <p>${capitalizeOrDefault(infoClassroom.courses.name_course)}</p>
+                        <p>${capitalizeOrDefault(infoClassroom.relations.course.name_course)}</p>
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-4 mx-auto">
@@ -141,31 +156,31 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="col-sm-12 col-md-4 mx-auto">
                     <div class="form-group">
                         <label>Campo:</label>
-                        <p>${capitalizeOrDefault(infoClassroom.courses.component.study_field.name_study_field)}</p>
+                        <p>${capitalizeOrDefault(infoClassroom.relations.course.component.study_field.name_study_field)}</p>
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-4 mx-auto">
                     <div class="form-group">
                         <label>Componente:</label>
-                        <p>${capitalizeOrDefault(infoClassroom.courses.component.name_component)}</p>
+                        <p>${capitalizeOrDefault(infoClassroom.relations.course.component.name_component)}</p>
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-4 mx-auto">
                     <div class="form-group">
                         <label>Creditos:</label>
-                        <p>${infoClassroom.courses.credit}</p>
+                        <p>${infoClassroom.relations.course.credit}</p>
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-4 mx-auto">
                     <div class="form-group">
                         <label>Semestre:</label>
-                        <p>${capitalizeOrDefault(infoClassroom.courses.semester.name_semester)}</p>
+                        <p>${capitalizeOrDefault(infoClassroom.relations.course.semester.name_semester)}</p>
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-4 mx-auto">
                     <div class="form-group">
                         <label>Tipo de curso:</label>
-                        <p>${capitalizeOrDefault(infoClassroom.courses.course_type.name_course_type)}</p>
+                        <p>${capitalizeOrDefault(infoClassroom.relations.course.course_type.name_course_type)}</p>
                     </div>
                 </div>
         `;
@@ -175,9 +190,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function viewInfoPensum(response) {
         let infoClassroom = response.classroomInfo;
-        let infoProgram = response.classroomInfo.learning_result.competence.profile_egres.program;
+        let infoProgram = response.classroomInfo.learning_result.competence.profile_egres.program
         console.log(infoProgram)
-        
+
         let infoContent;
         infoContent = ` 
                 <div class="col-sm-12 col-md-4 mx-auto">
@@ -195,19 +210,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="col-sm-12 col-md-4 mx-auto">
                     <div class="form-group">
                         <label>Semestre:</label>
-                        <p>${capitalizeOrDefault(infoClassroom.courses.semester.name_semester)}</p>
+                        <p>${capitalizeOrDefault(infoClassroom.relations.course.semester.name_semester)}</p>
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-4 mx-auto">
                     <div class="form-group">
                         <label>Codigo de curso:</label>
-                        <p>${infoClassroom.courses.course_code}</p>
+                        <p>${infoClassroom.relations.course.course_code}</p>
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-4 mx-auto">
                     <div class="form-group">
                         <label>Curso:</label>
-                        <p>${capitalizeOrDefault(infoClassroom.courses.name_course)}</p>
+                        <p>${capitalizeOrDefault(infoClassroom.relations.course.name_course)}</p>
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-4 mx-auto">
@@ -219,25 +234,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="col-sm-12 col-md-4 mx-auto">
                     <div class="form-group">
                         <label>Campo:</label>
-                        <p>${capitalizeOrDefault(infoClassroom.courses.component.study_field.name_study_field)}</p>
+                        <p>${capitalizeOrDefault(infoClassroom.relations.course.component.study_field.name_study_field)}</p>
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-4 mx-auto">
                     <div class="form-group">
                         <label>Componente:</label>
-                        <p>${capitalizeOrDefault(infoClassroom.courses.component.name_component)}</p>
+                        <p>${capitalizeOrDefault(infoClassroom.relations.course.component.name_component)}</p>
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-4 mx-auto">
                     <div class="form-group">
                         <label>Creditos:</label>
-                        <p>${infoClassroom.courses.credit}</p>
+                        <p>${infoClassroom.relations.course.credit}</p>
                     </div>
                 </div>                
                 <div class="col-sm-12 col-md-4 mx-auto">
                     <div class="form-group">
                         <label>Tipo de curso:</label>
-                        <p>${capitalizeOrDefault(infoClassroom.courses.course_type.name_course_type)}</p>
+                        <p>${capitalizeOrDefault(infoClassroom.relations.course.course_type.name_course_type)}</p>
                     </div>
                 </div>
         `;
@@ -354,62 +369,54 @@ document.addEventListener('DOMContentLoaded', function () {
     function viewTopics(topicInfo) {
         if (topicInfo.length > 0) {
             let topicsContent1 = '<div class="row">';
-
             topicInfo.slice(0, 5).forEach((topic, index) => {
                 const i = index + 1;
                 topicsContent1 += `
-                    <div class="col-sm-12 col-md-4">
-                        <div class="form-group">
-                            <label for="textAreaTopic${i}">Tema semana ${i}:</label>
-                            <textarea class="form-control" data-topics-id="${topic.id}" id="textAreaTopic${i}" rows="8" disabled>${capitalizeOrDefault(topic.description_topic)}</textarea>
+                        <div class="col-sm-12 col-md-4">
+                            <div class="form-group">
+                                <label for="textAreaTopic${i}">Tema semana ${i}:</label>
+                                <textarea class="form-control" data-topics-id="${topic.id}" id="textAreaTopic${i}" rows="8" disabled>${capitalizeOrDefault(topic.description_topic)}</textarea>
+                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
             });
-
             topicsContent1 += '</div>';
-            document.getElementById("fromTopicsOne").innerHTML = topicsContent1;
+            document.getElementById("fromWeeks1").innerHTML = topicsContent1;
 
             let topicsContent2 = '<div class="row">';
-
             topicInfo.slice(5, 10).forEach((topic, index) => {
                 const i = index + 6;
                 topicsContent2 += `
-                    <div class="col-sm-12 col-md-4">
-                        <div class="form-group">
-                            <label for="textAreaTopic${i}">Tema semana ${i}:</label>
-                            <textarea class="form-control" data-topics-id="${topic.id}" id="textAreaTopic${i}" rows="8" disabled>${capitalizeOrDefault(topic.description_topic)}</textarea>
+                        <div class="col-sm-12 col-md-4">
+                            <div class="form-group">
+                                <label for="textAreaTopic${i}">Tema semana ${i}:</label>
+                                <textarea class="form-control" data-topics-id="${topic.id}" id="textAreaTopic${i}" rows="8" disabled>${capitalizeOrDefault(topic.description_topic)}</textarea>
+                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
             });
-
             topicsContent2 += '</div>';
-            document.getElementById("fromTopicsTwo").innerHTML = topicsContent2;
+            document.getElementById("fromWeeks2").innerHTML = topicsContent2;
 
             let topicsContent3 = '<div class="row">';
-
             topicInfo.slice(10, 17).forEach((topic, index) => {
                 const i = index + 11;
                 topicsContent3 += `
-                    <div class="col-sm-12 col-md-4">
-                        <div class="form-group">
-                            <label for="textAreaTopic${i}">Tema semana ${i}:</label>
-                            <textarea class="form-control" data-topics-id="${topic.id}" id="textAreaTopic${i}" rows="8" disabled>${capitalizeOrDefault(topic.description_topic)}</textarea>
+                        <div class="col-sm-12 col-md-4">
+                            <div class="form-group">
+                                <label for="textAreaTopic${i}">Tema semana ${i}:</label>
+                                <textarea class="form-control" data-topics-id="${topic.id}" id="textAreaTopic${i}" rows="8" disabled>${capitalizeOrDefault(topic.description_topic)}</textarea>
+                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
             });
-
             topicsContent3 += '</div>';
-            document.getElementById("fromTopicsThree").innerHTML = topicsContent3;
+            document.getElementById("fromWeeks3").innerHTML = topicsContent3;
 
         } else {
-
-            document.getElementById("fromTopicsOne").innerHTML = '<h3>No se encontraron resultados.</h3>';
-            document.getElementById("fromTopicsTwo").innerHTML = '<h3>No se encontraron resultados.</h3>';
-            document.getElementById("fromTopicsThree").innerHTML = '<h3>No se encontraron resultados.</h3>';
-
+            document.getElementById("fromWeeks1").innerHTML = '<h3>No se encontraron resultados.</h3>';
+            document.getElementById("fromWeeks2").innerHTML = '<h3>No se encontraron resultados.</h3>';
+            document.getElementById("fromWeeks3").innerHTML = '<h3>No se encontraron resultados.</h3>';
         }
     }
 
@@ -515,8 +522,23 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // VALIDATE
-    function validate() {
+    function validate(fields, alertMessage) {
+        let hasEmptyField = fields.some(field => {
+            const element = document.getElementById(field);
+            return element === null || element.value.trim() === "";
+        });
 
+        if (hasEmptyField) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Advertencia',
+                text: alertMessage,
+                confirmButtonColor: '#1269DB',
+                confirmButtonText: 'Entendido'
+            });
+        } else {
+            $('#modalConfirmation').modal('show');
+        }
     }
 
     // UPDATE
@@ -550,7 +572,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             document.getElementById('selectLearning').addEventListener('change', function () {
                 selectLearningId = this.value;
-                console.log('CORRECTO')
                 uploadData(selectLearningId, learninResult);
             });
 
@@ -617,17 +638,29 @@ document.addEventListener('DOMContentLoaded', function () {
         const specificData = [];
         const topicsData = [];
 
-        //------------------------------------------------------------------------------------------------------------------------------------
+        const fieldsToValidate = ['textAreaGeneral']; // Añade el ID del campo general
+
+        for (let i = 1; i <= 3; i++) {
+            fieldsToValidate.push(`textAreaspecific${i}`);
+        }
+
+        for (let i = 1; i <= 16; i++) {
+            fieldsToValidate.push(`textAreaTopic${i}`);
+        }
+
+        validate(fieldsToValidate, 'Por favor, completa todos los campos antes de continuar.');
+
         const textAreaGeneral = document.getElementById(`textAreaGeneral`);
-        const generalcId = textAreaGeneral.getAttribute('data-general-id');
-        const generalValue = textAreaGeneral.value;
+        if (textAreaGeneral) {
+            const generalcId = textAreaGeneral.getAttribute('data-general-id');
+            const generalValue = textAreaGeneral.value;
 
-        generalData.push({
-            id: generalcId,
-            description: generalValue
-        });
+            generalData.push({
+                id: generalcId,
+                description: generalValue
+            });
+        }
 
-        //------------------------------------------------------------------------------------------------------------------------------------
         for (let i = 1; i <= 3; i++) {
             const textAreaSpecific = document.getElementById(`textAreaspecific${i}`);
             if (textAreaSpecific) {
@@ -641,7 +674,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-        //------------------------------------------------------------------------------------------------------------------------------------
         for (let i = 1; i <= 16; i++) {
             const textArea = document.getElementById(`textAreaTopic${i}`);
             if (textArea) {
@@ -655,10 +687,15 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-        //------------------------------------------------------------------------------------------------------------------------------------
         console.log(generalData); // Muestra los datos en la consola
         console.log(specificData); // Muestra los datos en la consola
         console.log(topicsData); // Muestra los datos en la consola
+    }
+
+    function confirmButton() {
+
+        // Cerrar el modal
+        $('#modalConfirmation').modal('hide');
 
     }
 
@@ -687,6 +724,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.querySelector('.saveTemp').addEventListener('click', function () {
         captureData();
+    });
+
+    document.getElementById('confirm-button').addEventListener('click', function () {
+        confirmButton();
     });
 
 });

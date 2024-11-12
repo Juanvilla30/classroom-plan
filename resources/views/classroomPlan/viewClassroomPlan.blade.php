@@ -57,13 +57,13 @@
         <div class="card-body">
 
             <div class="row text-center" id="viewInfoCampoComun">
-                
+
             </div>
             <div class="row text-center" id="viewInfoPensum">
-                
+
             </div>
             <div class="row text-center" id="viewInfoSpecializations">
-                
+
             </div>
         </div>
     </div>
@@ -106,18 +106,28 @@
     </div>
     <!-- End Card -->
 
-    <!-- Card Info Topics #1 -->
+    <!-- Card Select Topics #1 -->
     <div class="card">
 
         <div class="card-header">
-            <h5 class="card-title font-weight-bold text-primary">Temas</h5>
+            <h5 class="card-title font-weight-bold text-primary">Selección de temas</h5>
         </div>
 
         <div class="card-body">
-
-            <form id="fromTopicsOne">
-
-            </form>
+            <ul class="nav nav-pills nav-primary nav-pills-no-bd justify-content-center mb-3" id="pills-tab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link" id="weeks1" data-toggle="pill" href="#fromWeeks1"
+                        role="tab" aria-controls="pills-home-nobd" aria-selected="true">Semana 1-5</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="weeks2" data-toggle="pill" href="#fromWeeks2"
+                        role="tab" aria-controls="pills-profile-nobd" aria-selected="false">Semana 6-10</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="weeks3" data-toggle="pill" href="#fromWeeks3"
+                        role="tab" aria-controls="pills-contact-nobd" aria-selected="false">Semana 11-16</a>
+                </li>
+            </ul>
 
         </div>
     </div>
@@ -132,26 +142,17 @@
 
         <div class="card-body">
 
-            <form id="fromTopicsTwo">
-
-            </form>
-
-        </div>
-    </div>
-    <!-- End Card -->
-
-    <!-- Card Info Topics #2 -->
-    <div class="card">
-
-        <div class="card-header">
-            <h5 class="card-title font-weight-bold text-primary">Temas</h5>
-        </div>
-
-        <div class="card-body">
-
-            <form id="fromTopicsThree">
-
-            </form>
+            <div class="tab-content mb-3" id="pills-tabContent">
+                <div class="tab-pane fade" id="fromWeeks1" role="tabpanel"
+                    aria-labelledby="pills-home-tab-nobd">
+                </div>
+                <div class="tab-pane fade" id="fromWeeks2" role="tabpanel"
+                    aria-labelledby="pills-profile-tab-nobd">
+                </div>
+                <div class="tab-pane fade" id="fromWeeks3" role="tabpanel"
+                    aria-labelledby="pills-contact-tab-nobd">
+                </div>
+            </div>
 
         </div>
     </div>
@@ -235,6 +236,30 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
                     <button type="button" class="btn btn-primary" id="confirm-desactivate" data-card="1">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal -->
+
+    <!-- Modal Confirmation -->
+    <div class="modal fade" id="modalConfirmation" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="card-title font-weight-bold text-primary">Advertencia</h5>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ¿Deseas guardar?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="confirm-button" data-card="1">Aceptar</button>
                 </div>
             </div>
         </div>

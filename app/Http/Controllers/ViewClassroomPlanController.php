@@ -33,9 +33,10 @@ class ViewClassroomPlanController extends Controller
 
             $classroomInfo = ClassroomPlan::where("id", $classroomId)
                 ->with([
-                    'courses.component.studyField',
-                    'courses.semester',
-                    'courses.courseType',
+                    'relations.course.component.studyField',
+                    'relations.course.semester',
+                    'relations.course.courseType',
+                    'relations.program',
                     'learningResult.competence.profileEgres.program.faculty',
                     'learningResult.competence.profileEgres.program.educationLevel',
                     'generalObjective',

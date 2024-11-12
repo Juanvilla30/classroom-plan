@@ -82,19 +82,22 @@ class ListClassroomPlanController extends Controller
     {
         DB::beginTransaction();
         try {
-            $studyFieldId = $request->input('studyFieldId');
+            $classroomTypeId = $request->input('classroomTypeId');
 
-            $componentId = Component::where('id_study_field', $studyFieldId)
+            $componentId = Component::where('id_study_field', $classroomTypeId)
                 ->orderBy('id')->pluck('id');
 
             $courseId = Course::whereIn('id_component', $componentId)
                 ->orderBy('id')->pluck('id');
 
-            $classroomInfo = ClassroomPlan::whereIn('id_course', $courseId)
+            $relationId = ProgramCourseRelationship::whereIn('id_course', $courseId)->pluck('id');
+
+            $classroomInfo = ClassroomPlan::whereIn('id_relations', $relationId)
                 ->with([
-                    'courses.component.studyField',
-                    'courses.semester',
-                    'courses.courseType',
+                    'relations.course.component.studyField',
+                    'relations.course.semester',
+                    'relations.course.courseType',
+                    'relations.program',
                     'learningResult',
                     'generalObjective',
                     'state',
@@ -122,13 +125,14 @@ class ListClassroomPlanController extends Controller
             $programId = $request->input('programId');
 
             $relationId = ProgramCourseRelationship::where('id_program', $programId)
-                ->orderBy('id')->pluck('id_course');
+                ->orderBy('id')->pluck('id');
 
-            $classroomInfo = ClassroomPlan::whereIn('id_course', $relationId)
+            $classroomInfo = ClassroomPlan::whereIn('id_relations', $relationId)
                 ->with([
-                    'courses.component.studyField',
-                    'courses.semester',
-                    'courses.courseType',
+                    'relations.course.component.studyField',
+                    'relations.course.semester',
+                    'relations.course.courseType',
+                    'relations.program',
                     'learningResult',
                     'generalObjective',
                     'state',
