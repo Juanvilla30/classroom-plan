@@ -56,69 +56,15 @@
 
         <div class="card-body">
 
-            <div class="row text-center">
-                <div class="col-sm-12 col-md-4 mx-auto">
-                    <div class="form-group">
-                        <label>Facultad:</label>
-                        <p>{{ucfirst(strtolower($classroomInfo->learningResult->competence->profileEgres->program->faculty->name_faculty))}}</p>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-4 mx-auto">
-                    <div class="form-group">
-                        <label>Programa:</label>
-                        <p>{{ucfirst(strtolower($classroomInfo->learningResult->competence->profileEgres->program->name_program))}}</p>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-4 mx-auto">
-                    <div class="form-group">
-                        <label>Semestre:</label>
-                        <p>{{ucfirst(strtolower($classroomInfo->courses->semester->name_semester))}}</p>
-                    </div>
-                </div>                
-                <div class="col-sm-12 col-md-4 mx-auto">
-                    <div class="form-group">
-                        <label>Codigo de curso:</label>
-                        <p>{{ucfirst(strtolower($classroomInfo->courses->course_code))}}</p>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-4 mx-auto">
-                    <div class="form-group">
-                        <label>Curso:</label>
-                        <p>{{ucfirst(strtolower($classroomInfo->courses->name_course))}}</p>
-                    </div>
-                </div>                
-                <div class="col-sm-12 col-md-4 mx-auto">
-                    <div class="form-group">
-                        <label>Nivel de educación:</label>
-                        <p>{{ucfirst(strtolower($classroomInfo->courses->educationLevel->name_education_level))}}</p>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-4 mx-auto">
-                    <div class="form-group">
-                        <label>Campo:</label>
-                        <p>{{ucfirst(strtolower($classroomInfo->courses->component->studyField->name_study_field))}}</p>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-4 mx-auto">
-                    <div class="form-group">
-                        <label>Componente:</label>
-                        <p>{{ucfirst(strtolower($classroomInfo->courses->component->name_component))}}</p>
-                    </div>
-                </div>                
-                <div class="col-sm-12 col-md-4 mx-auto">
-                    <div class="form-group">
-                        <label>Creditos:</label>
-                        <p>{{$classroomInfo->courses->credit}}</p>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-4 mx-auto">
-                    <div class="form-group">
-                        <label>Tipo de curso:</label>
-                        <p>{{ucfirst(strtolower($classroomInfo->courses->courseType->name_course_type))}}</p>
-                    </div>
-                </div>
-            </div>
+            <div class="row text-center" id="viewInfoCampoComun">
 
+            </div>
+            <div class="row text-center" id="viewInfoPensum">
+
+            </div>
+            <div class="row text-center" id="viewInfoSpecializations">
+
+            </div>
         </div>
     </div>
     <!-- End Card -->
@@ -160,18 +106,28 @@
     </div>
     <!-- End Card -->
 
-    <!-- Card Info Topics #1 -->
+    <!-- Card Select Topics #1 -->
     <div class="card">
 
         <div class="card-header">
-            <h5 class="card-title font-weight-bold text-primary">Temas</h5>
+            <h5 class="card-title font-weight-bold text-primary">Selección de temas</h5>
         </div>
 
         <div class="card-body">
-
-            <form id="fromTopicsOne">
-
-            </form>
+            <ul class="nav nav-pills nav-primary nav-pills-no-bd justify-content-center mb-3" id="pills-tab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link" id="weeks1" data-toggle="pill" href="#fromWeeks1"
+                        role="tab" aria-controls="pills-home-nobd" aria-selected="true">Semana 1-5</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="weeks2" data-toggle="pill" href="#fromWeeks2"
+                        role="tab" aria-controls="pills-profile-nobd" aria-selected="false">Semana 6-10</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="weeks3" data-toggle="pill" href="#fromWeeks3"
+                        role="tab" aria-controls="pills-contact-nobd" aria-selected="false">Semana 11-16</a>
+                </li>
+            </ul>
 
         </div>
     </div>
@@ -186,26 +142,17 @@
 
         <div class="card-body">
 
-            <form id="fromTopicsTwo">
-
-            </form>
-
-        </div>
-    </div>
-    <!-- End Card -->
-
-    <!-- Card Info Topics #2 -->
-    <div class="card">
-
-        <div class="card-header">
-            <h5 class="card-title font-weight-bold text-primary">Temas</h5>
-        </div>
-
-        <div class="card-body">
-
-            <form id="fromTopicsThree">
-
-            </form>
+            <div class="tab-content mb-3" id="pills-tabContent">
+                <div class="tab-pane fade" id="fromWeeks1" role="tabpanel"
+                    aria-labelledby="pills-home-tab-nobd">
+                </div>
+                <div class="tab-pane fade" id="fromWeeks2" role="tabpanel"
+                    aria-labelledby="pills-profile-tab-nobd">
+                </div>
+                <div class="tab-pane fade" id="fromWeeks3" role="tabpanel"
+                    aria-labelledby="pills-contact-tab-nobd">
+                </div>
+            </div>
 
         </div>
     </div>
@@ -295,8 +242,8 @@
     </div>
     <!-- End Modal -->
 
-    <!-- Modal Confirm -->
-    <div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog"
+    <!-- Modal Confirmation -->
+    <div class="modal fade" id="modalConfirmation" tabindex="-1" role="dialog"
         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -308,7 +255,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    ¿Seguro que deseas guardar los cambios?
+                    ¿Deseas guardar?
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
@@ -318,10 +265,6 @@
         </div>
     </div>
     <!-- End Modal -->
-
-    <!-- Styles -->
-    <link rel="stylesheet" href="../../css/classroomPlans.css">
-    <!-- End Styles -->
 
     <!-- Scripts -->
     <script src="{{ asset('js/viewClassroom.js') }}"></script>

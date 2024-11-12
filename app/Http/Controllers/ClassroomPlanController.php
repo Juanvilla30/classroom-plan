@@ -7,6 +7,7 @@ use App\Models\ClassroomPlan;
 use App\Models\Competence;
 use App\Models\Component;
 use App\Models\Course;
+use App\Models\CourseType;
 use App\Models\EducationLevel;
 use App\Models\Evaluation;
 use App\Models\Faculty;
@@ -30,48 +31,17 @@ class ClassroomPlanController extends Controller
     public function index()
     {
         try {
-
-            $educationInfo = EducationLevel::orderBy('id')->get();
             $facultyInfo = Faculty::orderBy('id')->get();
 
             return view(
                 'classroomPlan.classroomPlan',
                 compact(
-                    'educationInfo',
                     'facultyInfo',
                 )
             );
         } catch (\Exception $e) {
             // Redireccionar o devolver una vista de error con un mensaje informativo
             return redirect()->back()->with('error', 'Ocurrió un problema al cargar la información del plan de aula.');
-        }
-    }
-
-    public function searchFaculty(Request $request)
-    {
-        try {
-
-            $facultyInfo = Faculty::orderBy('id')->get();
-
-            if ($facultyInfo->isNotEmpty()) {
-                return response()->json([
-                    'check' => true,
-                    'facultyInfo' => $facultyInfo,
-                ]);
-            } else {
-                return response()->json(
-                    [
-                        'check' => false,
-                        'error' => 'No encontrado'
-                    ],
-                    404
-                );
-            }
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Error al encontrar',
-                'message' => $e->getMessage()
-            ], 500);
         }
     }
 
@@ -87,42 +57,10 @@ class ClassroomPlanController extends Controller
                 ->orderBy('id')
                 ->get();
 
-            if ($programsInfo->isNotEmpty()) {
-                return response()->json([
-                    'check' => true,
-                    'programsInfo' => $programsInfo,
-                ]);
-            } else {
-                return response()->json([
-                    'check' => false,
-                    'error' => 'No encontrados'
-                ], 404);
-            }
-        } catch (\Exception $e) {
             return response()->json([
-                'error' => 'Error al encontrar',
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function searchStudyField(Request $request)
-    {
-        try {
-            $studyFieldInfo = StudyField::orderBy('id')
-                ->get();
-
-            if ($studyFieldInfo->isNotEmpty()) {
-                return response()->json([
-                    'check' => true,
-                    'studyFieldInfo' => $studyFieldInfo,
-                ]);
-            } else {
-                return response()->json([
-                    'check' => false,
-                    'error' => 'No encontrados'
-                ], 404);
-            }
+                'check' => true,
+                'programsInfo' => $programsInfo,
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'Error al encontrar',
@@ -135,10 +73,10 @@ class ClassroomPlanController extends Controller
     {
         try {
             $programId = $request->input('programId');
-            $studyFieldId = $request->input('studyFieldId');
+            $educationId = $request->input('educationId');
 
-            if ($studyFieldId === null) {
-                $specializationInfo = ProgramCourseRelationship::where('id_program', $programId)
+            if ($programId == null) {
+                $relationInfo = ProgramCourseRelationship::where('id_program', $programId)
                     ->with([
                         'program.faculty',
                         'program.educationLevel',
@@ -147,60 +85,27 @@ class ClassroomPlanController extends Controller
                         'course.courseType',
                     ])->orderBy('id')
                     ->get();
-
-                return response()->json([
-                    'check' => '1',
-                    'specializationInfo' => $specializationInfo,
-                ]);
             } else {
 
-                $studyFieldIds = StudyField::where('id', $studyFieldId)
-                    ->pluck('id')
-                    ->toArray();
+                $programsId = Program::where('id_education_level', $educationId)
+                    ->where('id', $programId)
+                    ->pluck('id');
 
-                if (in_array(1, $studyFieldIds)) {
-                    $componentIds = Component::where('id_study_field', $studyFieldId)
-                        ->pluck('id')
-                        ->toArray();
-
-                    $coursesInfo = Course::whereIn('id_component', $componentIds)
-                        ->with([
-                            'component.studyField',
-                            'semester',
-                            'courseType',
-                        ])->orderBy('id_semester')
-                        ->get();
-
-                    return response()->json([
-                        'check' => false,
-                        'coursesInfo' => $coursesInfo,
-                    ]);
-                } else {
-                    $componentIds = Component::where('id_study_field', $studyFieldId)
-                        ->pluck('id')
-                        ->toArray();
-
-                    $coursesIds = Course::whereIn('id_component', $componentIds)
-                        ->whereIn('id', ProgramCourseRelationship::where('id_program', $programId)->pluck('id_course'))
-                        ->pluck('id')
-                        ->toArray();
-
-                    $relationInfo = ProgramCourseRelationship::whereIn('id_course', $coursesIds)
-                        ->with([
-                            'program.faculty',
-                            'program.educationLevel',
-                            'course.component.studyField',
-                            'course.semester',
-                            'course.courseType',
-                        ])->orderBy('id')
-                        ->get();
-
-                    return response()->json([
-                        'check' => true,
-                        'relationInfo' => $relationInfo,
-                    ]);
-                }
+                $relationInfo = ProgramCourseRelationship::where('id_program', $programsId)
+                    ->with([
+                        'program.faculty',
+                        'program.educationLevel',
+                        'course.component.studyField',
+                        'course.semester',
+                        'course.courseType',
+                    ])->orderBy('id')
+                    ->get();
             }
+
+            return response()->json([
+                'check' => true,
+                'relationInfo' => $relationInfo,
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'Error al asignar curso',
@@ -212,39 +117,22 @@ class ClassroomPlanController extends Controller
     public function viewInfoCourse(Request $request)
     {
         try {
-            $courseId = $request->input('courseId');
-            $programId = $request->input('programId');
+            $realtionId = $request->input('realtionId');
 
-            if ($programId !== null) {
-                $relationInfo = ProgramCourseRelationship::where('id_course', $courseId)
-                    ->where('id_program', $programId)
-                    ->with([
-                        'program.faculty',
-                        'program.educationLevel',
-                        'course.component.studyField',
-                        'course.semester',
-                        'course.courseType',
-                    ])->orderBy('id')
-                    ->get();
+            $relationInfo = ProgramCourseRelationship::where('id', $realtionId)
+                ->with([
+                    'program.faculty',
+                    'program.educationLevel',
+                    'course.component.studyField',
+                    'course.semester',
+                    'course.courseType',
+                ])->orderBy('id')
+                ->get();
 
-                return response()->json([
-                    'check' => true,
-                    'relationInfo' => $relationInfo,
-                ]);
-            } else {
-                $courseInfo = Course::where('id', $courseId)
-                    ->with([
-                        'component.studyField',
-                        'semester',
-                        'courseType',
-                    ])->orderBy('id')
-                    ->get();
-
-                return response()->json([
-                    'check' => false,
-                    'courseInfo' => $courseInfo,
-                ]);
-            }
+            return response()->json([
+                'check' => true,
+                'relationInfo' => $relationInfo,
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'Error al asignar curso',
@@ -259,48 +147,108 @@ class ClassroomPlanController extends Controller
             $componentId = $request->input('componentId');
             $programId = $request->input('programId');
 
-            if ($componentId !== null) {
-                $coursesInfo = Course::where('id_component', $componentId)
-                    ->orderBy('id')
-                    ->get();
+            $coursesInfo = Course::where('id_component', $componentId)->pluck('id');
 
-                $classroomPlanInfo = ClassroomPlan::with([
-                    'courses',
-                    'courses.component.studyField',
-                    'courses.semester',
-                    'courses.courseType',
-                ])->whereIn('id_course', $coursesInfo->pluck('id'))
-                    ->orderBy('id')
-                    ->get();
+            $relationQuery = ProgramCourseRelationship::whereIn('id_course', $coursesInfo);
 
-                return response()->json([
-                    'check' => true,
-                    'classroomPlanInfo' => $classroomPlanInfo
-                ]);
+            if (!is_null($programId)) {
+                $relationQuery->where('id_program', $programId);
             }
 
-            if ($programId !== null) {
-                $relationInfo = ProgramCourseRelationship::where('id_program', $programId)
-                    ->orderBy('id')
-                    ->get();
+            $relationId = $relationQuery->pluck('id');
 
-                $classroomPlanInfo = ClassroomPlan::with([
-                    'courses',
-                    'courses.component.studyField',
-                    'courses.semester',
-                    'courses.courseType',
-                ])->whereIn('id_course', $relationInfo->pluck('id_course'))
-                    ->orderBy('id')
-                    ->get();
+            $classroomPlanInfo = ClassroomPlan::with([
+                'relations.course.component.studyField',
+                'relations.course.semester',
+                'relations.course.courseType',
+                'relations.program',
+                'learningResult',
+                'generalObjective',
+                'state',
+            ])->whereIn('id_relations', $relationId)
+                ->orderBy('id')
+                ->get();
 
+            return response()->json([
+                'check' => true,
+                'classroomPlanInfo' => $classroomPlanInfo,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'No se pudo listar los cursos',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function searchClassroomPlan(Request $request)
+    {
+        try {
+            $realtionId = $request->input('realtionId');
+
+            $classroomPlans = ClassroomPlan::where('id_relations', operator: $realtionId)
+                ->with(
+                    'relations',
+                    'learningResult',
+                    'generalObjective',
+                    'state'
+                )->orderBy('id')
+                ->get();
+
+            $classroomPlanIds = $classroomPlans->pluck('id')->toArray();
+
+            $evaluationsId = AssignmentEvaluation::whereIn('id_classroom_plan', $classroomPlanIds)
+                ->with('evaluation', 'percentage')
+                ->orderBy('id')
+                ->get()
+                ->toArray();
+
+            $referencesId = Reference::whereIn('id_classroom_plan', $classroomPlanIds)
+                ->orderBy('id')
+                ->get()
+                ->toArray();
+
+            $specifics = SpecificObjective::whereIn('id_classroom_plan', $classroomPlanIds)
+                ->orderBy('id')
+                ->get();
+
+            $specificsIds = $specifics->pluck('id')->toArray();
+
+            $specificsArray = $specifics->toArray();
+
+            $topicsId = Topic::whereIn('id_specific_objective', $specificsIds)
+                ->with('specificObjective')
+                ->orderBy('id')
+                ->get()
+                ->toArray();
+
+            $relationInfo = ProgramCourseRelationship::where('id', $realtionId)->pluck('id_course');
+
+            $cursoTypeId = Course::where('id', $relationInfo)
+                ->pluck('id_course_type');
+
+            $courseTypeInfo = Evaluation::whereIn('id_course_type', $cursoTypeId)
+                ->orderBy('id')
+                ->get();
+
+            if (!$classroomPlans->isEmpty()) {
+                return response()->json([
+                    'check' => true,
+                    'classroomPlanId' => $classroomPlans,
+                    'evaluationsId' => $evaluationsId,
+                    'referencesId' => $referencesId,
+                    'specificsId' => $specificsArray,
+                    'topicsId' => $topicsId,
+                ]);
+            } else {
                 return response()->json([
                     'check' => false,
-                    'classroomPlanInfo' => $classroomPlanInfo,
+                    'courseTypeInfo' => $courseTypeInfo,
                 ]);
             }
         } catch (\Exception $e) {
             return response()->json([
-                'error' => 'No se pudo listar los cursos',
+                'error' => 'No se pudo validar el plan de aula',
                 'message' => $e->getMessage()
             ], 500);
         }
@@ -339,7 +287,9 @@ class ClassroomPlanController extends Controller
                     'learningResultsId' => $learningResults,
                 ]);
             } else {
-                return response()->json(['check' => false]);
+                return response()->json([
+                    'check' => false
+                ]);
             }
         } catch (\Exception $e) {
             return response()->json([
@@ -349,96 +299,7 @@ class ClassroomPlanController extends Controller
         }
     }
 
-
-
-
-
-
-    public function validateClassroomPlans(Request $request)
-    {
-        try {
-            $cursoId = $request->input('courseId');
-
-            $classroomPlans = ClassroomPlan::where('id_course', $cursoId)
-                ->with('courses', 'learningResult', 'generalObjective', 'state')
-                ->orderBy('id')
-                ->get();
-
-            $classroomPlanIds = $classroomPlans->pluck('id')->toArray();
-
-            $evaluationsId = AssignmentEvaluation::whereIn('id_classroom_plan', $classroomPlanIds)
-                ->with('evaluation', 'percentage')
-                ->orderBy('id')
-                ->get()
-                ->toArray();
-
-            $referencesId = Reference::whereIn('id_classroom_plan', $classroomPlanIds)
-                ->orderBy('id')
-                ->get()
-                ->toArray();
-
-            $specifics = SpecificObjective::whereIn('id_classroom_plan', $classroomPlanIds)
-                ->orderBy('id')
-                ->get();
-
-            $specificsIds = $specifics->pluck('id')->toArray();
-
-            $specificsArray = $specifics->toArray();
-
-            $topicsId = Topic::whereIn('id_specific_objective', $specificsIds)
-                ->with('specificObjective')
-                ->orderBy('id')
-                ->get()
-                ->toArray();
-
-            if (!$classroomPlans->isEmpty()) {
-                return response()->json([
-                    'confirm' => true,
-                    'classroomPlanId' => $classroomPlans,
-                    'evaluationsId' => $evaluationsId,
-                    'referencesId' => $referencesId,
-                    'specificsId' => $specificsArray,
-                    'topicsId' => $topicsId,
-                ]);
-            } else {
-                return response()->json([
-                    'confirm' => false
-                ]);
-            }
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'No se pudo validar el plan de aula',
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-
-    public function filtersEvaluations(Request $request)
-    {
-        try {
-            $typeCourseId = $request->input('typeCourse');
-
-            $evaluationsId = Evaluation::where('id_course_type', $typeCourseId)
-                ->orderBy('id')
-                ->get();
-
-            if ($evaluationsId->isNotEmpty()) {
-                return response()->json([
-                    'evaluationsId' => $evaluationsId,
-                ]);
-            } else {
-                return response()->json(['error' => 'Cursos no encontrados'], 404);
-            }
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Error al asignar curso',
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function viewLearning(Request $request)
+    public function searchDescriptionLearning(Request $request)
     {
         try {
             $learningId = $request->input('learningId');
@@ -466,7 +327,7 @@ class ClassroomPlanController extends Controller
         DB::beginTransaction();
 
         try {
-            $courseId = $request->input('courseId');
+            $realtionId = $request->input('realtionId');
             $learningId = $request->input('learningId');
             $nameGeneral = $request->input('nameGeneral');
             $content = $request->input('content');
@@ -492,7 +353,7 @@ class ClassroomPlanController extends Controller
             $statesId = State::orderBy('id')->pluck('id')->first();
 
             $createClassroom = ClassroomPlan::create([
-                'id_course' =>  $courseId,
+                'id_relations' =>  $realtionId,
                 'id_learning_result' => $learningId,
                 'id_general_objective' =>  $generalObjectiveId,
                 'id_state' =>  $statesId,
@@ -504,14 +365,17 @@ class ClassroomPlanController extends Controller
             $percentageIds = Percentage::orderBy('id')->pluck('id');
 
             $createdAssignmentEvaluationIds = [];
-
+            $value = [30, 30, 40];
+            $i = 0;
             foreach ($percentageIds as $percentageId) {
                 $assignmentEvaluation = AssignmentEvaluation::create([
+                    'percentage_number' => $value[$i],
                     'id_evaluation' => $evaluationId,
                     'id_percentage' => $percentageId,
                     'id_classroom_plan' => $createClassroomId,
                 ]);
                 $createdAssignmentEvaluationIds[] = $assignmentEvaluation->id;
+                $i++;
             }
 
             $createSpObjective = [];
@@ -707,49 +571,48 @@ class ClassroomPlanController extends Controller
         try {
             $classroomId = $request->input('classroomId');
             $assigEvaId = $request->input('assigEvaId');
-            $selectedEvaluations = [
-                $request->input('selectedEvaluations'),
-                $request->input('selectedEvaluations2'),
-                $request->input('selectedEvaluations3')
-            ];
-            $percentageIds = [
-                $request->input('percentageId1'),
-                $request->input('percentageId2'),
-                $request->input('percentageId3')
+            $savesEvaluation1 = $request->input('savesEvaluation1');
+            $savesEvaluation2 = $request->input('savesEvaluation2');
+            $savesEvaluation3 = $request->input('savesEvaluation3');
+
+            // Agrupar los objetos de evaluación en un solo arreglo
+            $savesEvaluation = [
+                $savesEvaluation1,
+                $savesEvaluation2,
+                $savesEvaluation3
             ];
 
             foreach ($assigEvaId as $index => $assignmentId) {
-                if (!empty($selectedEvaluations[$index][0])) {
+                // Asegurarse de que exista un objeto en la posición deseada del arreglo
+                if (!empty($savesEvaluation[$index]) && !empty($savesEvaluation[$index][0])) {
+                    // Aquí accedemos a los elementos de tipo arreglo (sin la notación de objeto)
                     AssignmentEvaluation::where('id', $assignmentId)
                         ->update([
-                            'id_evaluation' => $selectedEvaluations[$index][0],
-                            'id_percentage' => $percentageIds[$index],
-                            'id_classroom_plan' => $classroomId,
+                            'percentage_number' => $savesEvaluation[$index][0]['percentageValue'], // Acceso como arreglo
+                            'id_evaluation' => $savesEvaluation[$index][0]['evaluationId'],
+                            'id_percentage' => $savesEvaluation[$index][0]['data'],
                         ]);
                 }
             }
 
-            foreach ($selectedEvaluations as $index => $evaluations) {
+            foreach ($savesEvaluation as $index => $evaluations) {
                 if (count($evaluations) > 1) {
                     for ($i = 1; $i < count($evaluations); $i++) {
+                        // Aquí también accedemos a los elementos como arreglos
                         AssignmentEvaluation::create([
-                            'id_evaluation' => $evaluations[$i],
-                            'id_percentage' => $percentageIds[$index],
+                            'percentage_number' => $evaluations[$i]['percentageValue'], // Acceso como arreglo
+                            'id_evaluation' => $evaluations[$i]['evaluationId'],
+                            'id_percentage' => $evaluations[$i]['data'],
                             'id_classroom_plan' => $classroomId,
                         ]);
                     }
                 }
             }
 
-            $evaluationsId = AssignmentEvaluation::where('id_classroom_plan', $classroomId)
-                ->orderBy('id')
-                ->get();
-
             DB::commit();
 
             return response()->json([
-                'confirm' => true,
-                'evaluationsId' => $evaluationsId,
+                'confirm' => true
             ]);
         } catch (\Exception $e) {
             DB::rollback();

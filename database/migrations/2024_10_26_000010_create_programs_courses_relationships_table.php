@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
 
             // Llaves foráneas
-            $table->unsignedBigInteger('id_program');
+            $table->unsignedBigInteger('id_program')->nullable();
             $table->foreign('id_program')->references('id')->on('programs');
 
-            $table->unsignedBigInteger('id_course')->nullable();
+            $table->unsignedBigInteger('id_course');
             $table->foreign('id_course')->references('id')->on('courses');
 
             // CAMPOS DE ACTUALIZACION

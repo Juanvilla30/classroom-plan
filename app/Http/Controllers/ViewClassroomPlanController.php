@@ -18,35 +18,7 @@ class ViewClassroomPlanController extends Controller
     public function index($id)
     {
         try {
-            $classroomInfo = ClassroomPlan::where("id", $id)
-                ->with([
-                    'courses.component.studyField',
-                    'courses.educationLevel',
-                    'learningResult.competence.profileEgres.program.faculty',
-                    'generalObjective',
-                    'state',
-                ])->find($id);
-
-            $referencsInfo = Reference::where('id_classroom_plan', $id)
-                ->orderBy('id')
-                ->get();
-
-            $specificInfo = SpecificObjective::where('id_classroom_plan', $id)
-                ->orderBy('id')
-                ->get();
-
-            $specificId = SpecificObjective::where('id_classroom_plan', $id)
-                ->get('id');
-
-            $topicInfo = Topic::whereIn('id_specific_objective', $specificId)
-                ->orderBy('id')
-                ->get();
-
-            return view('classroomPlan.editClassroomPlan', compact(
-                'classroomInfo',
-                'referencsInfo',
-                'specificInfo',
-                'topicInfo',
+            return view('classroomPlan.viewClassroomPlan', compact(
                 'id'
             ));
         } catch (\Exception $e) {
@@ -61,8 +33,12 @@ class ViewClassroomPlanController extends Controller
 
             $classroomInfo = ClassroomPlan::where("id", $classroomId)
                 ->with([
-                    'courses.component.studyField',
+                    'relations.course.component.studyField',
+                    'relations.course.semester',
+                    'relations.course.courseType',
+                    'relations.program',
                     'learningResult.competence.profileEgres.program.faculty',
+                    'learningResult.competence.profileEgres.program.educationLevel',
                     'generalObjective',
                     'state',
                 ])->find($classroomId);

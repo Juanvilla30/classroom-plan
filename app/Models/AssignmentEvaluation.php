@@ -12,6 +12,7 @@ class AssignmentEvaluation extends Model
     protected $table = 'assignments_evaluations';
 
     protected $fillable = [
+        'percentage_number',
         'id_evaluation',
         'id_percentage',
         'id_classroom_plan',

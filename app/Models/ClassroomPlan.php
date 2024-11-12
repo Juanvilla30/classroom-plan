@@ -12,15 +12,15 @@ class ClassroomPlan extends Model
     protected $table = 'classroom_plans';
 
     protected $fillable = [
-        'id_course',
+        'id_relations',
         'id_learning_result',
         'id_general_objective',
         'id_state',
     ];
 
-    public function courses()
+    public function relations()
     {
-        return $this->belongsTo(Course::class, 'id_course');
+        return $this->belongsTo(ProgramCourseRelationship::class, 'id_relations');
     }
 
     public function learningResult()

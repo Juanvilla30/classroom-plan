@@ -11,21 +11,22 @@ $.ajaxSetup({
     *
 */
 // IDS
-let educationId;
+let typeClassroomId;
 let facultyId;
 let programId;
-let studyFieldId;
+let realtionId;
 let componentId;
-let courseId;
 let learningId;
-
 // INFO
-let facultyInfo;
-let programInfo;
-let relationInfo;
-let studyFieldInfo;
-let pensumInfo;
-let specializationInfo;
+
+const savesEvaluation1 = [];
+const savesEvaluation2 = [];
+const savesEvaluation3 = [];
+const institutionalLinks = [];
+const generalLinks = [];
+let sumPercentage1 = 0;
+let sumPercentage2 = 0;
+let sumPercentage3 = 0;
 
 document.addEventListener('DOMContentLoaded', function () {
     /*
@@ -82,34 +83,29 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // RESET
-    function resetContent() {
-        // Limpiar los textos dentro de cada <p>
-        $('#nameFaculty, #nameProgram, #nameSemester, #codeCourse, #nameCourse, #educationLevel, #nameField, #nameComponent, #nameCredits, #nameCourseType').text('');
-        $('#nameFacultyS, #nameProgramS, #nameSemesterS, #codeCourseS, #nameCourseS, #educationLevelS, #nameCreditsS, #nameCourseTypeS').text('');
-        $('#nameFacultyCC, #nameProgramCC, #nameSemesterCC, #codeCourseCC, #nameCourseCC, #educationLevelCC, #nameCreditsCC, #nameFieldCC, #nameComponentCC').text('');
-
-        // Ocultar todos los divs de información
-        $('#infoCampoComun, #infoSpecialization').addClass('d-none');
-        $('#infoPensum').removeClass('d-none');
-    }
-
-    function reset() {
+    function resetTypeClassroom() {
         facultyId = '';
         programId = '';
-        studyFieldId = '';
 
+        const fromSelectFaculty = document.getElementById("fromSelectFaculty");
+        const fromSelectProgram = document.getElementById("fromSelectProgram");
         const selectFaculty = document.getElementById("selectFaculty");
         const selectProgram = document.getElementById("selectProgram");
-        const selectStudyField = document.getElementById("selectStudyField");
+
+        if (fromSelectFaculty) {
+            fromSelectFaculty.selectedIndex = 0;
+            fromSelectFaculty.disabled = false;
+            fromSelectFaculty.classList.add('d-none');
+        }
+
+        if (fromSelectProgram) {
+            fromSelectProgram.selectedIndex = 0;
+            fromSelectProgram.classList.add('d-none');
+        }
 
         if (selectFaculty) {
             selectFaculty.selectedIndex = 0; // Restablece al primer elemento (mensaje de selección)
             selectFaculty.disabled = false;   // Desactiva el campo
-        }
-
-        if (selectStudyField && selectProgram) {
-            selectStudyField.selectedIndex = 0; // Restablece al primer elemento (mensaje de selección)
-            selectStudyField.disabled = true;   // Desactiva el campo
         }
 
         if (selectProgram) {
@@ -119,38 +115,314 @@ document.addEventListener('DOMContentLoaded', function () {
 
         $('#bodyComponent').empty(); // Elimina todas las filas de datos dentro del tbody
         blockCampos(true, true);
-        document.getElementById('fromButtonSearch').classList.add('d-none');
+        document.getElementById('buttonSearchCourse').classList.add('d-none');
 
+    }
+
+    function resetContent() {
+        $('#nameFaculty, #nameProgram, #nameSemester, #codeCourse, #nameCourse, #educationLevel, #nameField, #nameComponent, #nameCredits, #nameCourseType').text('');
+        $('#nameFacultyS, #nameProgramS, #nameSemesterS, #codeCourseS, #nameCourseS, #educationLevelS, #nameCreditsS, #nameCourseTypeS').text('');
+        $('#nameFacultyCC, #nameProgramCC, #nameSemesterCC, #codeCourseCC, #nameCourseCC, #educationLevelCC, #nameCreditsCC, #nameFieldCC, #nameComponentCC').text('');
+
+        $('#infoCampoComun, #infoSpecialization').addClass('d-none');
+        $('#infoPensum').removeClass('d-none');
+
+        const selectElement = document.getElementById('selectLearning');
+        selectElement.innerHTML = '';
+
+        const defaultOption = document.createElement('option');
+        defaultOption.selected = true;
+        defaultOption.value = '';
+        defaultOption.text = 'Seleccione un resultado de aprendizaje';
+        selectElement.appendChild(defaultOption);
+        selectElement.setAttribute('disabled', true);
+
+        document.getElementById('textAreaDescriptionRA').value = '';
+        $('#bodyComponent').empty();
+
+        savesEvaluation1.length = 0;
+        savesEvaluation2.length = 0;
+        savesEvaluation3.length = 0;
+    }
+
+    function resetFaculty() {
+        const selectProgram = document.getElementById("selectProgram");
+        if (selectProgram) {
+            selectProgram.selectedIndex = 0; // Restablece al primer elemento (mensaje de selección)
+            selectProgram.disabled = true;   // Desactiva el campo
+        }
+        document.getElementById('buttonSearchCourse').classList.add('d-none');
+    }
+
+    function resetForm() {
+        document.getElementById('textAreaDescriptionRA').value = '';
+        document.querySelectorAll('.readonlyCheck').forEach(function (element) {
+            if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                element.value = '';
+            }
+        });
+        document.querySelectorAll('.percentage').forEach(function (element) {
+            element.textContent = '';
+        });
+        savesEvaluation1.length = 0;
+        savesEvaluation2.length = 0;
+        savesEvaluation3.length = 0;
     }
 
     // BLOCK ATRTRIBUTES
     function blockAttributes() {
         const selects = document.querySelectorAll(".selectsFrom");
+        let buttonSearchCourse = document.getElementById('buttonSearchCourse');
+
+        document.querySelectorAll('.readonlyCheck').forEach(function (element) {
+            if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                element.readOnly = true;
+            }
+        });
 
         selects.forEach(select => {
-            select.disabled = true;    // Desactiva el campo
+            select.disabled = true;
         });
+
+        buttonSearchCourse.disabled = true;
+
     }
 
     function blockCampos(showField, showComponent) {
         // Muestra u oculta la columna de "Campo"
         if (showField) {
-            $('#tableFieldStudy th:nth-child(1), #tableFieldStudy td:nth-child(1)').show();
+            $('#tableFieldStudy th:nth-child(1), #tableFieldStudy td:nth-child(1)').css('display', '');
         } else {
-            $('#tableFieldStudy th:nth-child(1), #tableFieldStudy td:nth-child(1)').hide();
+            $('#tableFieldStudy th:nth-child(1), #tableFieldStudy td:nth-child(1)').css('display', 'none');
         }
 
         // Muestra u oculta la columna de "Componente"
         if (showComponent) {
-            $('#tableFieldStudy th:nth-child(2), #tableFieldStudy td:nth-child(2)').show();
+            $('#tableFieldStudy th:nth-child(2), #tableFieldStudy td:nth-child(2)').css('display', '');
         } else {
-            $('#tableFieldStudy th:nth-child(2), #tableFieldStudy td:nth-child(2)').hide();
+            $('#tableFieldStudy th:nth-child(2), #tableFieldStudy td:nth-child(2)').css('display', 'none');
         }
     }
 
+    function unlockAttributes() {
+        const selects = document.querySelectorAll(".selectsFrom");
+        let buttonSearchCourse = document.getElementById('buttonSearchCourse');
+
+        document.querySelectorAll('.readonlyCheck').forEach(function (element) {
+            if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                element.readOnly = false;
+            }
+        });
+
+        selects.forEach(select => {
+            select.disabled = true;
+        });
+
+        buttonSearchCourse.disabled = true;
+    }
+
+    // VALIDATIONS
+    function validate(fields, alertMessage) {
+        let hasEmptyField = fields.some(field => {
+            const element = document.getElementById(field);
+            return element === null || element.value.trim() === "";
+        });
+
+        if (hasEmptyField) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Advertencia',
+                text: alertMessage,
+                confirmButtonColor: '#1269DB',
+                confirmButtonText: 'Entendido'
+            });
+        } else {
+            $('#modalConfirmation').modal('show');
+        }
+    }
+
+    function validateResfresh(check) {
+        if (check == false) {
+            document.querySelectorAll('.confirmationSave').forEach(function (button) {
+                button.classList.remove('d-none');
+            });
+            document.querySelectorAll('.nextCard').forEach(function (button) {
+                button.classList.add('d-none');
+
+            });
+            document.getElementById('viewSelectEvaluation').classList.remove('d-none');
+            document.getElementById('createReferent').classList.remove('d-none');
+            document.getElementById('tableReferent').classList.add('d-none');
+            $('#bodyReferences').empty();
+        } else {
+            document.querySelectorAll('.nextCard').forEach(function (button) {
+                button.classList.remove('d-none');
+            });
+            document.querySelectorAll('.confirmationSave').forEach(function (button) {
+                button.classList.add('d-none');
+            });
+            document.getElementById('viewSelectEvaluation').classList.add('d-none');
+            document.getElementById('createReferent').classList.add('d-none');
+            document.getElementById('tableReferent').classList.remove('d-none');
+        }
+    }
+
+    function validateEvaluation(data) {
+        const percentageField = document.getElementById(`inputPercentage${data}`);
+        const evaluationField = document.getElementById(`selectEvaluation${data}`);
+        const buttonField = document.getElementById(`savePercentage${data}`);
+        const percentageContent = parseFloat(percentageField.value);  // Convertir a número
+        const evaluationContent = evaluationField.value;
+        const selectedOption = evaluationField.options[evaluationField.selectedIndex];
+        const nameEvaluation = selectedOption.getAttribute('data-name');
+
+        const maxPercentage = data === '3' ? 40 : 30;
+
+        if (percentageContent !== '' && evaluationContent !== '') {
+            // Comprobar si el evaluationContent ya existe en el arreglo correspondiente
+            if (data == 1) {
+                if (savesEvaluation1.some(evaluation => evaluation.evaluationId == evaluationContent)) {
+                    Swal.fire({
+                        title: 'Advertencia',
+                        icon: 'warning',
+                        text: 'La evaluación ya ha sido registrada.',
+                        confirmButtonColor: '#1572E8',
+                        confirmButtonText: 'Aceptar',
+                    });
+                    return;
+                }
+
+                if (sumPercentage1 + percentageContent <= maxPercentage) {
+                    savesEvaluation1.push({
+                        data: data,
+                        evaluationId: evaluationContent,
+                        nameEvaluation: nameEvaluation,
+                        percentageValue: percentageContent,
+                    });
+                    sumPercentage1 += percentageContent; // Actualizar la suma
+                    // Deshabilitar los campos si la suma llega al máximo
+                    if (sumPercentage1 === maxPercentage) {
+                        percentageField.disabled = true;
+                        evaluationField.disabled = true;
+                        buttonField.disabled = true;
+                    }
+                } else {
+                    Swal.fire({
+                        title: 'Advertencia',
+                        icon: 'warning',
+                        text: `La suma de los porcentajes no puede superar los ${maxPercentage}`,
+                        confirmButtonColor: '#1572E8',
+                        confirmButtonText: 'Aceptar',
+                    });
+                }
+            } else if (data == 2) {
+                if (savesEvaluation2.some(evaluation => evaluation.evaluationId == evaluationContent)) {
+                    Swal.fire({
+                        title: 'Advertencia',
+                        icon: 'warning',
+                        text: 'La evaluación ya ha sido registrada.',
+                        confirmButtonColor: '#1572E8',
+                        confirmButtonText: 'Aceptar',
+                    });
+                    return;
+                }
+
+                if (sumPercentage2 + percentageContent <= maxPercentage) {
+                    savesEvaluation2.push({
+                        data: data,
+                        evaluationId: evaluationContent,
+                        nameEvaluation: nameEvaluation,
+                        percentageValue: percentageContent,
+                    });
+                    sumPercentage2 += percentageContent; // Actualizar la suma
+                    // Deshabilitar los campos si la suma llega al máximo
+                    if (sumPercentage2 === maxPercentage) {
+                        percentageField.disabled = true;
+                        evaluationField.disabled = true;
+                    }
+                } else {
+                    Swal.fire({
+                        title: 'Advertencia',
+                        icon: 'warning',
+                        text: `La suma de los porcentajes no puede superar los ${maxPercentage}`,
+                        confirmButtonColor: '#1572E8',
+                        confirmButtonText: 'Aceptar',
+                    });
+                }
+            } else if (data == 3) {
+                if (savesEvaluation3.some(evaluation => evaluation.evaluationId == evaluationContent)) {
+                    Swal.fire({
+                        title: 'Advertencia',
+                        icon: 'warning',
+                        text: 'La evaluación ya ha sido registrada.',
+                        confirmButtonColor: '#1572E8',
+                        confirmButtonText: 'Aceptar',
+                    });
+                    return;
+                }
+
+                if (sumPercentage3 + percentageContent <= maxPercentage) {
+                    savesEvaluation3.push({
+                        data: data,
+                        evaluationId: evaluationContent,
+                        nameEvaluation: nameEvaluation,
+                        percentageValue: percentageContent,
+                    });
+                    sumPercentage3 += percentageContent; // Actualizar la suma
+                    // Deshabilitar los campos si la suma llega al máximo
+                    if (sumPercentage3 === maxPercentage) {
+                        percentageField.disabled = true;
+                        evaluationField.disabled = true;
+                    }
+                } else {
+                    Swal.fire({
+                        title: 'Advertencia',
+                        icon: 'warning',
+                        text: `La suma de los porcentajes no puede superar los ${maxPercentage}`,
+                        confirmButtonColor: '#1572E8',
+                        confirmButtonText: 'Aceptar',
+                    });
+                }
+            }
+
+            // Limpiar los campos de input y select después de agregar una evaluación
+            percentageField.value = '';  // Limpiar el campo de porcentaje
+            evaluationField.value = '';  // Limpiar el select de evaluación
+        } else {
+            Swal.fire({
+                title: 'Advertencia',
+                icon: 'warning',
+                text: 'Los campos no pueden estar vacíos',
+                confirmButtonColor: '#1572E8',
+                confirmButtonText: 'Aceptar',
+            });
+        }
+    }
+
+    function validateReferences(institutionalLinks, generalLinks) {
+
+        if (institutionalLinks !== '' && generalLinks !== '') {
+            $('#modalConfirmation').modal('show');
+        } else {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Advertencia',
+                text: 'Por favor, ingresa al menos un link de referencias',
+                confirmButtonColor: '#1269DB',
+                confirmButtonText: 'Entendido'
+            });
+        }
+
+    }
+
     // SEARCH
-    function searchProgram(facultyId) {
+    function searchProgram(facultyId, typeClassroomId) {
         const selectElement = document.getElementById('selectProgram');
+        if (typeClassroomId == 2) {
+            educationId = 1;
+        } else {
+            educationId = 2;
+        }
 
         if (facultyId === '') {
             selectElement.disabled = true;
@@ -178,25 +450,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     }
 
-    function searchStudyFields() {
-        $.ajax({
-            url: '/classroom-plan/search-study-field',
-            method: 'GET',
-            success: function (response) {
-                studyFieldInfo = response.studyFieldInfo;
-                viewSelectStudyFields(studyFieldInfo);
-            },
-            error: function (xhr, status, error) {
-                console.error('Error al eliminar el grupo:', xhr);
-                console.error('Estado:', status);
-                console.error('Error:', error);
-                console.error('Respuesta del servidor:', xhr.responseText);
-            }
-        });
+    function searchCourses(programId, typeClassroomId) {
+        if (typeClassroomId == 2) {
+            educationId = 1;
+        } else {
+            educationId = 2;
+        }
 
-    }
-
-    function searchCourses(programId, studyFieldId) {
         if (programId !== '') {
             $('#modalCourse').modal('show');
 
@@ -205,15 +465,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 method: 'POST',
                 data: {
                     programId: programId,
-                    studyFieldId: studyFieldId,
+                    educationId: educationId,
                 },
                 success: function (response) {
-                    if (response.check == '1' && response.specializationInfo) {
-                        viewSelectSpecialization(response)
-                    } else if (response.check == true) {
-                        viewSelectPensum(response)
-                    } else if (response.check == false) {
+                    if (programId == null) {
                         viewSelectCampoComun(response)
+                    } else if (educationId == 1) {
+                        viewSelectPensum(response)
+                    } else {
+                        viewSelectSpecialization(response);
                     }
                 },
                 error: function (xhr, status, error) {
@@ -235,38 +495,39 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function searchInfoCourse(courseId, programId) {
-        $.ajax({
-            url: '/classroom-plan/search-info-course',
-            type: 'POST',
-            data: {
-                courseId: courseId,
-                programId: programId,
-            },
-            success: function (response) {
-                if (response.check == true) {
-                    if (componentId = response.relationInfo[0].course.id_component !== null) {
-                        componentId = response.relationInfo[0].course.id_component;
-                        viewInfoPensum(response);
-                    } else {
-                        viewInfoSpecialization(response)
-                    }
+    function searchInfoCourse(realtionId, typeClassroomId) {
 
-                } else if (response.check == false) {
-                    componentId = response.courseInfo[0].id_component;
-                    viewInfoCampoComun(response);
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: '/classroom-plan/search-info-course',
+                type: 'POST',
+                data: {
+                    realtionId: realtionId,
+                },
+                success: function (response) {
+                    if (typeClassroomId == null) {
+                        viewInfoCampoComun(response);
+                        componentId = response.relationInfo[0].course.id_component;
+                    } else if (typeClassroomId == 2) {
+                        viewInfoPensum(response);
+                        componentId = response.relationInfo[0].course.id_component;
+                    } else {
+                        viewInfoSpecialization(response);
+                        componentId = null;
+                    }
+                    resolve(componentId);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error al obtener:', xhr);
+                    console.error('Estado:', status);
+                    console.error('Error:', error);
+                    reject(error);
                 }
-            },
-            error: function (xhr, status, error) {
-                console.error('Error al obtener:', xhr);
-                console.error('Estado:', status);
-                console.error('Error:', error);
-            }
+            });
         });
     }
 
-    //TERMINAR...................
-    function searchComponent(componentId, programId) {
+    function searchComponent(checkin, componentId, programId) {
         $.ajax({
             url: '/classroom-plan/search-list-courses',
             type: 'POST',
@@ -275,13 +536,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 programId: programId,
             },
             success: function (response) {
-                console.log(response);
-                if (response.check == true) {
-                    viewListComponent(response);
-                    console.log(response)
-                } else if (response.check == false) {
-                    viewListSpecialization(response);
-                    console.log(response)
+                if (checkin == '1') {
+                    viewListComponent(response)
+                } else if (checkin == '2') {
+                    viewListComponent(response)                   
+                } else if (checkin == '3') {
+                    viewListSpecialization(response)
                 }
             },
             error: function (xhr, status, error) {
@@ -292,46 +552,22 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function searchLearning(programId) {
-        return new Promise((resolve, reject) => {
-            $.ajax({
-                url: '/classroom-plan/search-learning', 
-                method: 'POST',
-                data: {
-                    programId: programId,
-                },
-                success: function (response) {
-                    console.log(response);
-                    resolve(response);
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error al eliminar el grupo:', xhr);
-                    console.error('Estado:', status);
-                    console.error('Error:', error);
-                    console.error('Respuesta del servidor:', xhr.responseText);
-                    reject(error);
-                }
-            });
-        });
-    }
-
-    // VALIDATIONS
-    function validateClassroomPlan(courseId, program, typeCourseId) {
+    function searchClassroomPlan(realtionId, programId) {
         $.ajax({
-            url: '/classroom-plan/validate-classroom-plans',
+            url: '/classroom-plan/search-classroom-plans',
             method: 'POST',
             data: {
-                courseId: courseId,
+                realtionId: realtionId,
             },
             success: function (response) {
-                if (response.confirm == false) {
-                    //loadResultsSelect(program, false);
-                    //validateEvaluation(typeCourseId, false);
+                let check = response.check;
+                if (check == false) {
+                    searchLearning(programId, check);
+                    viewSelectEvaluation(response);
                     validateResfresh(false);
                 } else {
-                    let learningId = response.classroomPlanId[0].learning_result;
-                    //selectRA(learningId, true);
-                    //viewClassroom(response);
+                    viewSelectLearningResult(response, check);
+                    viewClassroom(response);
                     validateResfresh(true);
                 }
             },
@@ -344,41 +580,48 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function validate(fields, alertMessage) {
-        let hasEmptyField = fields.some(field => {
-            const element = document.getElementById(field);
-            return element === null || element.value.trim() === "";
-        });
-
-        if (hasEmptyField) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Advertencia',
-                text: alertMessage,
-                confirmButtonColor: '#1269DB',
-                confirmButtonText: 'Entendido'
+    function searchLearning(programId, check) {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: '/classroom-plan/search-learning',
+                method: 'POST',
+                data: {
+                    programId: programId,
+                },
+                success: function (response) {
+                    resolve(response);
+                    viewSelectLearningResult(response, check);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error al eliminar el grupo:', xhr);
+                    console.error('Estado:', status);
+                    console.error('Error:', error);
+                    console.error('Respuesta del servidor:', xhr.responseText);
+                    reject(error);
+                }
             });
-        } else {
-            $('#modalConfirmation').modal('show');
-        }
+        });
     }
 
-    function validateResfresh(check) {
-        if (check == false) {
-            document.querySelectorAll('.confirmationSave').forEach(function (button) {
-                button.classList.remove('d-none');
-            });
-            document.querySelectorAll('.nextCard').forEach(function (button) {
-                button.classList.add('d-none');
-            });
-        } else {
-            document.querySelectorAll('.nextCard').forEach(function (button) {
-                button.classList.remove('d-none');
-            });
-            document.querySelectorAll('.confirmationSave').forEach(function (button) {
-                button.classList.add('d-none');
-            });
-        }
+    function searchDescriptionLearning(learningId) {
+
+        $.ajax({
+            url: '/classroom-plan/search-description-Learning',
+            method: 'POST',
+            data: {
+                learningId: learningId,
+            },
+            success: function (response) {
+                document.getElementById('textAreaDescriptionRA').value = response.learningResult[0].description_learning_result;
+            },
+            error: function (xhr, status, error) {
+                console.error('Error al eliminar el grupo:', xhr);
+                console.error('Estado:', status);
+                console.error('Error:', error);
+                console.error('Respuesta del servidor:', xhr.responseText);
+            }
+        });
+
     }
 
     // VIEW
@@ -395,96 +638,41 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function viewSelectStudyFields(studyFieldInfo) {
-        document.getElementById('fromSelectStudyFields').classList.remove('d-none');
-        let selectsContent = `
-            <div class="form-group">
-                    <label for="selectStudyField">Selección campo de estudio</label>
-                    <select class="form-control input-pill selectsFrom" id="selectStudyField" disabled>
-                        <option disabled selected value="">Seleccione un campo de estudio</option>
-        `;
-
-        if (studyFieldInfo.length > 0) {
-            studyFieldInfo.forEach((studyField, index) => {
-                const i = index + 1;
-                selectsContent += `
-                        <option value="${studyField.id}">${capitalizeOrDefault(studyField.name_study_field)}</option>
-                `;
-            });
-
-            selectsContent += `
-                    </select>
-                </div>                
-            `;
-
-            document.getElementById("fromSelectStudyFields").innerHTML = selectsContent;
-
-            // EVENT LISTENER
-            document.getElementById('selectStudyField').addEventListener('change', function () {
-                studyFieldId = this.options[this.selectedIndex].value;
-                viewButtonSearch(programId, studyFieldId);
-                resetContent();
-            });
-
-        } else {
-
-            document.getElementById("fromSelectStudyFields").innerHTML = '<h3>No se encontraron resultados.</h3>';
-
-        }
-    }
-
-    function viewButtonSearch(programId, studyFieldId) {
-        document.getElementById('fromButtonSearch').classList.remove('d-none');
-        let selectsContent = `
-            <button type="button" class="btn btn-primary btn-lg btn-block" style="margin-top: 20px;" id="buttonSearchCourse">
-                Seleccione el curso
-            </button>
-        `;
-
-        document.getElementById("fromButtonSearch").innerHTML = selectsContent;
-
-        // EVENT LISTENER
-        document.getElementById('buttonSearchCourse').addEventListener('click', function () {
-            searchCourses(programId, studyFieldId);
-        });
-
-    }
-
-    function viewSelectSpecialization(response) {
-        document.getElementById('specializationContainer').classList.remove('d-none');
+    function viewSelectCampoComun(response) {
+        document.getElementById('specializationContainer').classList.add('d-none');
         document.getElementById('pensumContainer').classList.add('d-none');
-        document.getElementById('campoComunContainer').classList.add('d-none');
+        document.getElementById('campoComunContainer').classList.remove('d-none');
 
-        let bodySpecialization = $('#bodySpecialization');
-        bodySpecialization.empty();
+        let bodyCampoComun = $('#bodyCampoComun');
+        bodyCampoComun.empty();
 
-        relationInfo = response.specializationInfo;
+        let arrayContent = response.relationInfo;
 
-        if (relationInfo && relationInfo.length > 0) {
-            relationInfo.forEach(function (relation) {
+        if (arrayContent.length > 0) {
+            arrayContent.forEach(function (array) {
                 let row = `
-                        <tr>
-                            <td class="text-center">
-                                <button type="button" class="btn btn-primary btn-sm specializationSelect" 
-                                    data-id="${relation.course.id}">
-                                    <i class="fas fa-check-circle"></i>
-                                </button>
-                            </td>
-                            <td>${capitalizeOrDefault(relation.program?.faculty?.name_faculty)}</td>
-                            <td>${capitalizeOrDefault(relation.program?.name_program)}</td>
-                            <td>${capitalizeOrDefault(relation.course?.name_course)}</td>
-                            <td>${capitalizeOrDefault(relation.course?.semester?.name_semester)}</td>
-                            <td>${relation.course?.credit || 'sin asignación'}</td>
-                            <td>${capitalizeOrDefault(relation.course?.course_type?.name_course_type)}</td>
-                        </tr>
-                    `;
-                bodySpecialization.append(row);
+                    <tr>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-primary btn-sm campoComunSelect" 
+                                data-id="${array.id}">
+                                <i class="fas fa-check-circle"></i>
+                            </button>
+                        </td>
+                        <td>${capitalizeOrDefault(array.course.component?.study_field?.name_study_field)}</td>
+                        <td>${capitalizeOrDefault(array.course.component?.name_component)}</td>
+                        <td>${capitalizeOrDefault(array.course.name_course)}</td>
+                        <td>${capitalizeOrDefault(array.course.semester?.name_semester)}</td>
+                        <td align="center">${array.course.credit || 'sin asignación'}</td>
+                        <td>${capitalizeOrDefault(array.course.course_type?.name_course_type)}</td>
+                    </tr>
+                `;
+                bodyCampoComun.append(row);
             });
 
         } else {
-            bodySpecialization.append('<tr><td colspan="6">No se encontraron.</td></tr>');
+            // Mostrar un mensaje si no se encontraron cursos
+            bodyCampoComun.append('<tr><td colspan="6">No se encontraron.</td></tr>');
         }
-
     }
 
     function viewSelectPensum(response) {
@@ -495,26 +683,26 @@ document.addEventListener('DOMContentLoaded', function () {
         let bodyPensum = $('#bodyPensum');
         bodyPensum.empty();
 
-        pensumInfo = response.relationInfo;
+        let arrayContent = response.relationInfo;
 
-        if (pensumInfo.length > 0) {
-            pensumInfo.forEach(function (pensum) {
+        if (arrayContent.length > 0) {
+            arrayContent.forEach(function (array) {
                 let row = `
                         <tr>
                             <td class="text-center">
                                 <button type="button" class="btn btn-primary btn-sm pensumSelect" 
-                                    data-id="${pensum.course.id}">
+                                    data-id="${array.id}">
                                     <i class="fas fa-check-circle"></i>
                                 </button>
                             </td>
-                            <td>${capitalizeOrDefault(pensum.program?.faculty?.name_faculty)}</td>
-                            <td>${capitalizeOrDefault(pensum.program?.name_program)}</td>
-                            <td>${capitalizeOrDefault(pensum.course?.component?.study_field?.name_study_field)}</td>
-                            <td>${capitalizeOrDefault(pensum.course?.component?.name_component)}</td>
-                            <td>${capitalizeOrDefault(pensum.course?.name_course)}</td>
-                            <td>${capitalizeOrDefault(pensum.course?.semester?.name_semester)}</td>
-                            <td>${pensum.course?.credit || 'sin asignación'}</td>
-                            <td>${capitalizeOrDefault(pensum.course?.course_type?.name_course_type)}</td>
+                            <td>${capitalizeOrDefault(array.program?.faculty?.name_faculty)}</td>
+                            <td>${capitalizeOrDefault(array.program?.name_program)}</td>
+                            <td>${capitalizeOrDefault(array.course?.component?.study_field?.name_study_field)}</td>
+                            <td>${capitalizeOrDefault(array.course?.component?.name_component)}</td>
+                            <td>${capitalizeOrDefault(array.course?.name_course)}</td>
+                            <td>${capitalizeOrDefault(array.course?.semester?.name_semester)}</td>
+                            <td align="center">${array.course?.credit || 'sin asignación'}</td>
+                            <td>${capitalizeOrDefault(array.course?.course_type?.name_course_type)}</td>
                         </tr>
                     `;
                 bodyPensum.append(row);
@@ -527,104 +715,40 @@ document.addEventListener('DOMContentLoaded', function () {
 
     }
 
-    function viewSelectCampoComun(response) {
-        document.getElementById('specializationContainer').classList.add('d-none');
+    function viewSelectSpecialization(response) {
+        document.getElementById('specializationContainer').classList.remove('d-none');
         document.getElementById('pensumContainer').classList.add('d-none');
-        document.getElementById('campoComunContainer').classList.remove('d-none');
+        document.getElementById('campoComunContainer').classList.add('d-none');
 
-        let bodyCampoComun = $('#bodyCampoComun');
-        bodyCampoComun.empty();
+        let bodySpecialization = $('#bodySpecialization');
+        bodySpecialization.empty();
 
-        courseInfo = response.coursesInfo;
+        let arrayContent = response.relationInfo;
 
-        if (courseInfo.length > 0) {
-            courseInfo.forEach(function (course) {
+        if (arrayContent && arrayContent.length > 0) {
+            arrayContent.forEach(function (array) {
                 let row = `
-                    <tr>
-                        <td class="text-center">
-                            <button type="button" class="btn btn-primary btn-sm campoComunSelect" 
-                                data-id="${course.id}">
-                                <i class="fas fa-check-circle"></i>
-                            </button>
-                        </td>
-                        <td>${capitalizeOrDefault(course.component?.study_field?.name_study_field)}</td>
-                        <td>${capitalizeOrDefault(course.component?.name_component)}</td>
-                        <td>${capitalizeOrDefault(course.name_course)}</td>
-                        <td>${capitalizeOrDefault(course.semester?.name_semester)}</td>
-                        <td>${course.credit || 'sin asignación'}</td>
-                        <td>${capitalizeOrDefault(course.course_type?.name_course_type)}</td>
-                    </tr>
-                `;
-                bodyCampoComun.append(row);
+                        <tr>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-primary btn-sm specializationSelect" 
+                                    data-id="${array.id}">
+                                    <i class="fas fa-check-circle"></i>
+                                </button>
+                            </td>
+                            <td>${capitalizeOrDefault(array.program?.faculty?.name_faculty)}</td>
+                            <td>${capitalizeOrDefault(array.program?.name_program)}</td>
+                            <td>${capitalizeOrDefault(array.course?.name_course)}</td>
+                            <td>${capitalizeOrDefault(array.course?.semester?.name_semester)}</td>
+                            <td align="center">${array.course?.credit || 'sin asignación'}</td>
+                            <td>${capitalizeOrDefault(array.course?.course_type?.name_course_type)}</td>
+                        </tr>
+                    `;
+                bodySpecialization.append(row);
             });
 
         } else {
-            // Mostrar un mensaje si no se encontraron cursos
-            bodyCampoComun.append('<tr><td colspan="6">No se encontraron.</td></tr>');
+            bodySpecialization.append('<tr><td colspan="6">No se encontraron.</td></tr>');
         }
-    }
-
-    function viewInfoSpecialization(response) {
-        // CERRAR MODAL
-        $('#modalCourse').modal('hide');
-
-        document.getElementById('infoSpecialization').classList.remove('d-none');
-        document.getElementById('infoPensum').classList.add('d-none');
-        document.getElementById('infoCampoComun').classList.add('d-none');
-
-        specializationInfo = response.relationInfo;
-
-        let relation;
-
-        if (specializationInfo.length > 0) {
-            relation = specializationInfo[0];
-        } else {
-            console.error('No se encontraron.');
-            return;
-        }
-
-        // Actualizar los campos en el área #course-info
-        $('#nameFacultyS').text(capitalizeOrDefault(relation.program?.faculty?.name_faculty));
-        $('#nameProgramS').text(capitalizeOrDefault(relation.program?.name_program));
-        $('#nameSemesterS').text(capitalizeOrDefault(relation.course?.semester?.name_semester));
-        $('#codeCourseS').text(relation.course?.course_code || 'sin asignación');
-        $('#nameCourseS').text(capitalizeOrDefault(relation.course?.name_course));
-        $('#educationLevelS').text(capitalizeOrDefault(relation.program?.education_level.name_education_level));
-        $('#nameCreditsS').text(relation.course?.credit || 'sin asignación');
-        $('#nameCourseTypeS').text(capitalizeOrDefault(relation.course?.course_type?.name_course_type));
-
-    }
-
-    function viewInfoPensum(response) {
-        // CERRAR MODAL
-        $('#modalCourse').modal('hide');
-
-        document.getElementById('infoSpecialization').classList.add('d-none');
-        document.getElementById('infoPensum').classList.remove('d-none');
-        document.getElementById('infoCampoComun').classList.add('d-none');
-
-        pensumInfo = response.relationInfo;
-
-        let relation;
-        // Verifica si programas están definidos antes de usarlos
-        if (pensumInfo.length > 0) {
-            relation = pensumInfo[0];
-        } else {
-            console.error('No se encontraron.');
-            return; // Sal de la función si no hay programas
-        }
-
-        // Actualizar los campos en el área #course-info
-        $('#nameFaculty').text(capitalizeOrDefault(relation.program?.faculty?.name_faculty));
-        $('#nameProgram').text(capitalizeOrDefault(relation.program?.name_program));
-        $('#nameSemester').text(capitalizeOrDefault(relation.course?.semester?.name_semester));
-        $('#codeCourse').text(relation.course?.course_code || 'sin asignación');
-        $('#nameCourse').text(capitalizeOrDefault(relation.course?.name_course));
-        $('#educationLevel').text(capitalizeOrDefault(relation.program?.education_level.name_education_level));
-        $('#nameField').text(capitalizeOrDefault(relation.course?.component?.study_field?.name_study_field));
-        $('#nameComponent').text(capitalizeOrDefault(relation.course?.component?.name_component));
-        $('#nameCredits').text(relation.course?.credit || 'sin asignación');
-        $('#nameCourseType').text(capitalizeOrDefault(relation.course?.course_type?.name_course_type));
 
     }
 
@@ -636,25 +760,126 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('infoPensum').classList.add('d-none');
         document.getElementById('infoCampoComun').classList.remove('d-none');
 
-        campoComunInfo = response.courseInfo;
+        let arrayContent = response.relationInfo;
 
         let relation;
-        // Verifica si programas están definidos antes de usarlos
-        if (campoComunInfo.length > 0) {
-            relation = campoComunInfo[0];
+
+        if (arrayContent.length > 0) {
+            relation = arrayContent[0];
         } else {
             console.error('No se encontraron.');
-            return; // Sal de la función si no hay programas
+            return;
         }
 
-        $('#nameSemesterCC').text(capitalizeOrDefault(relation.semester?.name_semester));
-        $('#codeCourseCC').text(relation.course_code || 'sin asignación');
-        $('#nameCourseCC').text(capitalizeOrDefault(relation.name_course));
+        $('#nameSemesterCC').text(capitalizeOrDefault(relation.course.semester.name_semester));
+        $('#codeCourseCC').text(relation.course.course_code || 'sin asignación');
+        $('#nameCourseCC').text(capitalizeOrDefault(relation.course.name_course));
         $('#educationLevelCC').text('Pregrado');
-        $('#nameFieldCC').text(capitalizeOrDefault(relation.component?.study_field?.name_study_field));
-        $('#nameComponentCC').text(capitalizeOrDefault(relation.component?.name_component));
-        $('#nameCreditsCC').text(relation.credit || 'sin asignación');
-        $('#nameCourseTypeCC').text(capitalizeOrDefault(relation.course_type?.name_course_type));
+        $('#nameFieldCC').text(capitalizeOrDefault(relation.course.component.study_field.name_study_field));
+        $('#nameComponentCC').text(capitalizeOrDefault(relation.course.component.name_component));
+        $('#nameCreditsCC').text(relation.course.credit || 'sin asignación');
+        $('#nameCourseTypeCC').text(capitalizeOrDefault(relation.course.course_type?.name_course_type));
+
+    }
+
+    function viewInfoPensum(response) {
+        // CERRAR MODAL
+        $('#modalCourse').modal('hide');
+
+        document.getElementById('infoSpecialization').classList.add('d-none');
+        document.getElementById('infoPensum').classList.remove('d-none');
+        document.getElementById('infoCampoComun').classList.add('d-none');
+
+        let arrayContent = response.relationInfo;
+
+        let relation;
+
+        if (arrayContent.length > 0) {
+            relation = arrayContent[0];
+        } else {
+            console.error('No se encontraron.');
+            return;
+        }
+
+        $('#nameFaculty').text(capitalizeOrDefault(relation.program.faculty.name_faculty));
+        $('#nameProgram').text(capitalizeOrDefault(relation.program.name_program));
+        $('#nameSemester').text(capitalizeOrDefault(relation.course.semester.name_semester));
+        $('#codeCourse').text(relation.course.course_code || 'sin asignación');
+        $('#nameCourse').text(capitalizeOrDefault(relation.course.name_course));
+        $('#educationLevel').text(capitalizeOrDefault(relation.program.education_level.name_education_level));
+        $('#nameField').text(capitalizeOrDefault(relation.course.component.study_field.name_study_field));
+        $('#nameComponent').text(capitalizeOrDefault(relation.course.component.name_component));
+        $('#nameCredits').text(relation.course.credit || 'sin asignación');
+        $('#nameCourseType').text(capitalizeOrDefault(relation.course?.course_type.name_course_type));
+
+    }
+
+    function viewInfoSpecialization(response) {
+        // CERRAR MODAL
+        $('#modalCourse').modal('hide');
+
+        document.getElementById('infoSpecialization').classList.remove('d-none');
+        document.getElementById('infoPensum').classList.add('d-none');
+        document.getElementById('infoCampoComun').classList.add('d-none');
+
+        let arrayContent = response.relationInfo;
+
+        let relation;
+
+        if (arrayContent.length > 0) {
+            relation = arrayContent[0];
+        } else {
+            console.error('No se encontraron.');
+            return;
+        }
+
+        $('#nameFacultyS').text(capitalizeOrDefault(relation.program?.faculty?.name_faculty));
+        $('#nameProgramS').text(capitalizeOrDefault(relation.program?.name_program));
+        $('#nameSemesterS').text(capitalizeOrDefault(relation.course?.semester?.name_semester));
+        $('#codeCourseS').text(relation.course?.course_code || 'sin asignación');
+        $('#nameCourseS').text(capitalizeOrDefault(relation.course?.name_course));
+        $('#educationLevelS').text(capitalizeOrDefault(relation.program?.education_level.name_education_level));
+        $('#nameCreditsS').text(relation.course?.credit || 'sin asignación');
+        $('#nameCourseTypeS').text(capitalizeOrDefault(relation.course?.course_type?.name_course_type));
+
+    }
+
+    function viewSelectLearningResult(response, check) {
+        const selectElement = document.getElementById('selectLearning');
+        selectElement.innerHTML = '';
+
+        if (check == true) {
+            const learning = response.classroomPlanId[0].learning_result;
+            const option = document.createElement('option');
+            option.value = learning.id;
+            option.text = learning.name_learning_result;
+            option.selected = true;
+            selectElement.appendChild(option);
+
+            document.getElementById('selectLearning').disabled = true;
+            document.getElementById('textAreaDescriptionRA').value = learning.description_learning_result;
+        } else {
+            const defaultOption = document.createElement('option');
+            defaultOption.disabled = false;
+            defaultOption.selected = true;
+            defaultOption.value = '';
+            defaultOption.text = 'Seleccione un resultado de aprendizaje';
+            selectElement.appendChild(defaultOption);
+
+            if (response.learningResultsId && response.learningResultsId.length > 0) {
+                response.learningResultsId.forEach(function (learningArray) {
+                    learningArray.forEach(function (learning) {
+                        const option = document.createElement('option');
+                        option.value = learning.id;
+                        option.text = learning.name_learning_result;
+                        selectElement.appendChild(option);
+                    });
+                });
+                selectElement.removeAttribute('disabled');
+            } else {
+                selectElement.setAttribute('disabled', true);
+            }
+        }
 
     }
 
@@ -662,55 +887,54 @@ document.addEventListener('DOMContentLoaded', function () {
 
         blockCampos(true, true);
 
-        let coursesInfo = response.classroomPlanInfo;
-
+        let arrayContent = response.classroomPlanInfo;
         let bodyComponent = $('#bodyComponent');
         bodyComponent.empty();
 
-        if (coursesInfo.length > 0) {
-            coursesInfo.forEach(function (course) {
+        if (arrayContent.length > 0) {
+            arrayContent.forEach(function (array) {
                 let row = `
                         <tr class="highlight-row">                
-                            <td class="detalle-user" class="detalle-courses" data-course-id="${course.id}"
+                            <td class="detalle-user" class="detalle-courses" data-course-id="${array.id}"
                                 data-toggle="modal" data-target="#modalListCourses">
                                 <a href="#" class="text-dark">
-                                    ${capitalizeOrDefault(course.component.study_field.name_study_field)}
+                                    ${capitalizeOrDefault(array.relations.course.component.study_field.name_study_field)}
                                 </a>
                             </td>
-                            <td class="detalle-user" class="detalle-courses" data-course-id="${course.id}"
+                            <td class="detalle-user" class="detalle-courses" data-course-id="${array.id}"
                                 data-toggle="modal" data-target="#modalListCourses">
                                 <a href="#" class="text-dark">
-                                    ${capitalizeOrDefault(course.component.name_component)}
+                                    ${capitalizeOrDefault(array.relations.course.component.name_component)}
                                 </a>
                             </td>
-                            <td class="detalle-user" class="detalle-courses" data-course-id="${course.id}"
+                            <td class="detalle-user" class="detalle-courses" data-course-id="${array.id}"
                                 data-toggle="modal" data-target="#modalListCourses">
                                 <a href="#" class="text-dark">
-                                    ${capitalizeOrDefault(course.course_code)}                        
+                                    ${capitalizeOrDefault(array.relations.course.course_code)}                        
                                 </a>
                             </td>
-                            <td class="detalle-user" class="detalle-courses" data-course-id="${course.id}"
+                            <td class="detalle-user" class="detalle-courses" data-course-id="${array.id}"
                                 data-toggle="modal" data-target="#modalListCourses">
                                 <a href="#" class="text-dark">
-                                    ${capitalizeOrDefault(course.name_course)}                        
+                                    ${capitalizeOrDefault(array.relations.course.name_course)}                        
                                 </a>
                             </td>
-                            <td class="detalle-user" class="detalle-courses" data-course-id="${course.id}"
+                            <td class="detalle-user" class="detalle-courses" data-course-id="${array.id}"
                                 data-toggle="modal" data-target="#modalListCourses">
                                 <a href="#" class="text-dark">
-                                    ${capitalizeOrDefault(course.semester.name_semester)}                                
+                                    ${capitalizeOrDefault(array.relations.course.semester.name_semester)}                                
                                 </a>
                             </td>
-                            <td class="detalle-user" class="detalle-courses" data-course-id="${course.id}"
+                            <td align="center" class="detalle-user" class="detalle-courses" data-course-id="${array.id}"
                                 data-toggle="modal" data-target="#modalListCourses">
                                 <a href="#" class="text-dark">
-                                    ${course.credit}
+                                    ${array.relations.course.credit}
                                 </a>
                             </td>
-                            <td class="detalle-user" class="detalle-courses" data-course-id="${course.id}"
+                            <td class="detalle-user" class="detalle-courses" data-course-id="${array.id}"
                                 data-toggle="modal" data-target="#modalListCourses">
                                 <a href="#" class="text-dark">
-                                    ${capitalizeOrDefault(course.course_type.name_course_type)}
+                                    ${capitalizeOrDefault(array.relations.course.course_type.name_course_type)}
                                 </a>
                             </td>
                         </tr>
@@ -718,7 +942,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 bodyComponent.append(row);
             });
         } else {
-            bodyComponent.append('<tr><td colspan="6">No se encontraron.</td></tr>');
+            bodyComponent.append('<tr><td colspan="6">No se encontraron resultados.</td></tr>');
         }
     }
 
@@ -726,43 +950,42 @@ document.addEventListener('DOMContentLoaded', function () {
 
         blockCampos(false, false);
 
-        let coursesInfo = response.classroomPlanInfo;
-
+        let arrayContent = response.classroomPlanInfo;
         let bodyComponent = $('#bodyComponent');
         bodyComponent.empty();
 
-        if (coursesInfo.length > 0) {
-            coursesInfo.forEach(function (course) {
+        if (arrayContent.length > 0) {
+            arrayContent.forEach(function (array) {
                 let row = `
                         <tr class="highlight-row">                            
-                            <td class="detalle-user" class="detalle-courses" data-course-id="${course.id}"
+                            <td class="detalle-user" class="detalle-courses" data-course-id="${array.id}"
                                 data-toggle="modal" data-target="#modalListCourses">
                                 <a href="#" class="text-dark">
-                                    ${capitalizeOrDefault(course.course_code)}                        
+                                    ${capitalizeOrDefault(array.relations.course.course_code)}                        
                                 </a>
                             </td>
-                            <td class="detalle-user" class="detalle-courses" data-course-id="${course.id}"
+                            <td class="detalle-user" class="detalle-courses" data-course-id="${array.id}"
                                 data-toggle="modal" data-target="#modalListCourses">
                                 <a href="#" class="text-dark">
-                                    ${capitalizeOrDefault(course.name_course)}                        
+                                    ${capitalizeOrDefault(array.relations.course.name_course)}                        
                                 </a>
                             </td>
-                            <td class="detalle-user" class="detalle-courses" data-course-id="${course.id}"
+                            <td class="detalle-user" class="detalle-courses" data-course-id="${array.id}"
                                 data-toggle="modal" data-target="#modalListCourses">
                                 <a href="#" class="text-dark">
-                                    ${capitalizeOrDefault(course.semester.name_semester)}                                
+                                    ${capitalizeOrDefault(array.relations.course.semester.name_semester)}                                
                                 </a>
                             </td>
-                            <td class="detalle-user" class="detalle-courses" data-course-id="${course.id}"
+                            <td align="center" class="detalle-user" class="detalle-courses" data-course-id="${array.id}"
                                 data-toggle="modal" data-target="#modalListCourses">
                                 <a href="#" class="text-dark">
-                                    ${course.credit}
+                                    ${array.relations.course.credit}
                                 </a>
                             </td>
-                            <td class="detalle-user" class="detalle-courses" data-course-id="${course.id}"
+                            <td class="detalle-user" class="detalle-courses" data-course-id="${array.id}"
                                 data-toggle="modal" data-target="#modalListCourses">
                                 <a href="#" class="text-dark">
-                                    ${capitalizeOrDefault(course.course_type.name_course_type)}
+                                    ${capitalizeOrDefault(array.relations.course.course_type.name_course_type)}
                                 </a>
                             </td>
                         </tr>
@@ -774,11 +997,203 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    function viewInfoEvaluation(response) {
+
+        let evaluations1 = [];
+        let evaluations2 = [];
+        let evaluations3 = [];
+
+        // Verificar si se encontraron cursos en la respuesta
+        if (response.length > 0) {
+            response.forEach(function (resp) {
+                var percentageId = resp.id_percentage;
+
+                if (percentageId === 1) {
+                    var evaluationInfo = (resp.evaluation && resp.evaluation.name_evaluation)
+                        ? capitalizeOrDefault(resp.evaluation.name_evaluation) + '-' + resp.percentage_number + '%' // Capitalizar
+                        : 'Nombre de evaluación no disponible'; // Valor alternativo si no existe
+                    evaluations1.push(evaluationInfo); // Agregar al arreglo de evaluaciones 1
+                } else if (percentageId === 2) {
+                    var evaluationInfo = (resp.evaluation && resp.evaluation.name_evaluation)
+                        ? capitalizeOrDefault(resp.evaluation.name_evaluation) + '-' + resp.percentage_number + '%' // Capitalizar
+                        : 'Nombre de evaluación no disponible'; // Valor alternativo
+                    evaluations2.push(evaluationInfo); // Agregar al arreglo de evaluaciones 2
+                } else if (percentageId === 3) {
+                    var evaluationInfo = (resp.evaluation && resp.evaluation.name_evaluation)
+                        ? capitalizeOrDefault(resp.evaluation.name_evaluation) + '-' + resp.percentage_number + '%' // Capitalizar
+                        : 'Nombre de evaluación no disponible'; // Valor alternativo
+                    evaluations3.push(evaluationInfo); // Agregar al arreglo de evaluaciones 3
+                }
+            });
+
+            // Mostrar todos los nombres de evaluación en los elementos correspondientes, separados por salto de línea
+            document.getElementById('percentage1').innerText = evaluations1.join('\n') || 'Sin evaluaciones';
+            document.getElementById('percentage2').innerText = evaluations2.join('\n') || 'Sin evaluaciones';
+            document.getElementById('percentage3').innerText = evaluations3.join('\n') || 'Sin evaluaciones';
+        } else {
+            document.getElementById('percentage1').innerText = 'Sin evaluaciones';
+            document.getElementById('percentage2').innerText = 'Sin evaluaciones';
+            document.getElementById('percentage3').innerText = 'Sin evaluaciones';
+        }
+
+    }
+
+    function viewClassroom(response) {
+
+        let general = response.classroomPlanId[0].general_objective.description_general_objective;
+        let specifics = response.specificsId;
+        let topics = response.topicsId;
+        let evaluation = response.evaluationsId;
+        let reference = response.referencesId;
+
+        document.getElementById('textAreaObjective').value = general;
+
+        specifics.forEach((specific, index) => {
+            let description = specific.description_specific_objective;
+            let specificTextArea = document.getElementById(`textAreaSpecific${index + 1}`);
+            if (specificTextArea) {
+                specificTextArea.value = description;
+            }
+
+            let collapseCardBody = document.querySelector(`#collapse${index + 1} .card-body`);
+            if (collapseCardBody) {
+                collapseCardBody.innerText = description;
+            }
+        });
+
+        topics.forEach((topic, index) => {
+            let description = topic.description_topic;
+            let topicsTextArea = document.getElementById(`textAreaTheme${index + 1}`);
+            if (topicsTextArea) {
+                topicsTextArea.value = description;
+            }
+        });
+
+        viewInfoEvaluation(evaluation);
+        ViewtableReferences(reference)
+    }
+
+    function viewSelectEvaluation(response) {
+        document.getElementById('viewSelectEvaluation').classList.remove('d-none');
+        const selectElements = document.querySelectorAll('.selectEvaluation');
+
+        selectElements.forEach(selectElement => {
+            selectElement.innerHTML = '';
+
+            const defaultOption = document.createElement('option');
+            defaultOption.disabled = false;
+            defaultOption.selected = true;
+            defaultOption.value = '';
+            defaultOption.text = 'Seleccione una evaluación';
+            selectElement.appendChild(defaultOption);
+
+            if (response.courseTypeInfo && response.courseTypeInfo.length > 0) {
+                response.courseTypeInfo.forEach(function (courseTypeArray) {
+                    const option = document.createElement('option');
+                    option.value = courseTypeArray.id;
+                    option.setAttribute('data-name', courseTypeArray.name_evaluation);
+                    option.text = capitalizeOrDefault(courseTypeArray.name_evaluation);
+                    selectElement.appendChild(option);
+                });
+                selectElement.removeAttribute('disabled');
+            } else {
+                selectElement.setAttribute('disabled', true);
+            }
+        });
+    }
+
+    function viewDataEvaluation(savesEvaluation1, savesEvaluation2, savesEvaluation3) {
+        const formatEvaluations = (evaluations) => {
+            return evaluations.map(evaluation =>
+                `Evaluación: ${capitalizeOrDefault(evaluation.nameEvaluation)}, Porcentaje: ${evaluation.percentageValue}%`
+            ).join('\n') || 'Sin evaluaciones';
+        };
+
+        document.getElementById('percentage1').innerText = formatEvaluations(savesEvaluation1);
+        document.getElementById('percentage2').innerText = formatEvaluations(savesEvaluation2);
+        document.getElementById('percentage3').innerText = formatEvaluations(savesEvaluation3);
+    }
+
+    function ViewtableReferences(response) {
+
+        var referencesId = response;
+
+        var bodyReferences = $('#bodyReferences');
+        bodyReferences.empty();
+
+        if (referencesId.length > 0) {
+            let cont = 1;
+            referencesId.forEach(function (reference) {
+
+                var row = `
+                <tr>
+                    <td>
+                        ${cont++}
+                    </td>                               
+                    <td>
+                        ${capitalizeOrDefault(reference.name_reference)}
+                    </td>
+                    <td>
+                        ${reference.link_reference}
+                    </td>                                      
+                </tr>
+            `;
+                bodyReferences.append(row);
+            });
+        } else {
+            bodyReferences.append('<tr><td colspan="6">No se encontraron.</td></tr>');
+        }
+    }
+
+    function viewReferences(dataLinks, linkReference) {
+        // Inicializar arreglos para acumular los nombres de evaluación
+        let references1 = [];
+        let references2 = [];
+
+        if (dataLinks == 1) {
+            if (Array.isArray(linkReference) && linkReference.length > 0) {
+                linkReference.forEach(function (resp) {
+                    references1.push(resp);
+                });
+
+                document.getElementById('institutionalView').innerHTML = references1.join('<br>');
+
+            } else {
+                document.getElementById('institutionalView').textContent = 'Sin referencias institucionales';
+            }
+        } else {
+            if (Array.isArray(linkReference) && linkReference.length > 0) {
+                linkReference.forEach(function (resp) {
+                    references2.push(resp);
+                });
+
+                document.getElementById('generalView').innerHTML = references2.join('<br>');
+            } else {
+                document.getElementById('generalView').textContent = 'Sin referencias generales';
+            }
+        }
+    }
+
+    // DATA
+    function dataReference(dataLinks) {
+        if (dataLinks == 1) {
+            let institutionalLink = document.getElementById('linkInstitutionalReferences').value;
+            institutionalLinks.push(institutionalLink);
+            viewReferences(dataLinks, institutionalLinks);
+            document.getElementById('linkInstitutionalReferences').value = '';
+        } else {
+            let generalLink = document.getElementById('linkGeneralReferences').value;
+            generalLinks.push(generalLink);
+            viewReferences(dataLinks, generalLinks);
+            document.getElementById('linkGeneralReferences').value = '';
+        }
+    }
+
     // COMFIRMATIONS
     function confirmationSave(dataConfirmation) {
         if (dataConfirmation == '1') {
             validate(
-                ['pillSelectLearning'],
+                ['selectLearning'],
                 'Por favor, selecciona un resultado de aprendizaje.'
             );
         } else if (dataConfirmation == '2') {
@@ -807,10 +1222,323 @@ document.addEventListener('DOMContentLoaded', function () {
                 'Los campos de temas no pueden estar vacíos.'
             );
         } else if (dataConfirmation == '7') {
-            validateCheckbox();
+            $('#modalConfirmation').modal('show');
         } else if (dataConfirmation == '8') {
             validateReferences();
         }
+    }
+
+    function confirmButton(dataConfirmation, learningId, realtionId, savesEvaluation1, savesEvaluation2, savesEvaluation3) {
+        // Cambiar a la siguiente card
+        showNextCard();
+
+        // Cerrar el modal
+        $('#modalConfirmation').modal('hide');
+
+        if (dataConfirmation == 1) {
+            if (learningId !== '' && realtionId !== '') {
+                saveClassroomPlan(realtionId, learningId).then(response => {
+                    classroomId = response.createClassroom.id;
+                    assigEvaId = response.assignmentEvaluations;
+                    referencesId = response.references;
+                    specificId = response.specificObjectives;
+                    learningId = '';
+                    realtionId = '';
+                }).catch(error => {
+                    console.error("Error en la solicitud AJAX:", error);
+                });
+            }
+        } else if (dataConfirmation == 2) {
+            let generalObjective = document.getElementById('textAreaObjective').value;
+
+            if (generalObjective !== '') {
+                saveObjGeneral(classroomId, generalObjective).then(response => {
+                    generalObjective = '';
+                }).catch(error => {
+                    console.error("Error en la solicitud AJAX:", error);
+                });
+            }
+        } else if (dataConfirmation == 3) {
+            let specificObjectives = [];
+
+            for (let i = 1; i <= 3; i++) {
+                let objectiveValue = document.getElementById(`textAreaSpecific${i}`).value;
+                if (objectiveValue !== '') {
+                    specificObjectives.push(objectiveValue);
+                    document.querySelector(`#collapse${i} .card-body`).innerText = objectiveValue;
+                }
+            }
+
+            // Verificar si todos los objetivos específicos tienen valor antes de guardar
+            if (specificObjectives.length === 3) {
+                saveObjSpecific(classroomId, specificId, specificObjectives).then(response => {
+                    specificId = response;
+                    // Reiniciar los valores después de guardar
+                    specificObjectives.forEach((_, index) => {
+                        document.getElementById(`textAreaSpecific${index + 1}`).value = '';
+                    });
+                }).catch(error => {
+                    console.error("Error en la solicitud AJAX:", error);
+                });
+            }
+        } else if (dataConfirmation == 4) {
+            let topics = [];
+
+            for (let i = 1; i <= 5; i++) {
+                let TopicValue = document.getElementById(`textAreaTheme${i}`).value;
+                if (TopicValue !== '') {
+                    topics.push(TopicValue);
+                }
+            }
+
+            // Verificar si todos los objetivos específicos tienen valor antes de guardar
+            if (topics.length === 5) {
+                saveTopic(specificId[0], topics).then(response => {
+
+                    // Reiniciar los valores después de guardar
+                    topics.forEach((_, index) => {
+                        document.getElementById(`textAreaTheme${index + 1}`).value = '';
+                    });
+                }).catch(error => {
+                    console.error("Error en la solicitud AJAX:", error);
+                });
+            }
+        } else if (dataConfirmation == 5) {
+            let topics2 = [];
+
+            for (let i = 6; i <= 10; i++) {
+                let TopicValue2 = document.getElementById(`textAreaTheme${i}`).value;
+                if (TopicValue2 !== '') {
+                    topics2.push(TopicValue2);
+                }
+            }
+
+            // Verificar si todos los objetivos específicos tienen valor antes de guardar
+            if (topics2.length === 5) {
+                saveTopic(specificId[1], topics2).then(response => {
+
+                    // Reiniciar los valores después de guardar
+                    topics2.forEach((_, index) => {
+                        document.getElementById(`textAreaTheme${index + 1}`).value = '';
+                    });
+                }).catch(error => {
+                    console.error("Error en la solicitud AJAX:", error);
+                });
+            }
+        } else if (dataConfirmation == 6) {
+            let topics3 = [];
+
+            for (let i = 11; i <= 16; i++) {
+                let TopicValue3 = document.getElementById(`textAreaTheme${i}`).value;
+                if (TopicValue3 !== '') {
+                    topics3.push(TopicValue3);
+                }
+            }
+
+            // Verificar si todos los objetivos específicos tienen valor antes de guardar
+            if (topics3.length === 6) {
+                saveTopic(specificId[2], topics3).then(response => {
+
+                    // Reiniciar los valores después de guardar
+                    topics3.forEach((_, index) => {
+                        document.getElementById(`textAreaTheme${index + 1}`).value = '';
+                    });
+                }).catch(error => {
+                    console.error("Error en la solicitud AJAX:", error);
+                });
+            }
+        } else if (dataConfirmation == 7) {
+            if (savesEvaluation1 !== '' && savesEvaluation2 !== '' && savesEvaluation3 !== '') {
+                saveAsEvaluation(classroomId, assigEvaId, savesEvaluation1, savesEvaluation2, savesEvaluation3);
+            }
+        } else if (dataConfirmation == 8) {
+            saveReference(classroomId, referencesId, institutionalLinks, generalLinks);
+        }
+    }
+
+    // CREATE
+    function saveClassroomPlan(realtionId, learningId) {
+
+        const nameGeneral = 'Objetivo general';
+
+        const nameSpecific = [
+            'Objetivo especifico #1',
+            'Objetivo especifico #2',
+            'Objetivo especifico #3'
+        ];
+
+        const nameReference = [
+            'Referencia institucional',
+            'Referencia general',
+        ];
+
+        const content = 'No se registro contenido';
+
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: '/classroom-plan/create-classroom-plans',
+                method: 'POST',
+                data: {
+                    realtionId: realtionId,
+                    learningId: learningId,
+                    nameGeneral: nameGeneral,
+                    nameSpecificOne: nameSpecific[0],
+                    nameSpecificTwo: nameSpecific[1],
+                    nameSpecificThree: nameSpecific[2],
+                    nameReferenceOne: nameReference[0],
+                    nameReferenceTwo: nameReference[1],
+                    content: content,
+                },
+                success: function (response) {
+
+                    resolve(response);
+
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error al eliminar el grupo:', xhr);
+                    console.error('Estado:', status);
+                    console.error('Error:', error);
+                    console.error('Respuesta del servidor:', xhr.responseText);
+
+                    reject(error);
+                }
+            });
+        });
+    }
+
+    function saveObjGeneral(classroomId, generalObjective) {
+        return new Promise((resolve, reject) => {
+            // Realizar la petición AJAX
+            $.ajax({
+                url: '/classroom-plan/save-general-objective',
+                type: 'PUT',
+                data: {
+                    classroomId: classroomId,
+                    generalObjective: generalObjective,
+                },
+                success: function (response) {
+                    resolve(response);
+
+                },
+                // Función que se ejecuta en caso de error en la solicitud
+                error: function (xhr, status, error) {
+                    // Imprimir mensajes de error en la consola
+                    console.error('Error al obtener:', xhr);
+                    console.error('Estado:', status);
+                    console.error('Error:', error);
+                    reject(error);
+
+                }
+            });
+        });
+
+    }
+
+    function saveObjSpecific(classroomId, specificId, specificObjectives) {
+        return new Promise((resolve, reject) => {
+            // Realizar la petición AJAX
+            $.ajax({
+                url: '/classroom-plan/save-specific-objective',
+                type: 'PUT',
+                data: {
+                    specificId: specificId,
+                    classroomId: classroomId,
+                    specificObjectiveOne: specificObjectives[0],
+                    specificObjectiveTwo: specificObjectives[1],
+                    specificObjectiveThree: specificObjectives[2],
+                },
+                success: function (response) {
+                    resolve(response.specificId);
+
+                },
+                // Función que se ejecuta en caso de error en la solicitud
+                error: function (xhr, status, error) {
+                    // Imprimir mensajes de error en la consola
+                    console.error('Error al obtener:', xhr);
+                    console.error('Estado:', status);
+                    console.error('Error:', error);
+                    reject(error);
+
+                }
+            });
+        });
+    }
+
+    function saveTopic(specificId, topics) {
+        return new Promise((resolve, reject) => {
+            // Realizar la petición AJAX
+            $.ajax({
+                url: '/classroom-plan/save-topic',
+                type: 'PUT',
+                data: {
+                    specificId: specificId,
+                    topics: topics,
+                },
+                success: function (response) {
+                    resolve(response);
+
+                },
+                // Función que se ejecuta en caso de error en la solicitud
+                error: function (xhr, status, error) {
+                    // Imprimir mensajes de error en la consola
+                    console.error('Error al obtener:', xhr);
+                    console.error('Estado:', status);
+                    console.error('Error:', error);
+                    reject(error);
+
+                }
+            });
+        });
+    }
+
+    function saveAsEvaluation(classroomId, assigEvaId, savesEvaluation1, savesEvaluation2, savesEvaluation3) {
+        $.ajax({
+            url: '/classroom-plan/save-evaluations',
+            type: 'PUT',
+            data: {
+                classroomId: classroomId,
+                assigEvaId: assigEvaId,
+                savesEvaluation1: savesEvaluation1,
+                savesEvaluation2: savesEvaluation2,
+                savesEvaluation3: savesEvaluation3,
+            },
+            success: function (response) {
+            },
+            error: function (xhr, status, error) {
+                console.error('Error al obtener:', xhr);
+                console.error('Estado:', status);
+                console.error('Error:', error);
+                reject(error);
+            }
+        });
+    }
+
+    function saveReference(classroomId, referencesId, institutionalLinks, generalLinks) {
+
+        const nameReferences = [
+            'Referencia institucional',
+            'Referencia general',
+        ];
+
+        $.ajax({
+            url: '/classroom-plan/save-references',
+            type: 'PUT',
+            data: {
+                classroomId: classroomId,
+                referencesId: referencesId,
+                nameReferences: nameReferences,
+                institutionalLinks: institutionalLinks,
+                generalLinks: generalLinks,
+            },
+            success: function (response) {
+            },
+            error: function (xhr, status, error) {
+                console.error('Error al obtener:', xhr);
+                console.error('Estado:', status);
+                console.error('Error:', error);
+            }
+        });
+
     }
 
     /*
@@ -818,76 +1546,119 @@ document.addEventListener('DOMContentLoaded', function () {
         * Event Listener
         *
     */
-    document.getElementById('selectEducation').addEventListener('change', function () {
-
-        educationId = this.options[this.selectedIndex].value;
-        if (educationId == 1) {
-            reset();
-            searchStudyFields();
+    document.getElementById('selectTypeClassroom').addEventListener('change', function () {
+        typeClassroomId = this.options[this.selectedIndex].value;
+        resetTypeClassroom();
+        resetContent()
+        if (typeClassroomId == 1) {
+            document.getElementById('buttonSearchCourse').classList.remove('d-none');
         } else {
-            reset();
-            document.getElementById('selectFaculty').disabled = false;
-            document.getElementById('fromSelectStudyFields').classList.add('d-none');
+            document.getElementById('fromSelectFaculty').classList.remove('d-none');
+            document.getElementById('fromSelectProgram').classList.remove('d-none');
+            document.getElementById("selectFaculty").disabled = false;
         }
-        resetContent();
     });
 
     document.getElementById('selectFaculty').addEventListener('change', function () {
         facultyId = this.options[this.selectedIndex].value;
-        searchProgram(facultyId);
-        resetContent();
+        resetFaculty();
+        resetContent()
+        searchProgram(facultyId, typeClassroomId);
     });
 
     document.getElementById('selectProgram').addEventListener('change', function () {
         programId = this.options[this.selectedIndex].value;
-        if (educationId == 1) {
-            document.getElementById('selectStudyField').disabled = false;
+        resetContent()
+        document.getElementById('buttonSearchCourse').classList.remove('d-none');
+    });
+
+    document.getElementById('buttonSearchCourse').addEventListener('click', function () {
+        if (typeClassroomId == 1) {
+            searchCourses(null, null);
         } else {
-            viewButtonSearch(programId, null);
+            searchCourses(programId, typeClassroomId)
         }
-        resetContent();
     });
 
     document.getElementById('tableCampoComun').addEventListener('click', async function (event) {
         if (event.target.classList.contains('campoComunSelect')) {
-            const campoComunId = event.target.dataset.id;
-            await searchInfoCourse(campoComunId, null);
-            await searchComponent(componentId, null);
-            await searchLearning(programId);
+            realtionId = event.target.dataset.id;
+            await resetForm();
+            await searchInfoCourse(realtionId, null).then(response => {
+                componentId = response;
+            }).catch(error => {
+                console.error("Error en la solicitud AJAX:", error);
+            });
+            await searchComponent(1, componentId, null);
+            await searchClassroomPlan(realtionId, null);
         }
     });
 
     document.getElementById('tablePensum').addEventListener('click', async function (event) {
         if (event.target.classList.contains('pensumSelect')) {
-            const pensumId = event.target.dataset.id;
-            await searchInfoCourse(pensumId, programId);
-            await searchComponent(componentId, null);
-            await searchLearning(programId);
+            realtionId = event.target.dataset.id;
+            await resetForm();
+            await searchInfoCourse(realtionId, typeClassroomId).then(response => {
+                componentId = response;
+            }).catch(error => {
+                console.error("Error en la solicitud AJAX:", error);
+            });
+            await searchComponent(2, componentId, programId);
+            await searchClassroomPlan(realtionId, programId);
         }
     });
 
     document.getElementById('tableSpecialization').addEventListener('click', async function (event) {
         if (event.target.classList.contains('specializationSelect')) {
-            const specializationId = event.target.dataset.id;
-            await searchInfoCourse(specializationId, programId);
-            await searchComponent(null, programId);
-            await searchLearning(programId);
+            realtionId = event.target.dataset.id;
+            await resetForm();
+            await searchInfoCourse(realtionId, typeClassroomId).then(response => {
+                componentId = response;
+            }).catch(error => {
+                console.error("Error en la solicitud AJAX:", error);
+            });
+            await searchComponent(3, componentId, programId);
+            await searchClassroomPlan(realtionId, programId);
         }
+    });
+
+    document.getElementById('selectLearning').addEventListener('change', function () {
+        learningId = this.value;
+        searchDescriptionLearning(learningId);
+    });
+
+    document.querySelectorAll('.saveEvaluation').forEach(function (button) {
+        button.addEventListener('click', function () {
+            let data = this.getAttribute('data-evaluation');
+            validateEvaluation(data);
+            viewDataEvaluation(savesEvaluation1, savesEvaluation2, savesEvaluation3);
+        });
+    });
+
+    document.querySelectorAll('.referenceLinks').forEach(function (button) {
+        button.addEventListener('click', function () {
+            const dataLinks = this.getAttribute('data-links');
+            dataReference(dataLinks);
+        });
+    });
+
+    document.getElementById('confirm-button').addEventListener('click', function () {
+        confirmButton(dataConfirmation, learningId, realtionId, savesEvaluation1, savesEvaluation2, savesEvaluation3);
+        unlockAttributes();
     });
 
     document.querySelectorAll('.confirmationSave').forEach(function (button) {
         button.addEventListener('click', function () {
             dataConfirmation = this.getAttribute('data-confirmation');
-            //confirmationSave(dataConfirmation, courseId, learningId);
+            confirmationSave(dataConfirmation);
         });
     });
 
     document.querySelectorAll('.nextCard').forEach(function (button) {
         button.addEventListener('click', function () {
-            //blockAttributes(true, true);
+            blockAttributes();
             showNextCard();
         });
     });
 
 });
-
