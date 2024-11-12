@@ -31,9 +31,9 @@
 
 <div class="card-body">
     <!-- form -->
-    <form action="" method="POST">
+    <form action="" method="POST" enctype="multipart/form-data">
         @csrf
-        <input type="file" name="file" id="file">
+        <input type="file" name="file">
         <br>
         <input type="submit" value="import">
     </form>

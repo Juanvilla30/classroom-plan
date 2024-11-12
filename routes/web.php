@@ -97,4 +97,3 @@ Route::get('/document', [GenerateDocumentController::class, 'index'])->name('doc
 //Rutas para facultedes
 Route::get('/faculties', [FacultiController::class,'index'])->name('faculties');
 Route::post('/faculties', [FacultiController::class,'import']);
-
