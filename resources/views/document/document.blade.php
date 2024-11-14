@@ -46,7 +46,7 @@
                     completa</a>
 
                 <!-- Botón para descargar -->
-                <a href="ruta-del-archivo.pdf" download class="btn btn-success">Descargar PDF</a>
+                <a href="ruta-del-archivo.pdf" download class="btn btn-warning">Descargar PDF</a>
             </div>
         </div>
         <!-- end document -->
