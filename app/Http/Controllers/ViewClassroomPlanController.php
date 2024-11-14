@@ -6,6 +6,7 @@ use App\Models\AssignmentEvaluation;
 use App\Models\ClassroomPlan;
 use App\Models\Competence;
 use App\Models\Evaluation;
+use App\Models\GeneralObjective;
 use App\Models\LearningResult;
 use App\Models\Percentage;
 use App\Models\ProfileEgress;
@@ -67,7 +68,7 @@ class ViewClassroomPlanController extends Controller
                 ->with([
                     'evaluation',
                     'percentage',
-                ])->orderBy('id')
+                ])->orderBy('id_percentage')
                 ->get();
 
             return response()->json([
@@ -108,6 +109,52 @@ class ViewClassroomPlanController extends Controller
                 'learningInfo' => $learningInfo,
                 'evaluationInfo' => $evaluationInfo,
                 'percentageInfo' => $percentageInfo,
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with(
+                'error',
+                'Ocurrió un problema al cargar la información del plan de aula.'
+            );
+        }
+    }
+
+    public function saveContent(Request $request)
+    {
+        try {
+            $classroomId = $request->input('classroomId');
+            $learningId = $request->input('learning');
+            $dataGenerlaId = $request->input('dataGenerlaId');
+            $GeneralContent = $request->input('GeneralContent');
+            $specificObj = $request->input('specificObj');
+            $topicObj = $request->input('topicObj');
+
+            GeneralObjective::where('id', $dataGenerlaId)
+                ->update([
+                    'description_general_objective' => $GeneralContent,
+                ]);
+
+            foreach ($specificObj as $specific) {
+                SpecificObjective::where('id', $specific['dataId'])
+                    ->update([
+                        'description_specific_objective' => $specific['value'],
+                    ]);
+            }
+
+            foreach ($topicObj as $topics) {
+                Topic::where('id', $topics['dataId'])
+                    ->update([
+                        'description_topic' => $topics['value'],
+                    ]);
+            }
+
+            ClassroomPlan::where('id', $classroomId)
+                ->update([
+                    'id_learning_result' => $learningId,
+                    'id_state' => 2,
+                ]);
+
+            return response()->json([
+                'check' => true,
             ]);
         } catch (\Exception $e) {
             return redirect()->back()->with(
@@ -164,6 +211,69 @@ class ViewClassroomPlanController extends Controller
             $classroomPlanId = Reference::where('id', $dataId)->value('id_classroom_plan');
 
             $referencsInfo = Reference::where('id_classroom_plan', $classroomPlanId)
+                ->orderBy('name_reference')
+                ->get();
+
+            return response()->json([
+                'check' => true,
+                'referencsInfo' => $referencsInfo,
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with(
+                'error',
+                'Ocurrió un problema al cargar la información del plan de aula.'
+            );
+        }
+    }
+
+    public function createEvaluation(Request $request)
+    {
+        try {
+            $classroomId = $request->input('classroomId');
+            $percentageId = $request->input('percentageId');
+            $evaluationId = $request->input('evaluationId');
+            $valuePercentage = $request->input('valuePercentage');
+
+            AssignmentEvaluation::create([
+                'percentage_number' => $valuePercentage,
+                'id_evaluation' => $evaluationId,
+                'id_percentage' => $percentageId,
+                'id_classroom_plan' => $classroomId,
+            ]);
+
+            $assigEvaluationInfo = AssignmentEvaluation::where('id_classroom_plan', $classroomId)
+                ->with([
+                    'evaluation',
+                    'percentage',
+                ])->orderBy('id_percentage')
+                ->get();
+
+            return response()->json([
+                'check' => true,
+                'assigEvaluationInfo' => $assigEvaluationInfo,
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with(
+                'error',
+                'Ocurrió un problema al cargar la información del plan de aula.'
+            );
+        }
+    }
+
+    public function createReference(Request $request)
+    {
+        try {
+            $classroomId = $request->input('classroomId');
+            $nameReference = $request->input('nameReference');
+            $linkReference = $request->input('linkReference');
+
+            Reference::create([
+                'name_reference' => $nameReference,
+                'link_reference' => $linkReference,
+                'id_classroom_plan' => $classroomId,
+            ]);
+
+            $referencsInfo = Reference::where('id_classroom_plan', $classroomId)
                 ->orderBy('name_reference')
                 ->get();
 

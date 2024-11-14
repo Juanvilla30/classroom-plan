@@ -78,7 +78,7 @@
             <!-- Logo Header -->
             <div class="logo-header" data-background-color="blue">
 
-                <a href="#" class="logo">
+                <a href="/home" class="logo">
                     <img src="\img\logo_autonoma.svg" alt="navbar brand" class="navbar" width="90%" height="100%"
                         style="filter: grayscale(100%) brightness(0) invert(100%);">
                 </a>
@@ -112,7 +112,7 @@
                             <a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#"
                                 aria-expanded="false">
                                 <div class="avatar-sm">
-                                    <img src="https://themekita.com/demo-atlantis-lite-bootstrap/livepreview/examples/assets/img/profile.jpg"
+                                    <img src="\img\perfil_dos.png"
                                         alt="..." class="avatar-img rounded-circle">
                                 </div>
                             </a>
@@ -170,14 +170,14 @@
                 <div class="sidebar-content">
                     <div class="user">
                         <div class="avatar-sm float-left mr-2">
-                            <img src="https://themekita.com/demo-atlantis-lite-bootstrap/livepreview/examples/assets/img/profile.jpg"
+                            <img src="\img\perfil_uno.png"
                                 alt=".." class="avatar-img rounded-circle">
                         </div>
                         <div class="info">
                             <a data-toggle="collapse" href="#logoutDropdown" aria-expanded="false" class="collapsed">
                                 <span>
                                     <span class="username">{{ auth()->user()->name }}</span>
-                                    <span class="user-level text-uppercase">roles</span>
+                                    <span class="user-level text-uppercase">{{ auth()->user()->role->name_rol}}</span>
                                     <span class="caret"></span>
                                 </span>
                             </a>
@@ -359,7 +359,7 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                    <h5 class="card-title font-weight-bold text-primary">Cerrar sesión</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>

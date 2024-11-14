@@ -86,13 +86,18 @@ Route::middleware('auth')->group(function () {
     Route::post('/list-classroom-plan/search-program', [ListClassroomPlanController::class, 'searchProgram'])->name('searchProgram');
     Route::post('/list-classroom-plan/search-campo-comun', [ListClassroomPlanController::class, 'searchCampoComun'])->name('searchCampoComun');
     Route::post('/list-classroom-plan/search-classroom-plan', [ListClassroomPlanController::class, 'searchClassroomPlan'])->name('searchClassroomPlan');
+    Route::post('/list-classroom-plan/search-data', [ListClassroomPlanController::class, 'searchData'])->name('searchData');
+    Route::put('/list-classroom-plan/update-state', [ListClassroomPlanController::class, 'saveUpdateState'])->name('saveUpdateState');
 
     // Rutas de vizualizacion de plan de aula
     Route::get('/view-classroom-plan/{id}', [ViewClassroomPlanController::class, 'index'])->name('viewClassroomPlan');
     Route::post('/view-classroom-plan/info-classroom-plans', [ViewClassroomPlanController::class, 'ClaassroomInfo'])->name('ClaassroomInfo');
     Route::post('/view-classroom-plan/search-learning-result', [ViewClassroomPlanController::class, 'searchData'])->name('searchData');
+    Route::put('/view-classroom-plan/save-content', [ViewClassroomPlanController::class, 'saveContent'])->name('saveContent');
     Route::put('/view-classroom-plan/save-evaluation', [ViewClassroomPlanController::class, 'saveEvaluation'])->name('saveEvaluation');
     Route::put('/view-classroom-plan/save-reference', [ViewClassroomPlanController::class, 'saveReference'])->name('saveReference');
+    Route::post('/view-classroom-plan/create-evaluation', [ViewClassroomPlanController::class, 'createEvaluation'])->name('createEvaluation');
+    Route::post('/view-classroom-plan/create-reference', [ViewClassroomPlanController::class, 'createReference'])->name('createReference');
 
     // Rutas user
     Route::get('/user', [UserController::class, 'index'])->name('user');

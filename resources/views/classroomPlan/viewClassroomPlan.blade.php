@@ -234,7 +234,7 @@
                     <h5 class="card-title font-weight-bold text-primary">Referencias</h5>
                 </div>
                 <div class="col-sm-12 col-md-6 text-md-right d-none" id="btnNewReference">
-                    <button class="btn btn-primary btn-round ml-auto mb-3" data-toggle="modal" data-target="#modalNewReferences">
+                    <button class="btn btn-primary btn-round ml-auto mb-3">
                         <i class="fa fa-plus"></i>
                         Agregar
                     </button>
@@ -327,7 +327,8 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    ¿Deseas guardar?
+                    Recuerda que al enviar el plan de aula, no podrás modificar los registros hasta que se vuelva a autorizar. Asegúrate de que toda la información esté correcta.<br><br>
+                    ¿Estás seguro de que deseas actualizar el plan de aula?
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
@@ -469,7 +470,7 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="selectProgram">Selección de tipo de referencia</label>
-                        <select class="form-control input-pill" data-select-evaluation="1" id="selectNewReference">
+                        <select class="form-control input-pill" id="selectNewReference">
                             <option disabled selected value="">Seleccione una tipo de referencia</option>
                             <option value="referencia general">Referencia general</option>
                             <option value="referencia institucional">Referencia institucional</option>
@@ -486,7 +487,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary">Guardar</button>
+                    <button type="button" class="btn btn-primary" id="confirm-new-reference">Guardar</button>
                 </div>
             </div>
         </div>

@@ -96,6 +96,35 @@
     </div>
     <!-- End Card -->
 
+    <!-- Modal Update State -->
+    <div class="modal fade" id="modalUpdateState" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="card-title font-weight-bold text-primary">Actualizar Estado</h5>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <label id="valueClassroomId" class="d-none"></label>
+                    <div class="form-group">
+                        <label for="selectState">Selección de estado</label>
+                        <select class="form-control input-pill" id="selectState">
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="confirm-update">Actualizar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal -->
+
     <!-- Styles -->
     <link rel="stylesheet" href="../../css/listClassroomPlan.css">
     <!-- End Styles -->
