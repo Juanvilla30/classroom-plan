@@ -13,10 +13,22 @@ $.ajaxSetup({
 const classroomId = document.getElementById('classroomId').getAttribute('data-id');
 
 let educationId;
+let programId;
+let learningId;
+let courseTypeId;
 
-let classroomInfo;
+let learningInfo;
+let responseInfo;
+let percentageInfo;
 
+// EVALUATION
+let assigEvaInfo;
+
+// REFERENCE
+
+// CONT ACTIVATE
 let cont = true;
+
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -26,7 +38,9 @@ document.addEventListener('DOMContentLoaded', function () {
         *
     */
     searchClassroom(classroomId).then(response => {
-        classroomInfo = response;
+        programId = response.classroomInfo.relations.id_program;
+        courseTypeId = response.classroomInfo.relations.course.id_course_type;
+        responseInfo = response;
     }).catch(error => {
         console.error("Error en la solicitud AJAX:", error);
     });;
@@ -44,11 +58,17 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // BLOCK ATRTRIBUTES
-    function blockCampos(showField) {
+    function blockCampos(showField, showEvaluation) {
         if (showField) {
             $('#tableReferences th:nth-child(4), #tableReferences td:nth-child(4)').css('display', '');
         } else {
             $('#tableReferences th:nth-child(4), #tableReferences td:nth-child(4)').css('display', 'none');
+        }
+
+        if (showEvaluation) {
+            $('#tableEvaluation th:nth-child(4), #tableEvaluation td:nth-child(4)').css('display', '');
+        } else {
+            $('#tableEvaluation th:nth-child(4), #tableEvaluation td:nth-child(4)').css('display', 'none');
         }
     }
 
@@ -62,7 +82,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     classroomId: classroomId,
                 },
                 success: function (response) {
-                    console.log(response)
                     viewBtnUpdate(response);
                     educationId = response.classroomInfo.relations.program?.id_education_level || null;
                     if (educationId == null) {
@@ -78,6 +97,31 @@ document.addEventListener('DOMContentLoaded', function () {
                     viewInfoEvaluation(response);
                     viewReferences(response);
                     resolve(response);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error al eliminar el grupo:', xhr);
+                    console.error('Estado:', status);
+                    console.error('Error:', error);
+                    console.error('Respuesta del servidor:', xhr.responseText);
+                    reject(error)
+                }
+            });
+        });
+    }
+
+    // SEARCH UPDATE
+    function searchData(programId, courseTypeId) {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: '/view-classroom-plan/search-learning-result',
+                method: 'POST',
+                data: {
+                    programId: programId,
+                    courseTypeId: courseTypeId,
+                },
+                success: function (response) {
+                    viewLarningUpdate(response)
+                    resolve(response)
                 },
                 error: function (xhr, status, error) {
                     console.error('Error al eliminar el grupo:', xhr);
@@ -334,7 +378,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <div class="col-sm-12 col-md-4">
                             <div class="form-group">
                                 <label for="textAreaTopic${i}">Tema semana ${i}:</label>
-                                <textarea class="form-control" data-topics-id="${topic.id}" id="textAreaTopic${i}" rows="8" disabled>${capitalizeOrDefault(topic.description_topic)}</textarea>
+                                <textarea class="form-control unlockFields" data-topics-id="${topic.id}" id="textAreaTopic${i}" rows="8" disabled>${capitalizeOrDefault(topic.description_topic)}</textarea>
                             </div>
                         </div>
                     `;
@@ -349,7 +393,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <div class="col-sm-12 col-md-4">
                             <div class="form-group">
                                 <label for="textAreaTopic${i}">Tema semana ${i}:</label>
-                                <textarea class="form-control" data-topics-id="${topic.id}" id="textAreaTopic${i}" rows="8" disabled>${capitalizeOrDefault(topic.description_topic)}</textarea>
+                                <textarea class="form-control unlockFields" data-topics-id="${topic.id}" id="textAreaTopic${i}" rows="8" disabled>${capitalizeOrDefault(topic.description_topic)}</textarea>
                             </div>
                         </div>
                     `;
@@ -364,7 +408,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <div class="col-sm-12 col-md-4">
                             <div class="form-group">
                                 <label for="textAreaTopic${i}">Tema semana ${i}:</label>
-                                <textarea class="form-control" data-topics-id="${topic.id}" id="textAreaTopic${i}" rows="8" disabled>${capitalizeOrDefault(topic.description_topic)}</textarea>
+                                <textarea class="form-control unlockFields" data-topics-id="${topic.id}" id="textAreaTopic${i}" rows="8" disabled>${capitalizeOrDefault(topic.description_topic)}</textarea>
                             </div>
                         </div>
                     `;
@@ -380,47 +424,38 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function viewInfoEvaluation(response) {
+        blockCampos(false, false);
 
-        let evaluations1 = [];
-        let evaluations2 = [];
-        let evaluations3 = [];
+        let evaluationInfo = response.assigEvaluationInfo;
 
-        if (response.assigEvaluationInfo.length > 0) {
-            response.assigEvaluationInfo.forEach(function (resp) {
-                var percentageId = resp.id_percentage;
+        let bodyEvaluation = $('#bodyEvaluation');
+        bodyEvaluation.empty();
 
-                if (percentageId === 1) {
-                    var evaluationInfo = (resp.evaluation && resp.evaluation.name_evaluation)
-                        ? capitalizeOrDefault(resp.evaluation.name_evaluation) + '-' + resp.percentage_number + '%' // Capitalizar
-                        : 'Nombre de evaluación no disponible'; // Valor alternativo si no existe
-                    evaluations1.push(evaluationInfo); // Agregar al arreglo de evaluaciones 1
-                } else if (percentageId === 2) {
-                    var evaluationInfo = (resp.evaluation && resp.evaluation.name_evaluation)
-                        ? capitalizeOrDefault(resp.evaluation.name_evaluation) + '-' + resp.percentage_number + '%' // Capitalizar
-                        : 'Nombre de evaluación no disponible'; // Valor alternativo
-                    evaluations2.push(evaluationInfo); // Agregar al arreglo de evaluaciones 2
-                } else if (percentageId === 3) {
-                    var evaluationInfo = (resp.evaluation && resp.evaluation.name_evaluation)
-                        ? capitalizeOrDefault(resp.evaluation.name_evaluation) + '-' + resp.percentage_number + '%' // Capitalizar
-                        : 'Nombre de evaluación no disponible'; // Valor alternativo
-                    evaluations3.push(evaluationInfo); // Agregar al arreglo de evaluaciones 3
-                }
+        if (evaluationInfo.length > 0) {
+            evaluationInfo.forEach(function (evaluation) {
+                var row = `
+                    <tr>
+                        <td>
+                            ${capitalizeOrDefault(evaluation.evaluation.name_evaluation)}
+                        </td>                               
+                        <td>
+                            ${evaluation.percentage_number}
+                        </td>
+                        <td>
+                            ${capitalizeOrDefault(evaluation.percentage.name_percentage)}
+                        </td>                        
+                    </tr>
+                `;
+                bodyEvaluation.append(row);
             });
-
-            // Mostrar todos los nombres de evaluación en los elementos correspondientes, separados por salto de línea
-            document.getElementById('percentage1').innerText = evaluations1.join('\n') || 'Sin evaluaciones';
-            document.getElementById('percentage2').innerText = evaluations2.join('\n') || 'Sin evaluaciones';
-            document.getElementById('percentage3').innerText = evaluations3.join('\n') || 'Sin evaluaciones';
         } else {
-            document.getElementById('percentage1').innerText = 'Sin evaluaciones';
-            document.getElementById('percentage2').innerText = 'Sin evaluaciones';
-            document.getElementById('percentage3').innerText = 'Sin evaluaciones';
+            bodyEvaluation.append('<tr><td colspan="6">No se encontraron.</td></tr>');
         }
 
     }
 
     function viewReferences(response) {
-        blockCampos(false);
+        blockCampos(false, false);
         let referencesId = response.referencsInfo;
 
         let bodyReferences = $('#bodyReferences');
@@ -449,14 +484,221 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // VIEWS UPDATE
+    function viewLarningUpdate(response) {
+        document.getElementById("viewDataProfile").classList.add('d-none');
+        document.getElementById("viewDataUpdate").classList.remove('d-none');
+
+        const selectElement = document.getElementById('selectLearning');
+
+        selectElement.innerHTML = '<option disabled selected value="">Seleccione un resultado de aprendizaje</option>';
+
+        response.learningInfo.forEach(function (learning) {
+            const option = document.createElement('option');
+            option.value = learning.id;
+            option.text = capitalizeOrDefault(learning.name_learning_result); // Capitalizar
+            selectElement.appendChild(option);
+        });
+    }
+
+    // TERMINAR....................
+    function viewEvaluationUpdate(response, assigEvaInfo) {
+        blockCampos(true, true);
+        let evaluationInfo = response.assigEvaluationInfo;
+
+        let bodyEvaluation = $('#bodyEvaluation');
+        bodyEvaluation.empty();
+
+        if (evaluationInfo.length > 0) {
+            evaluationInfo.forEach(function (evaluation) {
+                var row = `
+                    <tr>
+                        <td>
+                            ${capitalizeOrDefault(evaluation.evaluation.name_evaluation)}
+                        </td>                               
+                        <td>
+                            ${evaluation.percentage_number}
+                        </td>
+                        <td>
+                            ${capitalizeOrDefault(evaluation.percentage.name_percentage)}
+                        </td>
+                        <td>
+							<div class="form-button-action">
+								<button type="button" title="" class="btn btn-link btn-simple-primary btn-lg"
+                                    id="evaluationBtnUpdate" data-id="${evaluation.id}">
+									<i class="fa fa-edit"></i>
+								</button>								
+							</div>
+						</td>                    
+                    </tr>
+                `;
+                bodyEvaluation.append(row);
+            });
+            document.querySelectorAll('#evaluationBtnUpdate').forEach(button => {
+                button.addEventListener('click', function () {
+                    const evaluationId = this.getAttribute('data-id');
+                    if (Array.isArray(evaluationInfo)) {
+                        const selectedContent = evaluationInfo.find(item => item.id === parseInt(evaluationId));
+                        viewModalUpdateEvaluation(selectedContent, assigEvaInfo);
+                    }
+                });
+            });
+        } else {
+            bodyEvaluation.append('<tr><td colspan="6">No se encontraron.</td></tr>');
+        }
+    }
+
+    function viewReferencesUpdate(response) {
+        blockCampos(true, true);
+        let referencesId = response.referencsInfo;
+
+        let bodyReferences = $('#bodyReferences');
+        bodyReferences.empty();
+
+        if (referencesId.length > 0) {
+            let cont = 1;
+            referencesId.forEach(function (reference) {
+                var row = `
+                    <tr>
+                        <td>
+                            ${cont++}
+                        </td>                               
+                        <td>
+                            ${capitalizeOrDefault(reference.name_reference)}
+                        </td>
+                        <td>
+                            ${reference.link_reference}
+                        </td>
+                        <td>
+							<div class="form-button-action">
+								<button type="button" class="btn btn-link btn-simple-primary btn-lg"
+                                    id="referenceBtnUpdate" data-id="${reference.id}">
+									<i class="fa fa-edit"></i>
+								</button>								
+							</div>
+						</td>                     
+                    </tr>
+                `;
+                bodyReferences.append(row);
+            });
+
+            document.querySelectorAll('#referenceBtnUpdate').forEach(button => {
+                button.addEventListener('click', function () {
+                    const referenceUId = this.getAttribute('data-id');
+                    if (Array.isArray(referencesId)) {
+                        const selectedContent = referencesId.find(item => item.id === parseInt(referenceUId));
+                        viewModalUpdateReference(selectedContent);
+                    }
+                });
+            });
+
+        } else {
+            bodyReferences.append('<tr><td colspan="6">No se encontraron.</td></tr>');
+        }
+    }
+
+    function viewModalUpdateEvaluation(response, assigEvaInfo) {
+        $('#modalUpdateEvaluation').modal('show');
+
+        document.getElementById('namePercentage').innerText = capitalizeOrDefault(response.percentage.name_percentage);
+
+        let evaluationId = response.evaluation.id;
+
+        const selectElement = document.getElementById('selectUpdateEvaluation');
+        selectElement.innerHTML = '';
+
+        // Buscar y agregar la opción seleccionada al principio
+        const selectedContent = assigEvaInfo.find(item => item.id === evaluationId) || null;
+        if (selectedContent) {
+            const selectedOption = document.createElement('option');
+            selectedOption.value = selectedContent.id;
+            selectedOption.text = capitalizeOrDefault(selectedContent.name_evaluation);
+            selectedOption.selected = true; // Marcar como seleccionada
+            selectElement.appendChild(selectedOption);
+        } else {
+            const selectedOption = document.createElement('option');
+            selectedOption.value = response.evaluation.id;
+            selectedOption.text = capitalizeOrDefault(response.evaluation.name_evaluation);
+            selectedOption.selected = true; // Marcar como seleccionada
+            selectedOption.disabled = true; // Deshabilitar la opción
+            selectElement.appendChild(selectedOption);
+        }
+
+        // Agregar las demás opciones
+        assigEvaInfo.forEach(function (evaluatio) {
+            if (evaluatio.id !== evaluationId) { // Evitar duplicar la opción seleccionada
+                const option = document.createElement('option');
+                option.value = evaluatio.id;
+                option.text = capitalizeOrDefault(evaluatio.name_evaluation);
+                selectElement.appendChild(option);
+            }
+        });
+
+        const inputPercentage = document.getElementById('inputPercentage')
+        inputPercentage.value = response.percentage_number;
+        inputPercentage.setAttribute('data-id', response.percentage.id);
+        inputPercentage.setAttribute('data-val-id', response.id);
+    }
+
+    function viewModalUpdateReference(response) {
+        $('#modalUpdateReferences').modal('show');
+        document.getElementById('nameReference').innerText = capitalizeOrDefault(response.name_reference);
+        const inputLink = document.getElementById('linksContent')
+        inputLink.value = response.link_reference;
+        inputLink.setAttribute('data-id', response.id);
+    }
+
+    function viewModalNewEvaluation(assigEvaInfo, percentageInfo) {
+        const selectElement = document.getElementById('selectNewPercentage');
+        selectElement.innerHTML = '<option disabled selected value="">Seleccione un porcentaje</option>';
+
+        percentageInfo.forEach(function (porcentaje) {
+            const option = document.createElement('option');
+            option.value = porcentaje.id;
+            option.text = capitalizeOrDefault(porcentaje.name_percentage);
+            selectElement.appendChild(option);
+        });
+
+        const selectElement2 = document.getElementById('selectNewEvaluation');
+        selectElement2.innerHTML = '<option disabled selected value="">Seleccione una evaluacion</option>';
+
+        assigEvaInfo.forEach(function (evaluation) {
+            const option = document.createElement('option');
+            option.value = evaluation.id;
+            option.text = capitalizeOrDefault(evaluation.name_evaluation);
+            selectElement2.appendChild(option);
+        });
+        document.getElementById('inputNewPercentage').value = "";
+    }
+
     // ACTIVATE
-    function activateUpdate() {
+    function activateUpdate(programId, responseInfo) {
         // Cerrar el modal
         $('#modalActivateUpdate').modal('hide');
 
         document.getElementById('activateUpdate').textContent = 'Desactivar actualización';
 
         document.getElementById("btnSaveUpdate").classList.remove('d-none');
+
+        searchData(programId, courseTypeId).then(response => {
+            learningInfo = response.learningInfo;
+            assigEvaInfo = response.evaluationInfo;
+            percentageInfo = response.percentageInfo;
+            viewEvaluationUpdate(responseInfo, assigEvaInfo)
+            viewReferencesUpdate(responseInfo)
+            viewModalNewEvaluation(assigEvaInfo, percentageInfo);
+        }).catch(error => {
+            console.error("Error en la solicitud AJAX:", error);
+        });
+
+        const selects = document.querySelectorAll(".unlockFields");
+
+        selects.forEach(select => {
+            select.disabled = false;
+        });
+
+        document.getElementById("btnNewEvaluation").classList.remove('d-none');
+        document.getElementById("btnNewReference").classList.remove('d-none');
     }
     // DEACTIVATE
     function deactivateUpdate() {
@@ -467,7 +709,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         document.getElementById("btnSaveUpdate").classList.add('d-none');
 
-        //location.reload();
+        location.reload();
 
     }
 
@@ -491,6 +733,141 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    function ValidationUpdateEvaluation(assigEvaInfo) {
+        const updateSelect = document.getElementById('selectUpdateEvaluation')
+        const dataValueSelect = updateSelect.value;
+
+        const updateInput = document.getElementById('inputPercentage')
+        const dataValueInput = updateInput.value;
+        const dataId = updateInput.dataset.id;
+        const dataValId = updateInput.dataset.valId;
+
+        if (dataValueSelect == '' || dataValueInput == '') {
+            Swal.fire({
+                title: 'Advertencia',
+                icon: 'warning',
+                text: 'Asegurate de llenar completo el registro',
+                confirmButtonColor: '#1572E8',
+                confirmButtonText: 'Aceptar',
+            })
+        } else {
+            Swal.fire({
+                title: 'Advertencia',
+                icon: 'warning',
+                text: '¿Estás seguro de que deseas actualizar?',
+                showCancelButton: true,
+                confirmButtonColor: '#1572E8',
+                cancelButtonColor: '#F25961',
+                confirmButtonText: 'Aceptar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    saveUpdateEvaluation(dataValueSelect, dataValueInput, dataValId, assigEvaInfo)
+                }
+            });
+        }
+    }
+
+    function ValidationUpdateReference() {
+        const updateInput = document.getElementById('linksContent')
+        const dataValue = updateInput.value;
+        const dataId = updateInput.dataset.id;
+
+        if (dataValue == '') {
+            Swal.fire({
+                title: 'Advertencia',
+                icon: 'warning',
+                text: 'Asegurate de llenar completo el registro',
+                confirmButtonColor: '#1572E8',
+                confirmButtonText: 'Aceptar',
+            })
+        } else {
+            Swal.fire({
+                title: 'Advertencia',
+                icon: 'warning',
+                text: '¿Estás seguro de que deseas actualizar?',
+                showCancelButton: true,
+                confirmButtonColor: '#1572E8',
+                cancelButtonColor: '#F25961',
+                confirmButtonText: 'Aceptar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    saveUpdateReference(dataId, dataValue)
+                }
+            });
+        }
+    }
+
+    function ValidationNewEvaluation() {
+        const newSelect1 = document.getElementById('selectNewPercentage');
+        const dataValueSelec1 = newSelect1.value;
+
+        const newSelect = document.getElementById('selectNewEvaluation');
+        const dataValueSelec = newSelect.value;
+
+        const newInput = document.getElementById('inputNewPercentage');
+        const dataValueInput = newInput.value;
+
+        if (dataValueSelec1 === '' || dataValueSelec === '' || newInput.value === '') {
+            Swal.fire({
+                title: 'Advertencia',
+                icon: 'warning',
+                text: 'Asegúrate de llenar completo el registro',
+                confirmButtonColor: '#1572E8',
+                confirmButtonText: 'Aceptar'
+            });
+            return;
+        }
+
+        if (dataValueInput <= 0) {
+            Swal.fire({
+                title: 'Advertencia',
+                icon: 'warning',
+                text: 'El porcentaje no puede ser menor a 0',
+                confirmButtonColor: '#1572E8',
+                confirmButtonText: 'Aceptar'
+            });
+            return;
+        }
+
+        if ((dataValueSelec1 == 1 || dataValueSelec1 == 2) && dataValueInput > 30) {
+            Swal.fire({
+                title: 'Advertencia',
+                icon: 'warning',
+                text: 'El porcentaje no puede ser mayor a 30',
+                confirmButtonColor: '#1572E8',
+                confirmButtonText: 'Aceptar'
+            });
+            return;
+        } else if (dataValueSelec1 == 3 && dataValueInput > 40) {
+            Swal.fire({
+                title: 'Advertencia',
+                icon: 'warning',
+                text: 'El porcentaje no puede ser mayor a 40',
+                confirmButtonColor: '#1572E8',
+                confirmButtonText: 'Aceptar'
+            });
+            return;
+        }
+
+        Swal.fire({
+            title: 'Advertencia',
+            icon: 'warning',
+            text: '¿Estás seguro de que deseas actualizar?',
+            showCancelButton: true,
+            confirmButtonColor: '#1572E8',
+            cancelButtonColor: '#F25961',
+            confirmButtonText: 'Aceptar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                saveCreateEvaluation(dataValueSelec1, dataValueSelec, dataValueInput);
+            }
+        });
+    }
+
+
     //CONFIRM
     function confirmationValidation() {
         $('#modalConfirmation').modal('show');
@@ -498,6 +875,59 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function confirmationSave() {
         $('#modalConfirmation').modal('hide');
+
+    }
+
+    // SAVE
+    function saveUpdateEvaluation(dataValueSelect, dataValueInput, dataValId, assigEvaInfo) {
+        $.ajax({
+            url: '/view-classroom-plan/save-evaluation',
+            method: 'PUT',
+            data: {
+                dataValueSelect: dataValueSelect,
+                dataValueInput: dataValueInput,
+                dataValId: dataValId,
+            },
+            success: function (response) {
+                if (response.check == true) {
+                    $('#modalUpdateEvaluation').modal('hide');
+                    viewEvaluationUpdate(response, assigEvaInfo)
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error al eliminar el grupo:', xhr);
+                console.error('Estado:', status);
+                console.error('Error:', error);
+                console.error('Respuesta del servidor:', xhr.responseText);
+            }
+        });
+    }
+
+    function saveUpdateReference(dataId, dataValue) {
+        $.ajax({
+            url: '/view-classroom-plan/save-reference',
+            method: 'PUT',
+            data: {
+                dataId: dataId,
+                dataValue: dataValue,
+            },
+            success: function (response) {
+                if (response.check == true) {
+                    $('#modalUpdateReferences').modal('hide');
+                    viewReferencesUpdate(response);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error al eliminar el grupo:', xhr);
+                console.error('Estado:', status);
+                console.error('Error:', error);
+                console.error('Respuesta del servidor:', xhr.responseText);
+            }
+        });
+    }
+
+    function saveCreateEvaluation(percentageId, evaluationId, valuePercentage) {
+        
     }
 
     /*
@@ -515,7 +945,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     document.getElementById('confirm-activate').addEventListener('click', function () {
-        activateUpdate();
+        activateUpdate(programId, responseInfo);
         cont = false;
     });
 
@@ -524,12 +954,63 @@ document.addEventListener('DOMContentLoaded', function () {
         cont = true;
     });
 
+    // SAVE
     document.getElementById('btnSaveUpdate').addEventListener('click', function () {
         confirmationValidation();
     });
 
     document.getElementById('confirm-save').addEventListener('click', function () {
         confirmationSave();
+    });
+
+    // LEARNING
+    document.getElementById('selectLearning').addEventListener('change', function () {
+        const learningId = parseInt(this.value);
+
+        // Busca en el arreglo learningInfo el objeto que tenga el ID seleccionado
+        const selectedLearning = learningInfo.find(item => item.id === learningId);
+
+        if (selectedLearning) {
+            // Si encuentra el ID, coloca el valor de description_learning_result en el textarea
+            document.getElementById('textAreaSelectLearning').value = selectedLearning.description_learning_result;
+        } else {
+            // Si no encuentra el ID, limpiar el textarea o hacer algo más
+            document.getElementById('textAreaSelectLearning').value = '';
+            console.log('Resultado de aprendizaje no encontrado');
+        }
+    });
+
+    // EVALUATION UPDATE
+    document.getElementById('confirm-update-evaluation').addEventListener('click', function () {
+        ValidationUpdateEvaluation(assigEvaInfo)
+    });
+
+    // EVALUATION NEW
+    document.getElementById('btnNewEvaluation').addEventListener('click', function () {
+        $('#modalNewEvaluation').modal('show');
+        searchData(programId, courseTypeId).then(response => {
+            learningInfo = response.learningInfo;
+            assigEvaInfo = response.evaluationInfo;
+            percentageInfo = response.percentageInfo;
+            viewModalNewEvaluation(assigEvaInfo, percentageInfo);
+        }).catch(error => {
+            console.error("Error en la solicitud AJAX:", error);
+        });
+
+
+    });
+
+    document.getElementById('selectNewPercentage').addEventListener('change', function () {
+        document.getElementById('inputNewPercentage').value = "";
+    });
+
+    document.getElementById('confirm-new-evaluation').addEventListener('click', function () {
+        ValidationNewEvaluation()
+    });
+
+    // REFERENCE UPDATE
+    document.getElementById('confirm-update-reference').addEventListener('click', function () {
+        ValidationUpdateReference()
     });
 
 });

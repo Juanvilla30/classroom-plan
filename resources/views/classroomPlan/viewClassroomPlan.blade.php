@@ -77,7 +77,7 @@
         </div>
 
         <div class="card-body">
-            <form>
+            <form id="viewDataProfile">
                 <div class="form-group">
                     <label for="exampleFormControlTextarea1" id="labelNameCompetence"></label>
                     <textarea class="form-control" id="textAreaDescriptionCompetence" rows="6" disabled></textarea>
@@ -87,6 +87,19 @@
                     <textarea class="form-control" id="textAreaDescriptionLearning" rows="6" disabled></textarea>
                 </div>
             </form>
+
+            <form class="d-none" id="viewDataUpdate">
+                <div class="form-group">
+                    <label for="selectLearning">Seleccción de resultado de aprendizaje</label>
+                    <select class="form-control input-pill" id="selectLearning">
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="exampleFormControlTextarea1">Descripción:</label>
+                    <textarea class="form-control" id="textAreaSelectLearning" rows="6" disabled></textarea>
+                </div>
+            </form>
+
         </div>
     </div>
     <!-- End Card -->
@@ -102,14 +115,14 @@
             <form>
                 <div class="form-group">
                     <label for="exampleFormControlTextarea1" id="labelNameGeneral"></label>
-                    <textarea class="form-control" id="textAreaDescriptionGeneral" rows="8" disabled></textarea>
+                    <textarea class="form-control unlockFields" id="textAreaDescriptionGeneral" rows="8" disabled></textarea>
                 </div>
                 <div class="row">
                     <div class="col-sm-12 col-md-4 mx-auto">
                         <div class="form-group">
                             <div class="form-group">
                                 <label for="exampleFormControlTextarea1" id="labelSpecific1"></label>
-                                <textarea class="form-control" id="textAreaDescriptionSpecific1" rows="6" disabled></textarea>
+                                <textarea class="form-control unlockFields" id="textAreaDescriptionSpecific1" rows="6" disabled></textarea>
                             </div>
                         </div>
                     </div>
@@ -117,7 +130,7 @@
                         <div class="form-group">
                             <div class="form-group">
                                 <label for="exampleFormControlTextarea1" id="labelSpecific2"></label>
-                                <textarea class="form-control" id="textAreaDescriptionSpecific2" rows="6" disabled></textarea>
+                                <textarea class="form-control unlockFields" id="textAreaDescriptionSpecific2" rows="6" disabled></textarea>
                             </div>
                         </div>
                     </div>
@@ -125,7 +138,7 @@
                         <div class="form-group">
                             <div class="form-group">
                                 <label for="exampleFormControlTextarea1" id="labelSpecific3"></label>
-                                <textarea class="form-control" id="textAreaDescriptionSpecific3" rows="6" disabled></textarea>
+                                <textarea class="form-control unlockFields" id="textAreaDescriptionSpecific3" rows="6" disabled></textarea>
                             </div>
                         </div>
                     </div>
@@ -174,34 +187,40 @@
     </div>
     <!-- End Card -->
 
-    <!-- Card -->
+    <!-- Card Evaluation -->
     <div class="card">
 
         <div class="card-header">
-            <h5 class="card-title font-weight-bold text-primary">Evaluaciones</h5>
+            <div class="row">
+                <div class="col-sm-12 col-md-6">
+                    <h5 class="card-title font-weight-bold text-primary">Evaluaciones</h5>
+                </div>
+                <div class="col-sm-12 col-md-6 text-md-right d-none" id="btnNewEvaluation">
+                    <button class="btn btn-primary btn-round ml-auto mb-3">
+                        <i class="fa fa-plus"></i>
+                        Agregar
+                    </button>
+                </div>
+            </div>
         </div>
 
         <div class="card-body">
-            <div class="row">
-                <div class="col-sm-12 col-md-4">
-                    <div class="form-group text-center">
-                        <label>PORCENTAJE 30%</label>
-                        <p class="percentage" id="percentage1"></p>
-                    </div>
+            <form>
+                <div class="table-responsive" id="tableEvaluation">
+                    <table class="table table-head-bg-primary">
+                        <thead>
+                            <tr>
+                                <th scope="col">Evaluación</th>
+                                <th scope="col">Porcenteje</th>
+                                <th scope="col">Nombre porcenteje</th>
+                                <th scope="col">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodyEvaluation">
+                        </tbody>
+                    </table>
                 </div>
-                <div class="col-sm-12 col-md-4">
-                    <div class="form-group text-center">
-                        <label>PORCENTAJE 30%</label>
-                        <p class="percentage" id="percentage2"></p>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-4">
-                    <div class="form-group text-center">
-                        <label>PORCENTAJE 40%</label>
-                        <p class="percentage" id="percentage3"></p>
-                    </div>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
     <!-- End Card -->
@@ -210,7 +229,17 @@
     <div class="card">
 
         <div class="card-header">
-            <h5 class="card-title font-weight-bold text-primary">Referencias</h5>
+            <div class="row">
+                <div class="col-sm-12 col-md-6">
+                    <h5 class="card-title font-weight-bold text-primary">Referencias</h5>
+                </div>
+                <div class="col-sm-12 col-md-6 text-md-right d-none" id="btnNewReference">
+                    <button class="btn btn-primary btn-round ml-auto mb-3" data-toggle="modal" data-target="#modalNewReferences">
+                        <i class="fa fa-plus"></i>
+                        Agregar
+                    </button>
+                </div>
+            </div>
         </div>
 
         <div class="card-body">
@@ -303,6 +332,161 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
                     <button type="button" class="btn btn-primary" id="confirm-save">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal -->
+
+    <!-- Modal Update Evaluation -->
+    <div class="modal fade" id="modalUpdateEvaluation" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="card-title font-weight-bold text-primary">Actualizar evaluación</h5>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group" style="text-align: center;">
+                            <label id="namePercentage">Porcentaje</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="selectUpdateEvaluation">Selección de evaluaciones</label>
+                            <select class="form-control input-pill" id="selectUpdateEvaluation">
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="pillInput" style="margin-left: 10px;">Ingrese el prorcentaje:</label>
+                            <div class="input-group">
+                                <input type="number" max="30" class="form-control input-pill" id="inputPercentage"
+                                    placeholder="" aria-label="" aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="confirm-update-evaluation">Actualizar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal -->
+
+    <!-- Modal New Evaluation -->
+    <div class="modal fade" id="modalNewEvaluation" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="card-title font-weight-bold text-primary">Agregar Evaluación</h5>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="selectUpdateEvaluation">Selección de porcenteje</label>
+                            <select class="form-control input-pill" id="selectNewPercentage">
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="selectUpdateEvaluation">Selección de evaluaciones</label>
+                            <select class="form-control input-pill" id="selectNewEvaluation">
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="pillInput" style="margin-left: 10px;">Ingrese el prorcentaje:</label>
+                            <div class="input-group">
+                                <input type="number" max="30" class="form-control input-pill" id="inputNewPercentage"
+                                    placeholder="" aria-label="" aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="confirm-new-evaluation">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal -->
+
+    <!-- Modal Update References -->
+    <div class="modal fade" id="modalUpdateReferences" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="card-title font-weight-bold text-primary">Actualizar Referencias</h5>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group" style="text-align: center;">
+                        <label id="nameReference"></label>
+                    </div>
+                    <div class="form-group">
+                        <label for="pillInput" style="margin-left: 10px;">Ingrese la referencia:</label>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="linksContent" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="confirm-update-reference">Actualizar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal -->
+
+    <!-- Modal New References -->
+    <div class="modal fade" id="modalNewReferences" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="card-title font-weight-bold text-primary">Agregar Referencias</h5>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="selectProgram">Selección de tipo de referencia</label>
+                        <select class="form-control input-pill" data-select-evaluation="1" id="selectNewReference">
+                            <option disabled selected value="">Seleccione una tipo de referencia</option>
+                            <option value="referencia general">Referencia general</option>
+                            <option value="referencia institucional">Referencia institucional</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="pillInput" style="margin-left: 10px;">Ingrese la referencia institucional:</label>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="linksNewContent" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary">Guardar</button>
                 </div>
             </div>
         </div>

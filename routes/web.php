@@ -90,7 +90,9 @@ Route::middleware('auth')->group(function () {
     // Rutas de vizualizacion de plan de aula
     Route::get('/view-classroom-plan/{id}', [ViewClassroomPlanController::class, 'index'])->name('viewClassroomPlan');
     Route::post('/view-classroom-plan/info-classroom-plans', [ViewClassroomPlanController::class, 'ClaassroomInfo'])->name('ClaassroomInfo');
-    Route::post('/view-classroom-plan/search-data', [ViewClassroomPlanController::class, 'searchData'])->name('searchData');
+    Route::post('/view-classroom-plan/search-learning-result', [ViewClassroomPlanController::class, 'searchData'])->name('searchData');
+    Route::put('/view-classroom-plan/save-evaluation', [ViewClassroomPlanController::class, 'saveEvaluation'])->name('saveEvaluation');
+    Route::put('/view-classroom-plan/save-reference', [ViewClassroomPlanController::class, 'saveReference'])->name('saveReference');
 
     // Rutas user
     Route::get('/user', [UserController::class, 'index'])->name('user');
