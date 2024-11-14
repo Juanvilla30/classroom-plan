@@ -220,14 +220,14 @@
                             <span class="sidebar-mini-icon">
                                 <i class="fa fa-ellipsis-h"></i>
                             </span>
-                            <h4 class="text-section">Gestión de facultades</h4>
+                            <h4 class="text-section">Gestión de plan de aula</h4>
                         </li>
 
                         <!-- nav-bar list faculties -->
                         <li class="nav-item {{ request()->routeIs('faculties') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('faculties') }}">
                                 <i class="fas fa-file-alt"></i>
-                                <p>Gestionar facultades</p>
+                                <p>Gestionar plan de aula</p>
                             </a>
                         </li>
                         <!-- end nav-bar list  faculties -->

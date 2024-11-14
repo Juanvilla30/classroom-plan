@@ -101,14 +101,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/ListUsers', [ListUsersController::class, 'index'])->name('ListUsers');
 
 //Rutas para facultedes
-Route::get('/faculties', [FacultiController::class,'index'])->name('faculties');
-Route::post('/faculties', [FacultiController::class,'import']);
-    //Routes document
-    Route::get('/document', [GenerateDocumentController::class, 'index'])->name('document');
-
-    //Rutas para facultedes
-    Route::get('/faculties', [FacultiController::class, 'index'])->name('faculties');
-    Route::post('/faculties', [FacultiController::class, 'import']);
+Route::get('/plan-aula', [FacultiController::class,'index'])->name('faculties');
+Route::get('/plan-aula/donwload', [FacultiController::class,'export'])->name('export');
+Route::get('/plan-aula/pdf', [FacultiController::class,'pdfPlanAula'])->name('pdfplan');
+//Routes document
+Route::get('/document', [GenerateDocumentController::class, 'index'])->name('document');
 });
 
 require __DIR__ . '/auth.php';
