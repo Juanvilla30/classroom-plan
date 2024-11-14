@@ -254,6 +254,11 @@ document.addEventListener('DOMContentLoaded', function () {
                                     ${capitalizeOrDefault(classroom.state.name_state)}
                                 </a>
                             </td>
+                            <td>
+                                <a href="/view-classroom-plan/${classroom.id}" class="text-warning">
+                                    Descargar
+                                </a>
+                            </td>
                         </tr>
                 `;
                 bodyContent.append(row);
@@ -302,6 +307,11 @@ document.addEventListener('DOMContentLoaded', function () {
                             <td>
                                 <a href="/view-classroom-plan/${classroom.id}" class="text-dark">
                                     ${capitalizeOrDefault(classroom.state.name_state)}
+                                </a>
+                            </td>
+                            <td>
+                                <a href="/view-classroom-plan/${classroom.id}" class="text-warning">
+                                    Descargar
                                 </a>
                             </td>
                         </tr>

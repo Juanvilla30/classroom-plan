@@ -85,6 +85,7 @@
                             <th scope="col">Creditos</th>
                             <th scope="col">Tipo de curso</th>
                             <th scope="col">Estado</th>
+                            <th scope="col">Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="bodyTableClassroom">

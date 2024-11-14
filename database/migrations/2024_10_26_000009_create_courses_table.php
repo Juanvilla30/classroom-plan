@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('course_code');
             $table->string('name_course');
             $table->integer('credit');
+            $table->integer('pretential_time')->nullable();
+            $table->integer('independent_time')->nullable();    
 
             // Llaves foráneas
             $table->unsignedBigInteger('id_modality')->nullable();
