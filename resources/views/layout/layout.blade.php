@@ -8,6 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="icon" href="img/quimera.png" type="image/x-icon">
 
     <title>Aula Manager @yield('title')</title>
 
@@ -124,7 +125,7 @@
                                         <li>
                                             <div class="user-box">
                                                 <div class="avatar-lg"><img
-                                                        src="https://themekita.com/demo-atlantis-lite-bootstrap/livepreview/examples/assets/img/profile.jpg"
+                                                        src="\img\perfil_uno.png"
                                                         alt="image profile" class="avatar-img rounded"></div>
                                                 <div class="u-text">
                                                     <h4>{{ auth()->user()->name }}</h4>
@@ -215,7 +216,7 @@
                             </a>
                         </li>
 
-
+                        @if (auth()->user()->id_role == 1)
                         <li class="nav-section">
                             <span class="sidebar-mini-icon">
                                 <i class="fa fa-ellipsis-h"></i>
@@ -223,16 +224,15 @@
                             <h4 class="text-section">Gestión de plan de aula</h4>
                         </li>
 
-                        <!-- nav-bar list faculties -->
                         <li class="nav-item {{ request()->routeIs('faculties') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('faculties') }}">
                                 <i class="fas fa-file-alt"></i>
                                 <p>Gestionar plan de aula</p>
                             </a>
                         </li>
-                        <!-- end nav-bar list  faculties -->
+                        @endif
 
-
+                        @if (auth()->user()->id_role == 1)
                         <li class="nav-section">
                             <span class="sidebar-mini-icon">
                                 <i class="fa fa-ellipsis-h"></i>
@@ -240,15 +240,15 @@
                             <h4 class="text-section">Gestión de usuarios</h4>
                         </li>
 
-                        <!-- nav-bar list user -->
                         <li class="nav-item {{ request()->routeIs('user') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('user') }}">
                                 <i class="fas fa-users"></i>
                                 <p>Gestionar usuarios</p>
                             </a>
                         </li>
-                        <!-- end nav-bar list  user -->
+                        @endif
 
+                        @if (auth()->user()->id_role !== 4)
                         <li class="nav-section">
                             <span class="sidebar-mini-icon">
                                 <i class="fa fa-ellipsis-h"></i>
@@ -269,6 +269,7 @@
                                 <p>Listado de perfiles de egresos</p>
                             </a>
                         </li>
+                        @endif
 
                         <li class="nav-section">
                             <span class="sidebar-mini-icon">
@@ -291,7 +292,7 @@
                             </a>
                         </li>
 
-                        <!-- nav-bar document -->
+                        @if (auth()->user()->id_role !== 4)
                         <li class="nav-section">
                             <span class="sidebar-mini-icon">
                                 <i class="fa fa-ellipsis-h"></i>
@@ -301,11 +302,11 @@
 
                         <li class="nav-item {{ request()->routeIs('document') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('document')}}">
-                                <i class="fas fa-file-alt"></i> <!-- Ícono de documento -->
+                                <i class="fas fa-file-alt"></i> 
                                 <p>Gestionar informe</p>
                             </a>
                         </li>
-                        <!-- end nav-bar document -->
+                        @endif
 
                     </ul>
                 </div>
