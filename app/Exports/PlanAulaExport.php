@@ -7,17 +7,32 @@ use Maatwebsite\Excel\Concerns\FromView;
 
 class PlanAulaExport implements FromView
 {
-    protected $data;
+    protected $classroom;
+    protected $evaluations;
+    protected $references;
+    protected $specifics;
+    protected $topics;
+    protected $percentages;
 
     public function __construct($data)
     {
-        $this->data = $data;
+        $this->classroom = $data['classroom'];
+        $this->evaluations = $data['evaluations'];
+        $this->references = $data['references'];
+        $this->specifics = $data['specifics'];
+        $this->topics = $data['topics'];
+        $this->percentages = $data['percentages'];
     }
-    
+
     public function view(): View
-    {
-        return view('faculties.exportPlanAula', [
-            'data' => $this->data
+    {      
+        return view('documents.exportExcel', [
+            'classrooms' => $this->classroom,
+            'evaluationss' => $this->evaluations,
+            'references' => $this->references,
+            'specifics' => $this->specifics,
+            'topics' => $this->topics,
+            'percentages' => $this->percentages,
         ]);
     }
 }

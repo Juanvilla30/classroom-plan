@@ -67,13 +67,13 @@
     <div class="global-container">
         <div class="card login-form">
             <div class="card-body">
-                <h3 class="card-title text-center">Inicio de sesión</h3>
+                <h5 class="card-title font-weight-bold text-center text-primary">Inicio de sesión</h5>
                 <div class="card-text">
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
                         <div class="form-group">
                             <label for="exampleInputEmail1">Correo institucional</label>
-                            <input type="email" class="form-control form-control-sm  @error('email') is-invalid @enderror" name="email" id="email" value="{{ old('email') }}" required autocomplete="email" autofocus >
+                            <input type="email" class="form-control form-control-sm  @error('email') is-invalid @enderror" name="email" id="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
                             @error('email')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>

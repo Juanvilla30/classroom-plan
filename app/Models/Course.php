@@ -15,6 +15,8 @@ class Course extends Model
         'course_code',
         'name_course',
         'credit',
+        'pretential_time',
+        'independent_time',
         'id_modality',
         'id_component',
         'id_semester',

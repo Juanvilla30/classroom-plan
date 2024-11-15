@@ -23,6 +23,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\FacultyImport;
 use App\Models\Program;
 use App\Models\Component;
+use App\Models\Percentage;
 use Illuminate\Support\Facades\Log;
 
 class FacultiController extends Controller
@@ -30,7 +31,7 @@ class FacultiController extends Controller
     public function index()
     {
         $facultieinfo = Faculty::all();
-        return view("faculties.faculties", compact("facultieinfo"));
+        return view("download.downloadFiles", compact("facultieinfo"));
     }
 
     public function searchprogram(Request $request)
@@ -69,6 +70,7 @@ class FacultiController extends Controller
                     'relations.course.component.studyField',
                     'relations.course.semester',
                     'relations.course.courseType',
+                    'relations.course.user',
                     'relations.program',
                     'learningResult',
                     'generalObjective',
@@ -80,10 +82,9 @@ class FacultiController extends Controller
 
             $evaluationsId = AssignmentEvaluation::whereIn('id_classroom_plan', $classroomPlanIds)
                 ->with('evaluation', 'percentage')
-                ->orderBy('id')
+                ->orderBy('id_percentage')
                 ->get()
                 ->toArray();
-
 
             $referencesId = Reference::whereIn('id_classroom_plan', $classroomPlanIds)
                 ->orderBy('id')
@@ -104,19 +105,22 @@ class FacultiController extends Controller
                 ->get()
                 ->toArray();
 
-            $data = [
+            $percentageInfo = Percentage::orderBy('id')
+                ->get();
+
+            return Excel::download(new PlanAulaExport([
                 'classroom' => $classroomPlans,
                 'evaluations' => $evaluationsId,
                 'references' => $referencesId,
                 'specifics' => $specificsArray,
                 'topics' => $topicsId,
-            ];
-
-            return Excel::download(new PlanAulaExport($data), 'plan-aula.xlsx');
+                'percentages' => $percentageInfo,
+            ]), 'plan-aula.xlsx');
         } catch (\Throwable $th) {
             Log::error('Error en export: ' . $th->getMessage());
         }
     }
+
 
     public function pdfPlanAula()
     {

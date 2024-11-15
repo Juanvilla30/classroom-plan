@@ -70,19 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function searchExport(programId) {
-        $.ajax({
-            url: "/plan-aula/donwload",
-            type: "GET",
-            data: {
-                programId: programId,
-            },
-            success: function (response) { },
-            error: function (xhr, status, error) {
-                console.error("Error al obtener:", xhr);
-                console.error("Estado:", status);
-                console.error("Error:", error);
-            },
-        });
+        window.location.href = "/plan-aula/donwload?programId=" + programId;
     }
 
     function viewProgram(response) {
@@ -98,6 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
             selectElement.appendChild(option);
         });
     }
+
     /*
      *
      * Event Listener
@@ -105,7 +94,6 @@ document.addEventListener("DOMContentLoaded", function () {
      */
     document.getElementById("selectfacultie").addEventListener("change", function () {
         facultyId = this.value;
-        console.log("llega");
         searchProgram(facultyId);
     });
 

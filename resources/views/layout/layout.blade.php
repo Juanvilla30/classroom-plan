@@ -175,7 +175,7 @@
                             <a data-toggle="collapse" href="#logoutDropdown" aria-expanded="false" class="collapsed">
                                 <span>
                                     <span class="username">{{ auth()->user()->name }}</span>
-                                    <span class="user-level text-uppercase">{{ auth()->user()->role->name_rol}}</span>
+                                    <span class="user-level text-uppercase">{{ auth()->user()->roles->name_rol}}</span>
                                     <span class="caret"></span>
                                 </span>
                             </a>
@@ -273,22 +273,21 @@
                             </a>
                         </li>
 
-
+                        @if (auth()->user()->id_role !== 4)
                         <li class="nav-section">
                             <span class="sidebar-mini-icon">
                                 <i class="fa fa-ellipsis-h"></i>
                             </span>
-                            <h4 class="text-section">Gestión de plan de aula</h4>
+                            <h4 class="text-section">Gestión de descargas</h4>
                         </li>
 
-                        <!-- nav-bar list faculties -->
                         <li class="nav-item {{ request()->routeIs('faculties') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('faculties') }}">
                                 <i class="fas fa-file-alt"></i>
-                                <p>Gestionar plan de aula</p>
+                                <p>Descarga de Excel</p>
                             </a>
                         </li>
-                        <!-- end nav-bar list  faculties -->
+                        @endif
 
                     </ul>
                 </div>
