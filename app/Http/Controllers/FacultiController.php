@@ -61,9 +61,17 @@ class FacultiController extends Controller
         try {
             $programId = $request->input('programId');
 
-            $relation = ProgramCourseRelationship::where('id_program', $programId)
-                ->orWhereNull('id_program')
-                ->pluck('id');
+            // Obtener el nivel de educación del programa
+            $a = Program::where('id', $programId)->pluck('id_education_level')->first(); // Obtener el primer valor de la colección
+
+            if ($a == 1) {
+                $relation = ProgramCourseRelationship::where('id_program', $programId)
+                    ->orWhereNull('id_program')
+                    ->pluck('id');
+            } else {
+                $relation = ProgramCourseRelationship::where('id_program', $programId)
+                    ->pluck('id');
+            }
 
             $classroomPlans = ClassroomPlan::whereIn('id_relations', $relation)
                 ->with([

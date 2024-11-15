@@ -25,7 +25,9 @@ class PlanAulaExport implements FromView
     }
 
     public function view(): View
-    {      
+    {   
+        //dd($this->classroom);
+
         return view('documents.exportExcel', [
             'classrooms' => $this->classroom,
             'evaluationss' => $this->evaluations,
