@@ -132,7 +132,7 @@
                                                 </div>
                                             </div>
                                         </li>
-                                        <li>                                        
+                                        <li>
                                             <div class="dropdown-divider"></div>
                                             <a class="dropdown-item" href="#" data-toggle="modal"
                                                 data-target="#logoutModal">Cerrar sesión</a>
@@ -186,8 +186,7 @@
                             <div class="in collapse" id="logoutDropdown">
                                 <ul class="nav">
                                     <li>
-                                        <a class="nav-link" href="" data-toggle="modal"
-                                            data-target="#logoutModal">
+                                        <a class="nav-link" href="" data-toggle="modal" data-target="#logoutModal">
                                             <span class="link-collapse">Cerrar sesión</span>
                                         </a>
                                         <form id="logout-form" action="" style="display: none;">
@@ -216,21 +215,7 @@
                         </li>
 
 
-                        <li class="nav-section">
-                            <span class="sidebar-mini-icon">
-                                <i class="fa fa-ellipsis-h"></i>
-                            </span>
-                            <h4 class="text-section">Gestión de plan de aula</h4>
-                        </li>
 
-                        <!-- nav-bar list faculties -->
-                        <li class="nav-item {{ request()->routeIs('faculties') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('faculties') }}">
-                                <i class="fas fa-file-alt"></i>
-                                <p>Gestionar plan de aula</p>
-                            </a>
-                        </li>
-                        <!-- end nav-bar list  faculties -->
 
 
                         <li class="nav-section">
@@ -291,21 +276,21 @@
                             </a>
                         </li>
 
-                        <!-- nav-bar document -->
                         <li class="nav-section">
                             <span class="sidebar-mini-icon">
                                 <i class="fa fa-ellipsis-h"></i>
                             </span>
-                            <h4 class="text-section">Gestión de informes</h4>
+                            <h4 class="text-section">Gestión de plan de aula</h4>
                         </li>
 
-                        <li class="nav-item {{ request()->routeIs('document') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('document')}}">
-                                <i class="fas fa-file-alt"></i> <!-- Ícono de documento -->
-                                <p>Gestionar informe</p>
+                        <!-- nav-bar list faculties -->
+                        <li class="nav-item {{ request()->routeIs('faculties') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ route('faculties') }}">
+                                <i class="fas fa-file-alt"></i>
+                                <p>Gestionar plan de aula</p>
                             </a>
                         </li>
-                        <!-- end nav-bar document -->
+                        <!-- end nav-bar list  faculties -->
 
                     </ul>
                 </div>
@@ -355,7 +340,8 @@
     <!-- End of Content Wrapper -->
 
     <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">

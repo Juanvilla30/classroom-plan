@@ -28,6 +28,7 @@
 </div>
 <!-- End Breadcumb Header -->
 
+<div id="documentId" data-id="{{ $id}}"></div>
 
 <div>
     <div class="card">
