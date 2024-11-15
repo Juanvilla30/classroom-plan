@@ -69,14 +69,14 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function Export(programId) {
+    function searchExport(programId) {
         $.ajax({
             url: "/plan-aula/donwload",
             type: "GET",
             data: {
                 programId: programId,
             },
-            success: function (response) {},
+            success: function (response) { },
             error: function (xhr, status, error) {
                 console.error("Error al obtener:", xhr);
                 console.error("Estado:", status);
@@ -103,24 +103,18 @@ document.addEventListener("DOMContentLoaded", function () {
      * Event Listener
      *
      */
-    document
-        .getElementById("selectfacultie")
-        .addEventListener("change", function () {
-            facultyId = this.value;
-            console.log("llega");
-            searchProgram(facultyId);
-        });
+    document.getElementById("selectfacultie").addEventListener("change", function () {
+        facultyId = this.value;
+        console.log("llega");
+        searchProgram(facultyId);
+    });
 
-    document
-        .getElementById("selectprogram")
-        .addEventListener("change", function () {
-            programId = this.value;
-            document.getElementById("btn-excel").classList.remove("d-none");
-        });
+    document.getElementById("selectprogram").addEventListener("change", function () {
+        programId = this.value;
+        document.getElementById("btn-excel").classList.remove("d-none");
+    });
 
-    document
-        .getElementById("btn-excel")
-        .addEventListener("click", function () {
-            Export(programId);
-        });
+    document.getElementById("btn-excel").addEventListener("click", function () {
+        searchExport(programId);
+    });
 });

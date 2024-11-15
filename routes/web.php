@@ -111,9 +111,8 @@ Route::middleware('auth')->group(function () {
     //Rutas para reporte de plan de aula
     Route::get('/plan-aula', [FacultiController::class, 'index'])->name('faculties');
     Route::post('/plan-aula/search-program', [FacultiController::class, 'searchprogram'])->name('searchprogram');
-    Route::get('/plan-aula/donwload', [FacultiController::class, 'export'])->name('export');
+    Route::get('/plan-aula/donwload/', [FacultiController::class, 'export'])->name('export');
     Route::get('/plan-aula/pdf', [FacultiController::class, 'pdfPlanAula'])->name('pdfplan');
-    //Routes document
 });
 
 require __DIR__ . '/auth.php';

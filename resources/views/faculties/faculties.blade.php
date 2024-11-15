@@ -47,7 +47,7 @@
                     <option disabled selected value="">Seleccione un programa</option>
                 </select>
             </div>
-            <a href="{{ route('export')}}" download><button type="button" class="btn btn-primary btn-lg btn-block d-none" id="btn-excel">Descargar excel</button></a>
+            <button type="button" class="btn btn-primary btn-lg btn-block d-none" id="btn-excel">Descargar excel</button>
         </div>
     </div>
 </div>

@@ -23,6 +23,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\FacultyImport;
 use App\Models\Program;
 use App\Models\Component;
+use Illuminate\Support\Facades\Log;
+
 class FacultiController extends Controller
 {
     public function index()
@@ -59,10 +61,10 @@ class FacultiController extends Controller
             $programId = $request->input('programId');
 
             $relation = ProgramCourseRelationship::where('id_program', $programId)
-                ->where('id_program', null)
+                ->orWhereNull('id_program')
                 ->pluck('id');
 
-            $classroomPlans = ClassroomPlan::where('id_relations', $relation)
+            $classroomPlans = ClassroomPlan::whereIn('id_relations', $relation)
                 ->with([
                     'relations.course.component.studyField',
                     'relations.course.semester',
@@ -81,6 +83,7 @@ class FacultiController extends Controller
                 ->orderBy('id')
                 ->get()
                 ->toArray();
+
 
             $referencesId = Reference::whereIn('id_classroom_plan', $classroomPlanIds)
                 ->orderBy('id')
@@ -101,9 +104,8 @@ class FacultiController extends Controller
                 ->get()
                 ->toArray();
 
-
             $data = [
-                'classroom'=> $classroomPlans,
+                'classroom' => $classroomPlans,
                 'evaluations' => $evaluationsId,
                 'references' => $referencesId,
                 'specifics' => $specificsArray,
@@ -111,10 +113,8 @@ class FacultiController extends Controller
             ];
 
             return Excel::download(new PlanAulaExport($data), 'plan-aula.xlsx');
-
-
         } catch (\Throwable $th) {
-            //throw $th;
+            Log::error('Error en export: ' . $th->getMessage());
         }
     }
 

@@ -1,13 +1,13 @@
 <table>
     <thead>
         <tr>
-            <th>Curso</th>
+            <th>Aula</th>
         </tr>
     </thead>
     <tbody>
-        @foreach ($data as $dat)
+        @foreach ($data['classroom'] as $classroom)
         <tr>
-            <th>{{ $dat }}</th>
+            <td>{{ $classroom->relations->course->name_course ?? 'Sin nombre' }}</td>
         </tr>
         @endforeach
     </tbody>
