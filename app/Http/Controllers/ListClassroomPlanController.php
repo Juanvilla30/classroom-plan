@@ -11,6 +11,7 @@ use App\Models\Program;
 use App\Models\ProgramCourseRelationship;
 use App\Models\Reference;
 use App\Models\SpecificObjective;
+use App\Models\State;
 use App\Models\Topic;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -101,7 +102,7 @@ class ListClassroomPlanController extends Controller
                     'learningResult',
                     'generalObjective',
                     'state',
-                ])->orderBy('id')
+                ])->orderBy('id_state')
                 ->get();
 
             DB::commit();
@@ -136,13 +137,66 @@ class ListClassroomPlanController extends Controller
                     'learningResult',
                     'generalObjective',
                     'state',
-                ])->orderBy('id')
+                ])->orderBy('id_state')
                 ->get();
 
             DB::commit();
             return response()->json([
                 'check' => true,
                 'classroomInfo' => $classroomInfo,
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'error' => 'No se pudo obtener respuesta.',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function searchData(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $classroomId = $request->input('classroomId');
+
+            $classroomInfo = ClassroomPlan::where('id', $classroomId)
+                ->with([
+                    'state'
+                ])->get();
+
+            $stateInfo = State::orderBy('id')->get();
+
+            DB::commit();
+            return response()->json([
+                'check' => true,
+                'classroomInfo' => $classroomInfo,
+                'stateInfo' => $stateInfo,
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'error' => 'No se pudo obtener respuesta.',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function saveUpdateState(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $classroomId = $request->input('classroomId');
+            $dataValueSelec = $request->input('dataValueSelec');
+
+            ClassroomPlan::where('id', $classroomId)
+                ->update([
+                    'id_state' => $dataValueSelec
+                ]);
+
+            DB::commit();
+            return response()->json([
+                'check' => true,
             ]);
         } catch (\Exception $e) {
             DB::rollback();

@@ -8,6 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="icon" href="img/quimera.png" type="image/x-icon">
 
     <title>Aula Manager @yield('title')</title>
 
@@ -78,7 +79,7 @@
             <!-- Logo Header -->
             <div class="logo-header" data-background-color="blue">
 
-                <a href="#" class="logo">
+                <a href="/home" class="logo">
                     <img src="\img\logo_autonoma.svg" alt="navbar brand" class="navbar" width="90%" height="100%"
                         style="filter: grayscale(100%) brightness(0) invert(100%);">
                 </a>
@@ -112,8 +113,7 @@
                             <a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#"
                                 aria-expanded="false">
                                 <div class="avatar-sm">
-                                    <img src="https://themekita.com/demo-atlantis-lite-bootstrap/livepreview/examples/assets/img/profile.jpg"
-                                        alt="..." class="avatar-img rounded-circle">
+                                    <img src="\img\perfil_dos.png" alt="..." class="avatar-img rounded-circle">
                                 </div>
                             </a>
                             <ul class="dropdown-menu dropdown-user animated fadeIn">
@@ -123,8 +123,7 @@
                                         style="height: auto; margin-bottom: 0px; margin-right: 0px; max-height: 0px;">
                                         <li>
                                             <div class="user-box">
-                                                <div class="avatar-lg"><img
-                                                        src="https://themekita.com/demo-atlantis-lite-bootstrap/livepreview/examples/assets/img/profile.jpg"
+                                                <div class="avatar-lg"><img src="\img\perfil_uno.png"
                                                         alt="image profile" class="avatar-img rounded"></div>
                                                 <div class="u-text">
                                                     <h4>{{ auth()->user()->name }}</h4>
@@ -170,14 +169,13 @@
                 <div class="sidebar-content">
                     <div class="user">
                         <div class="avatar-sm float-left mr-2">
-                            <img src="https://themekita.com/demo-atlantis-lite-bootstrap/livepreview/examples/assets/img/profile.jpg"
-                                alt=".." class="avatar-img rounded-circle">
+                            <img src="\img\perfil_uno.png" alt=".." class="avatar-img rounded-circle">
                         </div>
                         <div class="info">
                             <a data-toggle="collapse" href="#logoutDropdown" aria-expanded="false" class="collapsed">
                                 <span>
                                     <span class="username">{{ auth()->user()->name }}</span>
-                                    <span class="user-level text-uppercase">roles</span>
+                                    <span class="user-level text-uppercase">{{ auth()->user()->role->name_rol}}</span>
                                     <span class="caret"></span>
                                 </span>
                             </a>
@@ -215,9 +213,7 @@
                         </li>
 
 
-
-
-
+                        @if (auth()->user()->id_role == 1)
                         <li class="nav-section">
                             <span class="sidebar-mini-icon">
                                 <i class="fa fa-ellipsis-h"></i>
@@ -225,15 +221,15 @@
                             <h4 class="text-section">Gestión de usuarios</h4>
                         </li>
 
-                        <!-- nav-bar list user -->
                         <li class="nav-item {{ request()->routeIs('user') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('user') }}">
                                 <i class="fas fa-users"></i>
                                 <p>Gestionar usuarios</p>
                             </a>
                         </li>
-                        <!-- end nav-bar list  user -->
+                        @endif
 
+                        @if (auth()->user()->id_role !== 4)
                         <li class="nav-section">
                             <span class="sidebar-mini-icon">
                                 <i class="fa fa-ellipsis-h"></i>
@@ -254,6 +250,7 @@
                                 <p>Listado de perfiles de egresos</p>
                             </a>
                         </li>
+                        @endif
 
                         <li class="nav-section">
                             <span class="sidebar-mini-icon">
@@ -275,6 +272,7 @@
                                 <p>Listado de plan de aula</p>
                             </a>
                         </li>
+
 
                         <li class="nav-section">
                             <span class="sidebar-mini-icon">
@@ -345,7 +343,7 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                    <h5 class="card-title font-weight-bold text-primary">Cerrar sesión</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>

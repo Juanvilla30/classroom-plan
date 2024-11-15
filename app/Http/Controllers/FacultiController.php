@@ -3,11 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Exports\PlanAulaExport;
+use App\Models\AssignmentEvaluation;
 use App\Models\ClassroomPlan;
 use App\Models\Course;
 use App\Models\CourseType;
 use App\Models\Evaluation;
 use App\Models\GeneralObjective;
+use App\Models\LearningResult;
+use App\Models\ProgramCourseRelationship;
+use App\Models\Reference;
 use App\Models\Semester;
 use App\Models\SpecificObjective;
 use App\Models\StudyField;
@@ -21,103 +25,96 @@ use App\Models\Program;
 use App\Models\Component;
 class FacultiController extends Controller
 {
-    public function index($id)
+    public function index()
+    {
+        $facultieinfo = Faculty::all();
+        return view("faculties.faculties", compact("facultieinfo"));
+    }
+
+    public function searchprogram(Request $request)
     {
         try {
-            return view("faculties.faculties", compact("id"));//code...
+            $faculty = $request->input('facultyId');
+
+            $programsInfo = Program::where('id_faculty', $faculty)
+                ->with(['faculty', 'educationLevel'])
+                ->orderBy('id')
+                ->get();
+
+            return response()->json([
+                'check' => true,
+                'programsInfo' => $programsInfo,
+            ]);
         } catch (\Exception $e) {
-            return redirect()->back()->with("error", "Error al cargar la informacion de plan aula");
+            return response()->json([
+                'error' => 'Error al encontrar',
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 
     public function export(Request $request)
     {
         try {
-            $documentId = $request->input("documentId");
+            $programId = $request->input('programId');
 
-            $course = Course::where('id', $documentId)
+            $relation = ProgramCourseRelationship::where('id_program', $programId)
+                ->where('id_program', null)
+                ->pluck('id');
+
+            $classroomPlans = ClassroomPlan::where('id_relations', $relation)
                 ->with([
-                    'relations.course',
-                    'relations.credit'
-                ])->find($documentId);
+                    'relations.course.component.studyField',
+                    'relations.course.semester',
+                    'relations.course.courseType',
+                    'relations.program',
+                    'learningResult',
+                    'generalObjective',
+                ])
+                ->orderBy('id')
+                ->get();
 
-            $studyfield = StudyField::where('id', $documentId)
-                ->with([
-                    'name_suty_field',
-                ])->find($documentId);
+            $classroomPlanIds = $classroomPlans->pluck('id')->toArray();
 
-            $component = Component::where('id', $documentId)
-                ->with([
-                    'name_component'
-                ])->find($documentId);
+            $evaluationsId = AssignmentEvaluation::whereIn('id_classroom_plan', $classroomPlanIds)
+                ->with('evaluation', 'percentage')
+                ->orderBy('id')
+                ->get()
+                ->toArray();
 
-            $semester = Semester::where('id', $documentId)
-                ->with([
-                    'name_semester'
-                ])->find($documentId);
+            $referencesId = Reference::whereIn('id_classroom_plan', $classroomPlanIds)
+                ->orderBy('id')
+                ->get()
+                ->toArray();
 
-            $coursetype = CourseType::where('id', $documentId)
-                ->with([
-                    'name_course_type'
-                ])->find($documentId);
+            $specifics = SpecificObjective::whereIn('id_classroom_plan', $classroomPlanIds)
+                ->orderBy('id')
+                ->get();
 
-            $classroom = ClassroomPlan::where('id', $documentId)
-                ->with([
-                    'id_learning_result'
-                ])->find($documentId);
+            $specificsIds = $specifics->pluck('id')->toArray();
 
-            $generalobjetivs = GeneralObjective::where('id', $documentId)
-                ->with([
-                    'name_general_objetive'
-                ])->find($documentId);
+            $specificsArray = $specifics->toArray();
 
-            $specificsobjetive = SpecificObjective::where('id', $documentId)
-                ->with([
-                    'name_specifics_objetive'
-                ])->find($documentId);
+            $topicsId = Topic::whereIn('id_specific_objective', $specificsIds)
+                ->with('specificObjective')
+                ->orderBy('id')
+                ->get()
+                ->toArray();
 
-            $topics = Topic::where('id', $documentId)
-                ->with([
-                    'description_topic'
-                ])->find($documentId);
 
-            $evaluations = Evaluation::where('id', $documentId)
-                ->with([
-                    'description_topic'
-                ])->find($documentId);
-
-            // return response()->json([
-            //     'course' => $course,
-            //     'studyfield' => $studyfield,
-            //     'component' => $component,
-            //     'semester' => $semester,
-            //     'coursetype' => $coursetype,
-            //     'classroom' => $classroom,
-            //     'generalobjetivs' => $generalobjetivs,
-            //     'specificsobjetive' => $specificsobjetive,
-            //     'topics' => $topics,
-            //     'evaluations' => $evaluations,
-            // ]);
-
-            //posible idea para que funcione la generacion de excel
-            $data = [ //array con los modelos obtenidos desde el fronted
-                $course => Course::all(),
-                // 'credits' => Course::all(),
-                $studyfield => StudyField::all(),
-                $component => Component::all(),
-                $semester => Semester::all(),
-                $coursetype => CourseType::all(),
-                $classroom => ClassroomPlan::all(),
-                $generalobjetivs => GeneralObjective::all(),
-                $specificsobjetive => SpecificObjective::all(),
-                $topics => Topic::all(),
-                $evaluations => Evaluation::all(),
+            $data = [
+                'classroom'=> $classroomPlans,
+                'evaluations' => $evaluationsId,
+                'references' => $referencesId,
+                'specifics' => $specificsArray,
+                'topics' => $topicsId,
             ];
 
-            return Excel::download(new $data, 'plan-aula.xlsx');
+            return Excel::download(new PlanAulaExport($data), 'plan-aula.xlsx');
 
-        } catch (\Exception $e) {
-            return redirect()->back()->with("error", "Error al cargar la informacion de plan aula", );
+
+        } catch (\Throwable $th) {
+            //throw $th;
         }
     }
 

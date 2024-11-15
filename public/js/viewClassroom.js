@@ -439,7 +439,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             ${capitalizeOrDefault(evaluation.evaluation.name_evaluation)}
                         </td>                               
                         <td>
-                            ${evaluation.percentage_number}
+                            ${evaluation.percentage_number}%
                         </td>
                         <td>
                             ${capitalizeOrDefault(evaluation.percentage.name_percentage)}
@@ -517,7 +517,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             ${capitalizeOrDefault(evaluation.evaluation.name_evaluation)}
                         </td>                               
                         <td>
-                            ${evaluation.percentage_number}
+                            ${evaluation.percentage_number}%
                         </td>
                         <td>
                             ${capitalizeOrDefault(evaluation.percentage.name_percentage)}
@@ -714,25 +714,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // VALIDATIONS
-    function validate(fields, alertMessage) {
-        let hasEmptyField = fields.some(field => {
-            const element = document.getElementById(field);
-            return element === null || element.value.trim() === "";
-        });
-
-        if (hasEmptyField) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Advertencia',
-                text: alertMessage,
-                confirmButtonColor: '#1269DB',
-                confirmButtonText: 'Entendido'
-            });
-        } else {
-            $('#modalConfirmation').modal('show');
-        }
-    }
-
     function ValidationUpdateEvaluation(assigEvaInfo) {
         const updateSelect = document.getElementById('selectUpdateEvaluation')
         const dataValueSelect = updateSelect.value;
@@ -799,7 +780,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function ValidationNewEvaluation() {
+    function ValidationNewEvaluation(classroomId) {
         const newSelect1 = document.getElementById('selectNewPercentage');
         const dataValueSelec1 = newSelect1.value;
 
@@ -854,7 +835,7 @@ document.addEventListener('DOMContentLoaded', function () {
         Swal.fire({
             title: 'Advertencia',
             icon: 'warning',
-            text: '¿Estás seguro de que deseas actualizar?',
+            text: '¿Estás seguro de que deseas crear?',
             showCancelButton: true,
             confirmButtonColor: '#1572E8',
             cancelButtonColor: '#F25961',
@@ -862,23 +843,151 @@ document.addEventListener('DOMContentLoaded', function () {
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                saveCreateEvaluation(dataValueSelec1, dataValueSelec, dataValueInput);
+                saveCreateEvaluation(classroomId, dataValueSelec1, dataValueSelec, dataValueInput);
             }
         });
     }
 
+    function ValidationNewReference(classroomId) {
+        const newSelect = document.getElementById('selectNewReference');
+        const dataValueSelec = newSelect.value;
 
-    //CONFIRM
-    function confirmationValidation() {
+        const newInput = document.getElementById('linksNewContent');
+        const dataValueInput = newInput.value;
+
+        if (dataValueSelec === '' || dataValueInput === '') {
+            Swal.fire({
+                title: 'Advertencia',
+                icon: 'warning',
+                text: 'Asegúrate de llenar completo el registro',
+                confirmButtonColor: '#1572E8',
+                confirmButtonText: 'Aceptar'
+            });
+            return;
+        }
+
+        Swal.fire({
+            title: 'Advertencia',
+            icon: 'warning',
+            text: '¿Estás seguro de que deseas crear?',
+            showCancelButton: true,
+            confirmButtonColor: '#1572E8',
+            cancelButtonColor: '#F25961',
+            confirmButtonText: 'Aceptar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                saveCreateReference(classroomId, dataValueSelec, dataValueInput);
+            }
+        });
+    }
+
+    function validationConfirmation() {
+
+        const selectLearning = document.getElementById('selectLearning');
+        const dataValueSelec = selectLearning.value;
+
+        const textAreaDescriptionGeneral = document.getElementById('textAreaDescriptionGeneral');
+        const textAreaValue = textAreaDescriptionGeneral.value;
+
+        const textAreaValues = [];
+        for (let i = 1; i <= 3; i++) {
+            const textArea = document.getElementById(`textAreaDescriptionSpecific${i}`);
+            const value = textArea.value;
+            textAreaValues.push(value);
+        }
+
+        const textAreaValuesTopics = [];
+        for (let i = 1; i <= 16; i++) {
+            const textArea = document.getElementById(`textAreaTopic${i}`);
+            const value = textArea.value;
+            textAreaValuesTopics.push(value);
+        }
+
+        // Verificar si algún campo está vacío
+        const allFields = [dataValueSelec, textAreaValue, ...textAreaValues, ...textAreaValuesTopics];
+        const hasEmptyField = allFields.some(value => value.trim() === '');
+
+        if (hasEmptyField) {
+            Swal.fire({
+                title: 'Advertencia',
+                icon: 'warning',
+                text: 'Asegúrate de llenar completo el registro',
+                confirmButtonColor: '#1572E8',
+                confirmButtonText: 'Aceptar'
+            });
+            return;
+        }
+
         $('#modalConfirmation').modal('show');
     }
 
-    function confirmationSave() {
-        $('#modalConfirmation').modal('hide');
+    // SAVE
+    function saveContent(classroomId) {
+        const selectLearning = document.getElementById('selectLearning');
+        const dataValueSelec = selectLearning.value;
 
+        const textAreaDescriptionGeneral = document.getElementById('textAreaDescriptionGeneral');
+        const dataGenerlaId = textAreaDescriptionGeneral.getAttribute('data-id');
+        const textAreaValue = textAreaDescriptionGeneral.value;
+
+        const textAreaValuesSpecific = [];
+        for (let i = 1; i <= 3; i++) {
+            const textArea = document.getElementById(`textAreaDescriptionSpecific${i}`);
+            const value = textArea.value;
+            const dataId = textArea.getAttribute('data-id');
+            textAreaValuesSpecific.push({ dataId, value });
+        }
+
+        const textAreaValuesTopics = [];
+        for (let i = 1; i <= 16; i++) {
+            const textArea = document.getElementById(`textAreaTopic${i}`);
+            const value = textArea.value;
+            const dataId = textArea.getAttribute('data-topics-id');
+            textAreaValuesTopics.push({ dataId, value });
+        }
+
+        $.ajax({
+            url: '/view-classroom-plan/save-content',
+            method: 'PUT',
+            data: {
+                classroomId: classroomId,
+                learning: dataValueSelec,
+                dataGenerlaId: dataGenerlaId,
+                GeneralContent: textAreaValue,
+                specificObj: textAreaValuesSpecific,
+                topicObj: textAreaValuesTopics,
+            },
+            success: function (response) {
+                if (response.check == true) {
+                    $('#modalConfirmation').modal('hide');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Exito',
+                        text: 'Se ha registrado correctamente',
+                        confirmButtonColor: '#1572E8',
+                        confirmButtonText: 'Aceptar',
+                        allowOutsideClick: false, 
+                        allowEscapeKey: false  
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.reload();  
+                        }
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error al eliminar el grupo:', xhr);
+                console.error('Estado:', status);
+                console.error('Error:', error);
+                console.error('Respuesta del servidor:', xhr.responseText);
+            }
+        });
     }
 
-    // SAVE
+    $('#modalConfirmation').modal('hide');
+
+
     function saveUpdateEvaluation(dataValueSelect, dataValueInput, dataValId, assigEvaInfo) {
         $.ajax({
             url: '/view-classroom-plan/save-evaluation',
@@ -926,8 +1035,53 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function saveCreateEvaluation(percentageId, evaluationId, valuePercentage) {
-        
+    function saveCreateEvaluation(classroomId, percentageId, evaluationId, valuePercentage) {
+        $.ajax({
+            url: '/view-classroom-plan/create-evaluation',
+            method: 'POST',
+            data: {
+                classroomId: classroomId,
+                percentageId: percentageId,
+                evaluationId: evaluationId,
+                valuePercentage: valuePercentage,
+            },
+            success: function (response) {
+                if (response.check == true) {
+                    $('#modalNewEvaluation').modal('hide');
+                    viewEvaluationUpdate(response, assigEvaInfo);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error al eliminar el grupo:', xhr);
+                console.error('Estado:', status);
+                console.error('Error:', error);
+                console.error('Respuesta del servidor:', xhr.responseText);
+            }
+        });
+    }
+
+    function saveCreateReference(classroomId, nameReference, linkReference) {
+        $.ajax({
+            url: '/view-classroom-plan/create-reference',
+            method: 'POST',
+            data: {
+                classroomId: classroomId,
+                nameReference: nameReference,
+                linkReference: linkReference,
+            },
+            success: function (response) {
+                if (response.check == true) {
+                    $('#modalNewReferences').modal('hide');
+                    viewReferencesUpdate(response);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error al eliminar el grupo:', xhr);
+                console.error('Estado:', status);
+                console.error('Error:', error);
+                console.error('Respuesta del servidor:', xhr.responseText);
+            }
+        });
     }
 
     /*
@@ -956,11 +1110,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // SAVE
     document.getElementById('btnSaveUpdate').addEventListener('click', function () {
-        confirmationValidation();
+        validationConfirmation();
     });
 
     document.getElementById('confirm-save').addEventListener('click', function () {
-        confirmationSave();
+        saveContent(classroomId);
     });
 
     // LEARNING
@@ -996,8 +1150,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }).catch(error => {
             console.error("Error en la solicitud AJAX:", error);
         });
-
-
     });
 
     document.getElementById('selectNewPercentage').addEventListener('change', function () {
@@ -1005,7 +1157,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     document.getElementById('confirm-new-evaluation').addEventListener('click', function () {
-        ValidationNewEvaluation()
+        ValidationNewEvaluation(classroomId);
     });
 
     // REFERENCE UPDATE
@@ -1013,4 +1165,14 @@ document.addEventListener('DOMContentLoaded', function () {
         ValidationUpdateReference()
     });
 
+    document.getElementById('btnNewReference').addEventListener('click', function () {
+        $('#modalNewReferences').modal('show');
+        const selectNewReference = document.getElementById('selectNewReference');
+        selectNewReference.selectedIndex = 0;
+        document.getElementById('linksNewContent').value = '';
+    });
+
+    document.getElementById('confirm-new-reference').addEventListener('click', function () {
+        ValidationNewReference(classroomId);
+    });
 });

@@ -126,7 +126,6 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
             educationId = 2;
         }
-        console.log(educationId)
         $.ajax({
             url: '/list-classroom-plan/search-classroom-plan',
             method: 'POST',
@@ -139,6 +138,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 } else {
                     viewSpecialization(response);
                 }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error al eliminar el grupo:', xhr);
+                console.error('Estado:', status);
+                console.error('Error:', error);
+                console.error('Respuesta del servidor:', xhr.responseText);
+            }
+        });
+    }
+
+    function searchData(classroomId) {
+        $.ajax({
+            url: '/list-classroom-plan/search-data',
+            method: 'POST',
+            data: {
+                classroomId: classroomId,
+            },
+            success: function (response) {
+                viewModalUpdateState(response, classroomId);
             },
             error: function (xhr, status, error) {
                 console.error('Error al eliminar el grupo:', xhr);
@@ -250,7 +268,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 </a>
                             </td>
                             <td>
-                                <a href="/view-classroom-plan/${classroom.id}" class="text-dark">
+                                <a href="#" class="text-primary stateUpdate" data-id="${classroom.id}">
                                     ${capitalizeOrDefault(classroom.state.name_state)}
                                 </a>
                             </td>
@@ -262,6 +280,13 @@ document.addEventListener('DOMContentLoaded', function () {
                         </tr>
                 `;
                 bodyContent.append(row);
+            });
+            document.querySelectorAll('.stateUpdate').forEach(function (element) {
+                element.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const classroomId = this.getAttribute('data-id');
+                    searchData(classroomId);
+                });
             });
         } else {
             bodyContent.append('<tr><td colspan="6">No se encontraron resultados.</td></tr>');
@@ -305,7 +330,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 </a>
                             </td>
                             <td>
-                                <a href="/view-classroom-plan/${classroom.id}" class="text-dark">
+                                <a href="#" class="text-primary stateUpdate" data-id="${classroom.id}">
                                     ${capitalizeOrDefault(classroom.state.name_state)}
                                 </a>
                             </td>
@@ -318,9 +343,120 @@ document.addEventListener('DOMContentLoaded', function () {
                 `;
                 bodyContent.append(row);
             });
+            document.querySelectorAll('.stateUpdate').forEach(function (element) {
+                element.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const classroomId = this.getAttribute('data-id');
+                    searchData(classroomId);
+                });
+            });
         } else {
             bodyContent.append('<tr><td colspan="6">No se encontraron resultados.</td></tr>');
         }
+    }
+
+    function viewModalUpdateState(response, classroomId) {
+        $('#modalUpdateState').modal('show');
+
+        let stateId = response.classroomInfo[0].state.id;
+
+        let stateInfo = response.stateInfo;
+
+        const selectElement = document.getElementById('selectState');
+        selectElement.innerHTML = '';
+
+        const selectedContent = stateInfo.find(item => item.id === stateId) || null;
+        if (selectedContent) {
+            const selectedOption = document.createElement('option');
+            selectedOption.value = selectedContent.id;
+            selectedOption.text = capitalizeOrDefault(selectedContent.name_state);
+            selectedOption.selected = true;
+            selectElement.appendChild(selectedOption);
+        }
+
+        stateInfo.forEach(function (state) {
+            if (state.id !== stateId) {
+                const option = document.createElement('option');
+                option.value = state.id;
+                option.text = capitalizeOrDefault(state.name_state);
+                selectElement.appendChild(option);
+            }
+        });
+
+        document.getElementById('valueClassroomId').setAttribute('data-id', classroomId);
+    }
+
+    // VALIDATIONS
+    function validateUpdateState(programId, classroomTypeId) {
+        const newSelect = document.getElementById('selectState');
+        const dataValueSelec = newSelect.value;
+
+        const classroomId = document.getElementById('valueClassroomId').getAttribute('data-id');
+
+        if (dataValueSelec === '') {
+            Swal.fire({
+                title: 'Advertencia',
+                icon: 'warning',
+                text: 'Asegúrate de llenar completo el registro',
+                confirmButtonColor: '#1572E8',
+                confirmButtonText: 'Aceptar'
+            });
+            return;
+        }
+
+        Swal.fire({
+            title: 'Advertencia',
+            icon: 'warning',
+            text: '¿Estás seguro de que deseas actualizar?',
+            showCancelButton: true,
+            confirmButtonColor: '#1572E8',
+            cancelButtonColor: '#F25961',
+            confirmButtonText: 'Aceptar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                saveUpdateState(dataValueSelec, classroomId, programId, classroomTypeId)
+            }
+        });
+    }
+
+    function saveUpdateState(dataValueSelec, classroomId, programId, classroomTypeId) {
+        $.ajax({
+            url: '/list-classroom-plan/update-state',
+            method: 'PUT',
+            data: {
+                classroomId: classroomId,
+                dataValueSelec: dataValueSelec,
+            },
+            success: function (response) {
+                if(response.check == true){
+                    $('#modalUpdateState').modal('hide');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Exito',
+                        text: 'Se ha registrado correctamente',
+                        confirmButtonColor: '#1572E8',
+                        confirmButtonText: 'Aceptar',
+                        allowOutsideClick: false, 
+                        allowEscapeKey: false  
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            if(classroomTypeId == 1){
+                                searchCampoComun(classroomTypeId)
+                            }else{
+                                searchClassroomPlan(programId, classroomTypeId)
+                            }
+                        }
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error al eliminar el grupo:', xhr);
+                console.error('Estado:', status);
+                console.error('Error:', error);
+                console.error('Respuesta del servidor:', xhr.responseText);
+            }
+        });
     }
 
     /*
@@ -346,5 +482,9 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('selectProgram').addEventListener('change', function () {
         programId = this.options[this.selectedIndex].value;
         searchClassroomPlan(programId, classroomTypeId);
+    });
+
+    document.getElementById('confirm-update').addEventListener('click', function () {
+        validateUpdateState(programId, classroomTypeId)
     });
 });

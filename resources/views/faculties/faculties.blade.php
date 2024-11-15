@@ -28,32 +28,33 @@
 </div>
 <!-- End Breadcumb Header -->
 
-<div id="documentId" data-id="{{ $id}}"></div>
 
 <div>
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title font-weight-bold text-primary">Previsualización del Documento PDF</h5>
-
-            <!-- Previsualización del PDF -->
-            <iframe src="ruta-del-archivo.pdf" width="100%" height="500px" style="border: none;">
-                Tu navegador no soporta la visualización de PDFs.
-            </iframe>
-
-            <!-- Botones de acciones -->
-            <div class="mt-3">
-                <!-- Botón para descargar excel -->
-                <a href="{{ route('export')}}" download class="btn btn-primary">Descargar Excel</a>
-
-                <!-- Botón para descargar -->
-                <a href="{{ route('pdfplan')}}" class="btn btn-warning">Descargar PDF</a>
+            <div class="form-group">
+                <label for="pillSelect">Seleccion de facultad</label>
+                <select class="form-control input-pill" id="selectfacultie">
+                    <option disabled selected value="">Seleccione una facultad</option>
+                    @foreach ($facultieinfo as $facultie)
+                    <option value="{{ $facultie->id}}">{{ $facultie->name_faculty }}</option>
+                    @endforeach
+                </select>
             </div>
+            <div class="form-group">
+                <label for="pillSelect">Seleccion de programa</label>
+                <select class="form-control input-pill" id="selectprogram" disabled>
+                    <option disabled selected value="">Seleccione un programa</option>
+                </select>
+            </div>
+            <a href="{{ route('export')}}" download><button type="button" class="btn btn-primary btn-lg btn-block d-none" id="btn-excel">Descargar excel</button></a>
         </div>
-        <!-- end document -->
     </div>
 </div>
 
-
+<!-- script -->
+<script src="{{asset('js/report.js')}}"></script>
+<!-- end script -->
 </div>
 
 @endsection

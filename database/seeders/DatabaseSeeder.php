@@ -37,11 +37,37 @@ class DatabaseSeeder extends Seeder
         \App\Models\User::factory()->create([
             'name' => 'admin',
             'last_name' => 'suport',
-            'phone' => '1234567891',
+            'phone' => '1234567890',
             'email' => 'aulamanager.support@gmail.com',
             'password' => 'admin',
             'id_role' => '1',
         ]);
 
+        \App\Models\User::factory()->create([
+            'name' => 'vicerrector',
+            'last_name' => 'vice',
+            'phone' => '1234567890',
+            'email' => 'vicerrectoria@uniautonoma.edu.co',
+            'password' => 'vicerrectoria',
+            'id_role' => '2',
+        ]);
+
+        \App\Models\User::factory()->create([
+            'name' => 'Zulema Yidney',
+            'last_name' => 'León Escobar',
+            'phone' => '1234567890',
+            'email' => 'coordinacion.software@uniautonoma.edu.co',
+            'password' => 'vicerrectoria',
+            'id_role' => '3',
+        ]);
+
+        \App\Models\User::factory()->create([
+            'name' => 'docente',
+            'last_name' => 'software',
+            'phone' => '0000000000',
+            'email' => 'docente.software@uniautonoma.edu.co',
+            'password' => 'docente',
+            'id_role' => '4',
+        ]);
     }
 }
