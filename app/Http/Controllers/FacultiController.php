@@ -159,16 +159,15 @@ class FacultiController extends Controller
             $atributesUserInfo = UserAttributes::where('id_user', $userId)->orderBy('id')
                 ->get();
 
-
             $evaluationsId = AssignmentEvaluation::where('id_classroom_plan', $id)
                 ->with('evaluation', 'percentage')
                 ->orderBy('id_percentage')
                 ->get();
-
+            
             $referencesId = Reference::where('id_classroom_plan', $id)
                 ->orderBy('id')
                 ->get();
-
+            
             $specifics = SpecificObjective::where('id_classroom_plan', $id)
                 ->orderBy('id')
                 ->get();
@@ -197,7 +196,6 @@ class FacultiController extends Controller
             $dompdf->render(); //descargar el pdf
 
             return $dompdf->stream("plan-aula.pdf", array("Attachment" => false));
-
         } catch (\Throwable $th) {
             Log::error('Error en export: ' . $th->getMessage());
         }
