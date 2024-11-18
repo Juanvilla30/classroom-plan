@@ -314,6 +314,7 @@
             <tr>
                 <th colspan="2" class="section-title">BIBLIOGRAFÍA</th>
             </tr>
+
             <tr>
                 <td colspan="2">
                     <ol>

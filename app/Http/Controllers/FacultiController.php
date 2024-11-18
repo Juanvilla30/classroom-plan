@@ -186,7 +186,7 @@ class FacultiController extends Controller
             $html = view('documents.exportPdf', [
                 'classroom' => $classroomPlans[0],
                 'evaluations' => $evaluationsId,
-                'references' => $referencesId,
+                'references' => $referencesId[0],
                 'specifics' => $specificsArray,
                 'topics' => $topicsId,
                 'atributesUser' => $atributesUserInfo[0],
