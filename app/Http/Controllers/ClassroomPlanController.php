@@ -69,6 +69,52 @@ class ClassroomPlanController extends Controller
         }
     }
 
+    public function searchCoursesRole(Request $request)
+    {
+        try {
+            $programId = $request->input('programId');
+            $userId = $request->input('userId');
+
+            if ($userId == null) {
+                $relationInfo = ProgramCourseRelationship::where('id_program', $programId)
+                    ->with([
+                        'program.faculty',
+                        'program.educationLevel',
+                        'course.component.studyField',
+                        'course.semester',
+                        'course.courseType',
+                        'user',
+                    ])->orderBy('id')
+                    ->get();
+                $educationId = Program::where('id', $programId)->pluck('id_education_level');
+            } else {                
+                $relationInfo = ProgramCourseRelationship::where('id_program', $programId)
+                    ->where('id_user', $userId)
+                    ->with([
+                        'program.faculty',
+                        'program.educationLevel',
+                        'course.component.studyField',
+                        'course.semester',
+                        'course.courseType',
+                        'user',
+                    ])->orderBy('id')
+                    ->get();
+                $educationId = Program::where('id', $programId)->pluck('id_education_level');
+            }
+
+            return response()->json([
+                'check' => true,
+                'relationInfo' => $relationInfo,
+                'educationId' => $educationId,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error al asignar curso',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function searchCourses(Request $request)
     {
         try {

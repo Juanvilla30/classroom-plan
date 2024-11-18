@@ -10,6 +10,9 @@ $.ajaxSetup({
     * VARIABLES
     *
 */
+const userData = JSON.parse(document.getElementById('userId').getAttribute('data-id'));
+let confirmDataId;
+
 // IDS
 let typeClassroomId;
 let facultyId;
@@ -17,8 +20,8 @@ let programId;
 let realtionId;
 let componentId;
 let learningId;
-// INFO
 
+// INFO
 const savesEvaluation1 = [];
 const savesEvaluation2 = [];
 const savesEvaluation3 = [];
@@ -34,7 +37,6 @@ document.addEventListener('DOMContentLoaded', function () {
         * ARREGLOS
         *
     */
-
     const cards = ['card-1', 'card-2', 'card-3', 'card-4', 'card-5', 'card-6', 'card-7', 'card-8'];
 
     let currentCardIndex = 0;
@@ -170,9 +172,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // BLOCK ATRTRIBUTES
-    function blockAttributes() {
+    function blockAttributes(confirmDataId) {
         const selects = document.querySelectorAll(".selectsFrom");
         let buttonSearchCourse = document.getElementById('buttonSearchCourse');
+        let searchCourseBtn = document.getElementById('searchCourseBtn');
 
         document.querySelectorAll('.readonlyCheck').forEach(function (element) {
             if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
@@ -184,8 +187,11 @@ document.addEventListener('DOMContentLoaded', function () {
             select.disabled = true;
         });
 
-        buttonSearchCourse.disabled = true;
-
+        if (confirmDataId == 1) {
+            buttonSearchCourse.disabled = true;
+        } else {
+            searchCourseBtn.disabled = true;
+        }
     }
 
     function blockCampos(showField, showComponent) {
@@ -204,9 +210,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function unlockAttributes() {
+    function unlockAttributes(confirmDataId) {
         const selects = document.querySelectorAll(".selectsFrom");
         let buttonSearchCourse = document.getElementById('buttonSearchCourse');
+        let searchCourseBtn = document.getElementById('searchCourseBtn');
 
         document.querySelectorAll('.readonlyCheck').forEach(function (element) {
             if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
@@ -218,10 +225,75 @@ document.addEventListener('DOMContentLoaded', function () {
             select.disabled = true;
         });
 
-        buttonSearchCourse.disabled = true;
+        if (confirmDataId == 1) {
+            buttonSearchCourse.disabled = true;
+        } else {
+            searchCourseBtn.disabled = true;
+        }
     }
 
     // VALIDATIONS
+    validateUser(userData).then(response => {
+        confirmDataId = response;
+    }).catch(error => {
+        console.error("Error en la solicitud AJAX:", error);
+    });
+
+    function validateUser(response) {
+        return new Promise((resolve) => {
+
+            if (response.id_role == 1 || response.id_role == 2) {
+                document.getElementById('selectTypeClassroom').addEventListener('change', function () {
+                    typeClassroomId = this.options[this.selectedIndex].value;
+                    resetTypeClassroom();
+                    resetContent()
+                    if (typeClassroomId == 1) {
+                        document.getElementById('buttonSearchCourse').classList.remove('d-none');
+                    } else {
+                        document.getElementById('fromSelectFaculty').classList.remove('d-none');
+                        document.getElementById('fromSelectProgram').classList.remove('d-none');
+                        document.getElementById("selectFaculty").disabled = false;
+                    }
+                });
+
+                document.getElementById('selectFaculty').addEventListener('change', function () {
+                    facultyId = this.options[this.selectedIndex].value;
+                    resetFaculty();
+                    resetContent()
+                    searchProgram(facultyId, typeClassroomId);
+                });
+
+                document.getElementById('selectProgram').addEventListener('change', function () {
+                    programId = this.options[this.selectedIndex].value;
+                    resetContent()
+                    document.getElementById('buttonSearchCourse').classList.remove('d-none');
+                });
+
+                document.getElementById('buttonSearchCourse').addEventListener('click', function () {
+                    if (typeClassroomId == 1) {
+                        searchCourses(null, null);
+                    } else {
+                        searchCourses(programId, typeClassroomId)
+                    }
+                });
+                resolve(1)
+            } else if (response.id_role == 3 || response.id_role == 4) {
+                document.getElementById('searchCourseBtn').addEventListener('click', function () {
+                    if (response.id_role == 3) {
+                        let programId = response.id_program
+                        searchCoursesRole(programId, null)
+                    } else if (response.id_role == 4) {
+                        let programId = response.id_program
+                        let userId = response.id
+                        searchCoursesRole(programId, userId);
+                    }
+                });
+                resolve(2)
+            }
+        });
+
+    }
+
     function validate(fields, alertMessage) {
         let hasEmptyField = fields.some(field => {
             const element = document.getElementById(field);
@@ -236,6 +308,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 confirmButtonColor: '#1269DB',
                 confirmButtonText: 'Entendido'
             });
+            return;
         } else {
             $('#modalConfirmation').modal('show');
         }
@@ -314,6 +387,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         confirmButtonColor: '#1572E8',
                         confirmButtonText: 'Aceptar',
                     });
+                    return;
                 }
             } else if (data == 2) {
                 if (savesEvaluation2.some(evaluation => evaluation.evaluationId == evaluationContent)) {
@@ -348,6 +422,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         confirmButtonColor: '#1572E8',
                         confirmButtonText: 'Aceptar',
                     });
+                    return;
                 }
             } else if (data == 3) {
                 if (savesEvaluation3.some(evaluation => evaluation.evaluationId == evaluationContent)) {
@@ -382,6 +457,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         confirmButtonColor: '#1572E8',
                         confirmButtonText: 'Aceptar',
                     });
+                    return;
                 }
             }
 
@@ -396,6 +472,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 confirmButtonColor: '#1572E8',
                 confirmButtonText: 'Aceptar',
             });
+            return;
         }
     }
 
@@ -411,6 +488,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 confirmButtonColor: '#1269DB',
                 confirmButtonText: 'Entendido'
             });
+            return;
         }
 
     }
@@ -448,6 +526,34 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
+    }
+
+    function searchCoursesRole(programIds, userId) {
+        $('#modalCourse').modal('show');
+        $.ajax({
+            url: '/classroom-plan/search-course-role',
+            method: 'POST',
+            data: {
+                programId: programIds,
+                userId: userId,
+            },
+            success: function (response) {
+                if (response.educationId == 1) {
+                    viewSelectPensum(response)
+                    typeClassroomId = 2
+                } else {
+                    viewSelectSpecialization(response);
+                    typeClassroomId = 3
+                }
+                programId = programIds;
+            },
+            error: function (xhr, status, error) {
+                console.error('Error al eliminar el grupo:', xhr);
+                console.error('Estado:', status);
+                console.error('Error:', error);
+                console.error('Respuesta del servidor:', xhr.responseText);
+            }
+        });
     }
 
     function searchCourses(programId, typeClassroomId) {
@@ -539,7 +645,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (checkin == '1') {
                     viewListComponent(response)
                 } else if (checkin == '2') {
-                    viewListComponent(response)                   
+                    viewListComponent(response)
                 } else if (checkin == '3') {
                     viewListSpecialization(response)
                 }
@@ -1546,39 +1652,6 @@ document.addEventListener('DOMContentLoaded', function () {
         * Event Listener
         *
     */
-    document.getElementById('selectTypeClassroom').addEventListener('change', function () {
-        typeClassroomId = this.options[this.selectedIndex].value;
-        resetTypeClassroom();
-        resetContent()
-        if (typeClassroomId == 1) {
-            document.getElementById('buttonSearchCourse').classList.remove('d-none');
-        } else {
-            document.getElementById('fromSelectFaculty').classList.remove('d-none');
-            document.getElementById('fromSelectProgram').classList.remove('d-none');
-            document.getElementById("selectFaculty").disabled = false;
-        }
-    });
-
-    document.getElementById('selectFaculty').addEventListener('change', function () {
-        facultyId = this.options[this.selectedIndex].value;
-        resetFaculty();
-        resetContent()
-        searchProgram(facultyId, typeClassroomId);
-    });
-
-    document.getElementById('selectProgram').addEventListener('change', function () {
-        programId = this.options[this.selectedIndex].value;
-        resetContent()
-        document.getElementById('buttonSearchCourse').classList.remove('d-none');
-    });
-
-    document.getElementById('buttonSearchCourse').addEventListener('click', function () {
-        if (typeClassroomId == 1) {
-            searchCourses(null, null);
-        } else {
-            searchCourses(programId, typeClassroomId)
-        }
-    });
 
     document.getElementById('tableCampoComun').addEventListener('click', async function (event) {
         if (event.target.classList.contains('campoComunSelect')) {
@@ -1644,7 +1717,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById('confirm-button').addEventListener('click', function () {
         confirmButton(dataConfirmation, learningId, realtionId, savesEvaluation1, savesEvaluation2, savesEvaluation3);
-        unlockAttributes();
+        unlockAttributes(confirmDataId);
     });
 
     document.querySelectorAll('.confirmationSave').forEach(function (button) {
@@ -1656,7 +1729,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.querySelectorAll('.nextCard').forEach(function (button) {
         button.addEventListener('click', function () {
-            blockAttributes();
+            blockAttributes(confirmDataId);
             showNextCard();
         });
     });

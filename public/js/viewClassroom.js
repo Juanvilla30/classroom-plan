@@ -140,6 +140,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (contentState == 1) {
             document.getElementById("btnActivateUpdate").classList.remove('d-none')
+            document.getElementById("card-send").classList.remove('d-none')
         }
 
     }
@@ -501,11 +502,10 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // TERMINAR....................
     function viewEvaluationUpdate(response, assigEvaInfo) {
         blockCampos(true, true);
         let evaluationInfo = response.assigEvaluationInfo;
-
+        let classroomId = response.assigEvaluationInfo[0].id_classroom_plan;
         let bodyEvaluation = $('#bodyEvaluation');
         bodyEvaluation.empty();
 
@@ -523,17 +523,20 @@ document.addEventListener('DOMContentLoaded', function () {
                             ${capitalizeOrDefault(evaluation.percentage.name_percentage)}
                         </td>
                         <td>
-							<div class="form-button-action">
-								<button type="button" title="" class="btn btn-link btn-simple-primary btn-lg"
-                                    id="evaluationBtnUpdate" data-id="${evaluation.id}">
-									<i class="fa fa-edit"></i>
-								</button>								
-							</div>
+							<button type="button" title="" class="btn btn-link btn-simple-primary btn-lg"
+                                id="evaluationBtnUpdate" data-id="${evaluation.id}">
+								<i class="fa fa-edit"></i>
+							</button>								
+                            <button type="button" title="" class="btn btn-link btn-simple-danger" 
+                                id="evaluationBtnDelete" data-id="${evaluation.id}">
+                                <i class="fa fa-times"></i>
+                            </button>
 						</td>                    
                     </tr>
                 `;
                 bodyEvaluation.append(row);
             });
+
             document.querySelectorAll('#evaluationBtnUpdate').forEach(button => {
                 button.addEventListener('click', function () {
                     const evaluationId = this.getAttribute('data-id');
@@ -543,6 +546,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 });
             });
+
+            document.querySelectorAll('#evaluationBtnDelete').forEach(button => {
+                button.addEventListener('click', function () {
+                    const evaluationDId = this.getAttribute('data-id');
+                    deleteContent(classroomId, 1, evaluationDId, assigEvaInfo)
+                });
+            });
+
         } else {
             bodyEvaluation.append('<tr><td colspan="6">No se encontraron.</td></tr>');
         }
@@ -551,6 +562,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function viewReferencesUpdate(response) {
         blockCampos(true, true);
         let referencesId = response.referencsInfo;
+        let classroomId = response.referencsInfo[0].id_classroom_plan;
 
         let bodyReferences = $('#bodyReferences');
         bodyReferences.empty();
@@ -570,12 +582,14 @@ document.addEventListener('DOMContentLoaded', function () {
                             ${reference.link_reference}
                         </td>
                         <td>
-							<div class="form-button-action">
-								<button type="button" class="btn btn-link btn-simple-primary btn-lg"
-                                    id="referenceBtnUpdate" data-id="${reference.id}">
-									<i class="fa fa-edit"></i>
-								</button>								
-							</div>
+							<button type="button" class="btn btn-link btn-simple-primary btn-lg"
+                                id="referenceBtnUpdate" data-id="${reference.id}">
+								<i class="fa fa-edit"></i>
+							</button>								
+                            <button type="button" data-toggle="tooltip" title="" class="btn btn-link btn-simple-danger" 
+                                id="referenceBtnDelete" data-id="${reference.id}">
+                                <i class="fa fa-times"></i>
+                            </button>
 						</td>                     
                     </tr>
                 `;
@@ -589,6 +603,13 @@ document.addEventListener('DOMContentLoaded', function () {
                         const selectedContent = referencesId.find(item => item.id === parseInt(referenceUId));
                         viewModalUpdateReference(selectedContent);
                     }
+                });
+            });
+
+            document.querySelectorAll('#referenceBtnDelete').forEach(button => {
+                button.addEventListener('click', function () {
+                    const referenceDId = this.getAttribute('data-id');
+                    deleteContent(classroomId, 2, referenceDId, null)
                 });
             });
 
@@ -922,6 +943,38 @@ document.addEventListener('DOMContentLoaded', function () {
         $('#modalConfirmation').modal('show');
     }
 
+    // DELETE
+    function deleteContent(classroomId, select, deleteId, assigEvaInfo) {
+        $('#modalConfirmationDelete').modal('show');
+        document.getElementById('confirm-delete').addEventListener('click', function () {
+            $.ajax({
+                url: '/view-classroom-plan/delet-content',
+                method: 'DELETE',
+                data: {
+                    classroomId: classroomId,
+                    select: select,
+                    deleteId: deleteId,
+                },
+                success: function (response) {
+                    if (response.check == true) {
+                        $('#modalConfirmationDelete').modal('hide');
+                        if(select == 1){
+                            viewEvaluationUpdate(response, assigEvaInfo)
+                        }else{
+                            viewReferencesUpdate(response)
+                        }
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error al eliminar el grupo:', xhr);
+                    console.error('Estado:', status);
+                    console.error('Error:', error);
+                    console.error('Respuesta del servidor:', xhr.responseText);
+                }
+            });
+        });
+    }
+
     // SAVE
     function saveContent(classroomId) {
         const selectLearning = document.getElementById('selectLearning');
@@ -967,11 +1020,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         text: 'Se ha registrado correctamente',
                         confirmButtonColor: '#1572E8',
                         confirmButtonText: 'Aceptar',
-                        allowOutsideClick: false, 
-                        allowEscapeKey: false  
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            location.reload();  
+                            location.reload();
                         }
                     });
                 }
@@ -984,9 +1037,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
-
-    $('#modalConfirmation').modal('hide');
-
 
     function saveUpdateEvaluation(dataValueSelect, dataValueInput, dataValId, assigEvaInfo) {
         $.ajax({
@@ -1073,6 +1123,29 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (response.check == true) {
                     $('#modalNewReferences').modal('hide');
                     viewReferencesUpdate(response);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error al eliminar el grupo:', xhr);
+                console.error('Estado:', status);
+                console.error('Error:', error);
+                console.error('Respuesta del servidor:', xhr.responseText);
+            }
+        });
+    }
+
+    function sendClassroom(classroomId) {
+        $.ajax({
+            url: '/view-classroom-plan/send-classroom',
+            method: 'PUT',
+            data: {
+                classroomId: classroomId,
+            },
+            success: function (response) {
+                if (response.check == true) {
+                    $('#modalConfirmationSend').modal('hide');
+                    document.getElementById('card-send').classList.add('d-none');
+                    location.reload();
                 }
             },
             error: function (xhr, status, error) {
@@ -1175,4 +1248,13 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('confirm-new-reference').addEventListener('click', function () {
         ValidationNewReference(classroomId);
     });
+
+    document.getElementById('btnSendClassroom').addEventListener('click', function () {
+        $('#modalConfirmationSend').modal('show');
+    });
+
+    document.getElementById('confirm-send').addEventListener('click', function () {
+        sendClassroom(classroomId);
+    });
+
 });

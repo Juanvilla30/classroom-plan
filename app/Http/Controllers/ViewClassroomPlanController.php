@@ -28,7 +28,10 @@ class ViewClassroomPlanController extends Controller
                 )
             );
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Ocurrió un problema al cargar la información del plan de aula.');
+            return redirect()->back()->with(
+                'error',
+                'Error al cargar la informacion.'
+            );
         }
     }
 
@@ -79,7 +82,10 @@ class ViewClassroomPlanController extends Controller
                 'assigEvaluationInfo' => $assigEvaluationInfo,
             ]);
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Ocurrió un problema al cargar la información del plan de aula.');
+            return redirect()->back()->with(
+                'error',
+                'Error al cargar la informacion.'
+            );
         }
     }
 
@@ -113,7 +119,7 @@ class ViewClassroomPlanController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with(
                 'error',
-                'Ocurrió un problema al cargar la información del plan de aula.'
+                'Error al cargar la informacion.'
             );
         }
     }
@@ -150,7 +156,6 @@ class ViewClassroomPlanController extends Controller
             ClassroomPlan::where('id', $classroomId)
                 ->update([
                     'id_learning_result' => $learningId,
-                    'id_state' => 2,
                 ]);
 
             return response()->json([
@@ -159,7 +164,7 @@ class ViewClassroomPlanController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with(
                 'error',
-                'Ocurrió un problema al cargar la información del plan de aula.'
+                'Error al cargar la informacion.'
             );
         }
     }
@@ -193,7 +198,7 @@ class ViewClassroomPlanController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with(
                 'error',
-                'Ocurrió un problema al cargar la información del plan de aula.'
+                'Error al cargar la informacion.'
             );
         }
     }
@@ -221,7 +226,7 @@ class ViewClassroomPlanController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with(
                 'error',
-                'Ocurrió un problema al cargar la información del plan de aula.'
+                'Error al cargar la informacion.'
             );
         }
     }
@@ -255,7 +260,7 @@ class ViewClassroomPlanController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with(
                 'error',
-                'Ocurrió un problema al cargar la información del plan de aula.'
+                'Error al cargar la informacion.'
             );
         }
     }
@@ -284,7 +289,62 @@ class ViewClassroomPlanController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with(
                 'error',
-                'Ocurrió un problema al cargar la información del plan de aula.'
+                'Error al cargar la informacion.'
+            );
+        }
+    }
+
+    function sendClassroom(Request $request)
+    {
+        try {
+            $classroomId = $request->input('classroomId');
+
+            ClassroomPlan::where('id', $classroomId)
+                ->update([
+                    'id_state' => 2
+                ]);
+
+            return response()->json([
+                'check' => true,
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with(
+                'error',
+                'Error al cargar la informacion.'
+            );
+        }
+    }
+
+    function deleteContent(Request $request)
+    {
+        try {
+            $classroomId = $request->input('classroomId');
+            $select = $request->input('select');
+            $deleteId = $request->input('deleteId');
+
+            if ($select == 1) {
+                AssignmentEvaluation::where('id', $deleteId)->delete();
+                $content = AssignmentEvaluation::where('id_classroom_plan', $classroomId)
+                    ->with([
+                        'evaluation',
+                        'percentage',
+                    ])->orderBy('id')->get();
+                return response()->json([
+                    'check' => true,
+                    'assigEvaluationInfo' => $content,
+                ]);
+            } else {
+                Reference::where('id', $deleteId)->delete();
+                $content = Reference::where('id_classroom_plan', $classroomId)->orderBy('id')->get();
+                return response()->json([
+                    'check' => true,
+                    'referencsInfo' => $content,
+                ]);
+            }
+        } catch (\Exception $e) {
+            return redirect()->back()->with(
+                'error',
+                'Error al cargar la informacion.'
             );
         }
     }

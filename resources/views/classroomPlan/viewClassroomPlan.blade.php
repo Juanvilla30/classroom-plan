@@ -264,6 +264,68 @@
     </div>
     <!-- End Card -->
 
+    <!-- Card -->
+    <div class="card d-none" id="card-send">
+
+        <div class="card-header">
+            <h5 class="card-title font-weight-bold text-primary">Enviar</h5>
+        </div>
+
+        <div class="card-body">
+            <button type="button" class="btn btn-primary btn-lg btn-block" id="btnSendClassroom">Enviar</button>
+        </div>
+    </div>
+    <!-- End Card -->
+
+    <!-- Modal Confirmation -->
+    <div class="modal fade" id="modalConfirmationSend" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="card-title font-weight-bold text-primary">Advertencia</h5>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Recuerda que al enviar el plan de aula, no podrás modificar los registros hasta que se vuelva a autorizar. Asegúrate de que toda la información esté correcta.<br><br>
+                    ¿Estás seguro de que deseas actualizar el plan de aula?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="confirm-send">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal -->
+
+    <!-- Modal Confirmation -->
+    <div class="modal fade" id="modalConfirmationDelete" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="card-title font-weight-bold text-primary">Advertencia</h5>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ¿Estás seguro de que deseas eliminar el contenido?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="confirm-delete">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal -->
+
     <!-- Modal Activate Update -->
     <div class="modal fade" id="modalActivateUpdate" tabindex="-1" role="dialog"
         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -327,7 +389,6 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    Recuerda que al enviar el plan de aula, no podrás modificar los registros hasta que se vuelva a autorizar. Asegúrate de que toda la información esté correcta.<br><br>
                     ¿Estás seguro de que deseas actualizar el plan de aula?
                 </div>
                 <div class="modal-footer">

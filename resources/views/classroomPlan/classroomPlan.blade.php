@@ -29,7 +29,10 @@
         </ul>
     </div>
     <!-- End Breadcumb Header -->
+    
+    <div class="d-none" id="userId" data-id="{{ json_encode(auth()->user()) }}"></div>
 
+    @if (auth()->user()->id_role == 1 || auth()->user()->id_role == 2)
     <!-- Card Select-->
     <div class="card">
 
@@ -75,6 +78,29 @@
         </div>
     </div>
     <!-- End Card -->
+    @endif
+
+    @if (auth()->user()->id_role == 3 || auth()->user()->id_role == 4)
+    <!-- Card Select-->
+    <div class="card">
+
+        <div class="card-header">
+            <h5 class="card-title font-weight-bold text-primary">Selección de curso</h5>
+        </div>
+
+        <div class="card-body">
+            <!-- Forms -->
+            <form>            
+                <button type="button" class="btn btn-primary btn-lg btn-block" style="margin-top: 20px;" id="searchCourseBtn">
+                    Seleccione el curso
+                </button>
+            </form>
+            <!-- End Forms -->
+
+        </div>
+    </div>
+    <!-- End Card -->
+    @endif
 
     <!-- Card Info -->
     <div class="card">

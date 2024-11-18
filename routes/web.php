@@ -67,6 +67,7 @@ Route::middleware('auth')->group(function () {
     // Rutas de plan de aula
     Route::get('/classroom-plan', [ClassroomPlanController::class, 'index'])->name('classroomPlan');
     Route::post('/classroom-plan/search-program', [ClassroomPlanController::class, 'searchProgram'])->name('searchProgram');
+    Route::post('/classroom-plan/search-course-role', [ClassroomPlanController::class, 'searchCoursesRole'])->name('searchCoursesRole');
     Route::post('/classroom-plan/search-course', [ClassroomPlanController::class, 'searchCourses'])->name('searchCourses');
     Route::get('/classroom-plan/search-study-field', [ClassroomPlanController::class, 'searchStudyField'])->name('searchStudyField');
     Route::post('/classroom-plan/search-info-course', [ClassroomPlanController::class, 'viewInfoCourse'])->name('viewInfoCourse');
@@ -99,6 +100,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/view-classroom-plan/save-reference', [ViewClassroomPlanController::class, 'saveReference'])->name('saveReference');
     Route::post('/view-classroom-plan/create-evaluation', [ViewClassroomPlanController::class, 'createEvaluation'])->name('createEvaluation');
     Route::post('/view-classroom-plan/create-reference', [ViewClassroomPlanController::class, 'createReference'])->name('createReference');
+    Route::put('/view-classroom-plan/send-classroom', [ViewClassroomPlanController::class, 'sendClassroom'])->name('sendClassroom');
+    Route::delete('/view-classroom-plan/delet-content', [ViewClassroomPlanController::class, 'deleteContent'])->name('deleteContent');
 
     // Rutas user
     Route::get('/user', [UserController::class, 'index'])->name('user');

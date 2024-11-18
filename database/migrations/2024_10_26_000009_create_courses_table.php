@@ -31,9 +31,6 @@ return new class extends Migration
 
             $table->unsignedBigInteger('id_course_type');
             $table->foreign('id_course_type')->references('id')->on('course_types');
-            
-            $table->unsignedBigInteger('id_user')->nullable(); 
-            $table->foreign('id_user')->references('id')->on('users');
 
             // CAMPOS DE ACTUALIZACION
             $table->timestamps();
