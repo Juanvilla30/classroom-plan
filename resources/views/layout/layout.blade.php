@@ -126,7 +126,8 @@
                                                 <div class="avatar-lg"><img src="\img\perfil_uno.png"
                                                         alt="image profile" class="avatar-img rounded"></div>
                                                 <div class="u-text">
-                                                    <h4>{{ auth()->user()->name }}</h4>
+                                                    <h4 style="text-transform: capitalize;">{{ auth()->user()->name }}</h4>
+                                                    <h4 style="text-transform: capitalize;">{{ auth()->user()->last_name }}</h4>
                                                     <p class="text-muted">{{ auth()->user()->email }}</p>
                                                 </div>
                                             </div>
@@ -174,8 +175,9 @@
                         <div class="info">
                             <a data-toggle="collapse" href="#logoutDropdown" aria-expanded="false" class="collapsed">
                                 <span>
-                                    <span class="username">{{ auth()->user()->name }}</span>
-                                    <span class="user-level text-uppercase">{{ auth()->user()->roles->name_role}}</span>
+                                    <span class="username" style="text-transform: capitalize;">{{ auth()->user()->name }}</span>
+                                    <span class="userlastname" style="text-transform: capitalize;">{{ auth()->user()->last_name }}</span>
+                                    <span class="user-level" style="text-transform: capitalize;">{{ auth()->user()->roles->name_role}}</span>
                                     <span class="caret"></span>
                                 </span>
                             </a>
