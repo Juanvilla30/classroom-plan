@@ -172,24 +172,26 @@ class FacultiController extends Controller
                 ->get()
                 ->toArray();
 
-            $data = [
-                'classroom' => $classroomPlans,
-                'evaluations' => $evaluationsId,
-                'references' => $referencesId,
-                'specifics' => $specificsArray,
-                'topics' => $topicsId,
-            ];
+            // $data = [
+            //     'classroom' => $classroomPlans,
+            //     'evaluations' => $evaluationsId,
+            //     'references' => $referencesId,
+            //     'specifics' => $specificsArray,
+            //     'topics' => $topicsId,
+            // ];
 
             // dd($data);
 
             $dompdf = new Dompdf();
 
-            $html = view('documents.exportPdf', compact($data));
+            $html = view('documents.exportPdf', [
+                // 'classroom' => $classroomPlans,
+            ]);
 
-            $dompdf->LoadHtml($html);
+            $dompdf->LoadHtml($html); //renderisa el html a pdf
             $dompdf->render(); //descargar el pdf
 
-            return $dompdf->stream("plan-aula.pdf", array("Attachment" => true));
+            return $dompdf->stream("plan-aula.pdf", array("Attachment" => false));
 
         } catch (\Throwable $th) {
             Log::error('Error en export: ' . $th->getMessage());
