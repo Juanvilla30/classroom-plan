@@ -163,13 +163,11 @@ class FacultiController extends Controller
             $evaluationsId = AssignmentEvaluation::where('id_classroom_plan', $id)
                 ->with('evaluation', 'percentage')
                 ->orderBy('id_percentage')
-                ->get()
-                ->toArray();
+                ->get();
 
             $referencesId = Reference::where('id_classroom_plan', $id)
                 ->orderBy('id')
-                ->get()
-                ->toArray();
+                ->get();
 
             $specifics = SpecificObjective::where('id_classroom_plan', $id)
                 ->orderBy('id')
@@ -182,8 +180,7 @@ class FacultiController extends Controller
             $topicsId = Topic::whereIn('id_specific_objective', $specificsIds)
                 ->with('specificObjective')
                 ->orderBy('id')
-                ->get()
-                ->toArray();
+                ->get();
 
             $dompdf = new Dompdf();
 
