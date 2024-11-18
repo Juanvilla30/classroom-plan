@@ -163,8 +163,7 @@ class FacultiController extends Controller
             $evaluationsId = AssignmentEvaluation::where('id_classroom_plan', $id)
                 ->with('evaluation', 'percentage')
                 ->orderBy('id_percentage')
-                ->get()
-                ->toArray();
+                ->get();
 
             $referencesId = Reference::where('id_classroom_plan', $id)
                 ->orderBy('id')

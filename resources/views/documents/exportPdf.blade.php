@@ -173,10 +173,10 @@
                 <th>TOTAL HORAS SEMESTRE</th>
             </tr>
             <tr>
-                <td>{{ $classroom->relations->course->credit ?? 'No asignado' }}</td>
-                <td>{{ $classroom->relations->course->pretential_time ?? 'No asignado'}}</td>
-                <td>{{ $classroom->relations->course->independent_time ?? 'No asignado'}}</td>
-                <td>0</td>
+                <td style="text-align: center;">{{ $classroom->relations->course->credit ?? 'No asignado' }}</td>
+                <td style="text-align: center;">{{ $classroom->relations->course->pretential_time ?? 'No asignado'}}</td>
+                <td style="text-align: center;">{{ $classroom->relations->course->independent_time ?? 'No asignado'}}</td>
+                <td style="text-align: center;">0</td>
             </tr>
         </table>
 
@@ -262,18 +262,49 @@
             @endif
         </table>
 
-
-
-        <!-- Estrategias de Evaluación -->
         <table class="table">
             <tr>
                 <th colspan="2" class="section-title">ESTRATEGIAS DE EVALUACIÓN</th>
             </tr>
             <tr>
                 <td colspan="2">
-                    <ul>
-                        <li>Evaluación continua mediante trabajos prácticos y exámenes parciales.</li>
-                    </ul>
+                    <ol>
+                        <li>Primer porcentaje 30%
+                            @foreach($evaluations as $evaluation)
+                            @if ( $evaluation->id_percentage == 1)
+                            <ul>
+                                <li>
+                                    {{ucfirst(strtolower($evaluation->evaluation->name_evaluation))}} - {{$evaluation->percentage_number}}%
+                                </li>
+                            </ul>
+                            @endif
+                            @endforeach
+                        </li>
+
+                        <li>Segundo porcentaje 30%
+                            @foreach($evaluations as $evaluation)
+                            @if ( $evaluation->id_percentage == 2)
+                            <ul>
+                                <li>
+                                    {{ucfirst(strtolower($evaluation->evaluation->name_evaluation))}} - {{$evaluation->percentage_number}}%
+                                </li>
+                            </ul>
+                            @endif
+                            @endforeach
+                        </li>
+
+                        <li>Tercero porcentaje 40%
+                            @foreach($evaluations as $evaluation)
+                            @if ( $evaluation->id_percentage == 3)
+                            <ul>
+                                <li>
+                                    {{ucfirst(strtolower($evaluation->evaluation->name_evaluation))}} - {{$evaluation->percentage_number}}%
+                                </li>
+                            </ul>
+                            @endif
+                            @endforeach
+                        </li>
+                    </ol>
                 </td>
             </tr>
         </table>
@@ -286,18 +317,28 @@
 
             <tr>
                 <td colspan="2">
-                    <p>Referencia institucional</p>
                     <ol>
-                        <li>
-                                @foreach($references as $reference)
-                                @if($reference->id == 1 )
-                                <ul>
-                                    <li>
-                                        {{$reference->name_reference->link_reference}} - {{ $reference->id}}
-                                    </li>
-                                </ul>
-                                @endif
-                                @endforeach
+                        <li>Referencias institucionales
+                            @foreach($references as $reference)
+                            @if ( $reference->name_reference == 'Referencia institucional')
+                            <ul>
+                                <li>
+                                    {{$reference->link_reference}}
+                                </li>
+                            </ul>
+                            @endif
+                            @endforeach
+                        </li>
+                        <li>Referencias generales
+                            @foreach($references as $reference)
+                            @if ( $reference->name_reference == 'Referencia general')
+                            <ul>
+                                <li>
+                                    {{$reference->link_reference}}
+                                </li>
+                            </ul>
+                            @endif
+                            @endforeach
                         </li>
                     </ol>
                 </td>
