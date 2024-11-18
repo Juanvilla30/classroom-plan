@@ -25,6 +25,8 @@ use App\Models\Program;
 use App\Models\Component;
 use App\Models\Percentage;
 use Illuminate\Support\Facades\Log;
+use Dompdf\Dompdf;
+use PhpOffice\PhpSpreadsheet\Writer\Pdf;
 
 class FacultiController extends Controller
 {
@@ -130,17 +132,67 @@ class FacultiController extends Controller
     }
 
 
-    public function pdfPlanAula()
+    public function pdfPlanAula($id)
     {
-        $data = [
-            'faculty' => Faculty::all(),
-            'progrmas' => Program::all(),
-            'components' => Component::all(),
-            'semester' => Semester::all(),
-            'credits' => Course::all(),
-            'coursetype' => CourseType::all(),
-            'camp' => Program::all(),
-        ];
-        return view('faculties.pdfPlanAula');
+        try {
+
+            $classroomPlans = ClassroomPlan::where('id', $id)
+                ->with([
+                    'relations.course.component.studyField',
+                    'relations.course.semester',
+                    'relations.course.courseType',
+                    'relations.program',
+                ])
+                ->orderBy('id')
+                ->get();
+
+
+            $evaluationsId = AssignmentEvaluation::where('id_classroom_plan', $id)
+                ->with('evaluation', 'percentage')
+                ->orderBy('id_percentage')
+                ->get()
+                ->toArray();
+
+            $referencesId = Reference::where('id_classroom_plan', $id)
+                ->orderBy('id')
+                ->get()
+                ->toArray();
+
+            $specifics = SpecificObjective::where('id_classroom_plan', $id)
+                ->orderBy('id')
+                ->get();
+
+            $specificsIds = $specifics->pluck('id')->toArray();
+
+            $specificsArray = $specifics->toArray();
+
+            $topicsId = Topic::whereIn('id_specific_objective', $specificsIds)
+                ->with('specificObjective')
+                ->orderBy('id')
+                ->get()
+                ->toArray();
+
+            $data = [
+                'classroom' => $classroomPlans,
+                'evaluations' => $evaluationsId,
+                'references' => $referencesId,
+                'specifics' => $specificsArray,
+                'topics' => $topicsId,
+            ];
+
+            // dd($data);
+
+            $dompdf = new Dompdf();
+
+            $html = view('documents.exportPdf', compact($data));
+
+            $dompdf->LoadHtml($html);
+            $dompdf->render(); //descargar el pdf
+
+            return $dompdf->stream("plan-aula.pdf", array("Attachment" => true));
+
+        } catch (\Throwable $th) {
+            Log::error('Error en export: ' . $th->getMessage());
+        }
     }
 }

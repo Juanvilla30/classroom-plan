@@ -115,7 +115,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/plan-aula', [FacultiController::class, 'index'])->name('faculties');
     Route::post('/plan-aula/search-program', [FacultiController::class, 'searchprogram'])->name('searchprogram');
     Route::get('/plan-aula/donwload/', [FacultiController::class, 'export'])->name('export');
-    Route::get('/plan-aula/pdf', [FacultiController::class, 'pdfPlanAula'])->name('pdfplan');
+    Route::get('/plan-aula/pdf/{id}', [FacultiController::class, 'pdfPlanAula'])->name('pdfplan');
 });
 
 require __DIR__ . '/auth.php';

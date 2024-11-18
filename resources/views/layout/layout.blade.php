@@ -175,7 +175,7 @@
                             <a data-toggle="collapse" href="#logoutDropdown" aria-expanded="false" class="collapsed">
                                 <span>
                                     <span class="username">{{ auth()->user()->name }}</span>
-                                    <span class="user-level text-uppercase">{{ auth()->user()->roles->name_rol}}</span>
+                                    <span class="user-level text-uppercase">{{ auth()->user()->roles->name_role}}</span>
                                     <span class="caret"></span>
                                 </span>
                             </a>
