@@ -168,8 +168,7 @@ class FacultiController extends Controller
 
             $referencesId = Reference::where('id_classroom_plan', $id)
                 ->orderBy('id')
-                ->get()
-                ->toArray();
+                ->get();
 
             $specifics = SpecificObjective::where('id_classroom_plan', $id)
                 ->orderBy('id')
@@ -182,15 +181,14 @@ class FacultiController extends Controller
             $topicsId = Topic::whereIn('id_specific_objective', $specificsIds)
                 ->with('specificObjective')
                 ->orderBy('id')
-                ->get()
-                ->toArray();
+                ->get();
 
             $dompdf = new Dompdf();
 
             $html = view('documents.exportPdf', [
                 'classroom' => $classroomPlans[0],
                 'evaluations' => $evaluationsId,
-                'references' => $referencesId,
+                'references' => $referencesId[0],
                 'specifics' => $specificsArray,
                 'topics' => $topicsId,
                 'atributesUser' => $atributesUserInfo[0],

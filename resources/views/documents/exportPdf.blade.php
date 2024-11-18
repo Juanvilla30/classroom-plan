@@ -225,22 +225,44 @@
             <tr>
                 <th colspan="2" class="section-title">CONTENIDO TEMÁTICO</th>
             </tr>
+
+            @php
+            $firstSection = $topics->take(10); // Los primeros 10 temas
+            $secondSection = $topics->skip(10)->take(6); // Los últimos 6 temas
+            @endphp
+
             <tr>
                 <td colspan="2">
                     <ol>
-                        @php $i = 1; @endphp
-                        @foreach($topics as $topic)
-                        <li>Temas semana {{$i}}:
+                        @foreach($firstSection as $index => $topic)
+                        <li>Temas semana {{ $index + 1 }}:
                             <ul>
-                                <li>{{ $topic->description_topic}}</li>
+                                {!! nl2br(e($topic->description_topic)) !!}
                             </ul>
                         </li>
-                        @php $i++; @endphp
                         @endforeach
                     </ol>
                 </td>
             </tr>
+
+            @if($secondSection->isNotEmpty())
+            <tr>
+                <td colspan="2">
+                    <ol start="11">
+                        @foreach($secondSection as $index => $topic)
+                        <li>Temas semana {{ 0 + $index + 1 }}:
+                            <ul>
+                                {!! nl2br(e($topic->description_topic)) !!}
+                            </ul>
+                        </li>
+                        @endforeach
+                    </ol>
+                </td>
+            </tr>
+            @endif
         </table>
+
+
 
         <!-- Estrategias de Evaluación -->
         <table class="table">
@@ -251,8 +273,6 @@
                 <td colspan="2">
                     <ul>
                         <li>Evaluación continua mediante trabajos prácticos y exámenes parciales.</li>
-                        <li>Participación en actividades de desarrollo de proyectos.</li>
-                        <li>Autoevaluación y coevaluación en equipos de trabajo.</li>
                     </ul>
                 </td>
             </tr>
@@ -263,14 +283,23 @@
             <tr>
                 <th colspan="2" class="section-title">BIBLIOGRAFÍA</th>
             </tr>
+
             <tr>
                 <td colspan="2">
-                    <ul>
-                        <li>Pressman, R. (2005). Ingeniería de software: Un enfoque práctico.</li>
-                        <li>Sommerville, I. (2011). Ingeniería de software.</li>
-                        <li>Gamma, E., Helm, R., Johnson, R., & Vlissides, J. (1995). Design Patterns: Elements of
-                            Reusable Object-Oriented Software.</li>
-                    </ul>
+                    <p>Referencia institucional</p>
+                    <ol>
+                        <li>
+                                @foreach($references as $reference)
+                                @if($reference->id == 1 )
+                                <ul>
+                                    <li>
+                                        {{$reference->name_reference->link_reference}} - {{ $reference->id}}
+                                    </li>
+                                </ul>
+                                @endif
+                                @endforeach
+                        </li>
+                    </ol>
                 </td>
             </tr>
         </table>
