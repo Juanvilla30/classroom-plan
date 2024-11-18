@@ -16,6 +16,7 @@ use App\Models\Semester;
 use App\Models\SpecificObjective;
 use App\Models\StudyField;
 use App\Models\Topic;
+use App\Models\UserAttributes;
 use Illuminate\Http\Request;
 use App\Models\Faculty;
 use Illuminate\Support\Facades\Validator;
@@ -27,6 +28,7 @@ use App\Models\Percentage;
 use Illuminate\Support\Facades\Log;
 use Dompdf\Dompdf;
 use PhpOffice\PhpSpreadsheet\Writer\Pdf;
+use function Termwind\render;
 
 class FacultiController extends Controller
 {
@@ -141,9 +143,20 @@ class FacultiController extends Controller
                     'relations.course.component.studyField',
                     'relations.course.semester',
                     'relations.course.courseType',
-                    'relations.program',
+                    'relations.program.faculty',
+                    'relations.user',
+                    'learningResult.competence',
+                    'generalObjective',
                 ])
                 ->orderBy('id')
+                ->get();
+
+            $classromRelationId = $classroomPlans->pluck('id_relations');
+
+            $userId = ProgramCourseRelationship::where('id', $classromRelationId)
+                ->pluck('id_user');
+
+            $atributesUserInfo = UserAttributes::where('id_user', $userId)->orderBy('id')
                 ->get();
 
 
@@ -172,21 +185,16 @@ class FacultiController extends Controller
                 ->get()
                 ->toArray();
 
-            // $data = [
-            //     'classroom' => $classroomPlans,
-            //     'evaluations' => $evaluationsId,
-            //     'references' => $referencesId,
-            //     'specifics' => $specificsArray,
-            //     'topics' => $topicsId,
-            // ];
-
-            // dd($data);
-
             $dompdf = new Dompdf();
 
             $html = view('documents.exportPdf', [
-                // 'classroom' => $classroomPlans,
-            ]);
+                'classroom' => $classroomPlans[0],
+                'evaluations' => $evaluationsId,
+                'references' => $referencesId,
+                'specifics' => $specificsArray,
+                'topics' => $topicsId,
+                'atributesUser' => $atributesUserInfo[0],
+            ])->render();
 
             $dompdf->LoadHtml($html); //renderisa el html a pdf
             $dompdf->render(); //descargar el pdf

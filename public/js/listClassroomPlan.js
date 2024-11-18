@@ -273,7 +273,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 </a>
                             </td>
                             <td>
-                                <a href="/plan-aula/pdf/${classroom.id}" class="text-warning">
+                                <a href="/plan-aula/pdf/${classroom.id}" class="text-warning" target="_blank">
                                     Descargar
                                 </a>
                             </td>
@@ -335,7 +335,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 </a>
                             </td>
                             <td>
-                                <a href="/view-classroom-plan/${classroom.id}" class="text-warning">
+                                <a href="/plan-aula/pdf/${classroom.id}" class="text-warning" target="_blank">
                                     Descargar
                                 </a>
                             </td>

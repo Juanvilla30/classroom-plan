@@ -1,9 +1,126 @@
-<!DOCTYPE html>
-<html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <title>Plan de Aula</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        h2 {
+            color: #003366;
+            text-align: center;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        p {
+            margin: 5px 0;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Tablas generales */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table th,
+        table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+            font-size: 12px;
+        }
+
+        table th {
+            background-color: #f2f2f2;
+            color: #003366;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .table th.section-title {
+            background-color: #003366;
+            color: #fff;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* Listas */
+        ul,
+        ol {
+            padding-left: 20px;
+        }
+
+        ul li {
+            margin-bottom: 5px;
+        }
+
+        ol li {
+            margin-bottom: 10px;
+        }
+
+        /* Alineación */
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-left {
+            text-align: left;
+        }
+
+        /* Estilos para encabezado */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header p {
+            font-size: 10px;
+            margin: 2px 0;
+        }
+
+        .header strong {
+            color: #003366;
+        }
+
+        /* Secciones adicionales */
+        .section-title {
+            margin: 15px 0 5px;
+            font-weight: bold;
+            font-size: 14px;
+            color: #003366;
+        }
+
+        /* Pie de página */
+        .footer {
+            text-align: center;
+            font-size: 10px;
+            margin-top: 20px;
+            color: #777;
+        }
+    </style>
 </head>
 
 <body>
@@ -17,31 +134,34 @@
         <table class="info-table">
             <tr>
                 <th>FACULTAD</th>
-                <td></td>
+                <td>{{ucfirst(strtolower($classroom->relations->program->faculty->name_faculty ?? 'No asignado'))}}</td>
             </tr>
             <tr>
                 <th>PROGRAMA</th>
-                <td></td>
+                <td>{{ucfirst(strtolower($classroom->relations->program->name_program ?? 'No asignado'))}}</td>
             </tr>
             <tr>
                 <th>NOMBRE DEL CURSO</th>
-                <td></td>
+                <td>{{ucfirst(strtolower($classroom->relations->course->name_course ?? 'No asignado'))}}</td>
             </tr>
             <tr>
                 <th>SEMESTRE</th>
-                <td></td>
+                <td>{{ucfirst(strtolower($classroom->relations->course->semester->name_semester ?? 'No asignado'))}}
+                </td>
             </tr>
             <tr>
                 <th>ÁREA</th>
-                <td>Profesional</td>
+                <td>{{ucfirst(strtolower($classroom->relations->program->degree_type ?? 'No asignado'))}}</td>
             </tr>
             <tr>
                 <th>COMPONENTE</th>
-                <td></td>
+                <td>{{ ucfirst(strtolower($classroom->relations->course->component->name_component ?? 'No asignado')) }}
+                </td>
             </tr>
             <tr>
                 <th>TIPO DE CURSO</th>
-                <td></td>
+                <td>{{ucfirst(strtolower($classroom->relations->course->courseType->name_course_type ?? 'No
+                    asignado'))}}</td>
             </tr>
         </table>
 
@@ -53,10 +173,10 @@
                 <th>TOTAL HORAS SEMESTRE</th>
             </tr>
             <tr>
-                <td>3</td>
-                <td>64</td>
-                <td>80</td>
-                <td>144</td>
+                <td>{{ $classroom->relations->course->credit ?? 'No asignado' }}</td>
+                <td>{{ $classroom->relations->course->pretential_time ?? 'No asignado'}}</td>
+                <td>{{ $classroom->relations->course->independent_time ?? 'No asignado'}}</td>
+                <td>0</td>
             </tr>
         </table>
 
@@ -66,15 +186,15 @@
             </tr>
             <tr>
                 <th>PROFESION</th>
-                <td>Ingeniero de software</td>
+                <td>{{ ucfirst(strtolower($atributesUser->profession ?? 'No asignado'))}}</td>
             </tr>
             <tr>
                 <th>ESTUDIOS DE POSTGRADO</th>
-                <td>Esp. Ingeniería del software, Esp. Gestión de proyectos, MBA Dirección proyectos</td>
+                <td>{{ ucfirst(strtolower($atributesUser->postgraduate_studies ?? 'No asignado'))}}</td>
             </tr>
             <tr>
                 <th>COMPETENCIAS ESPECÍFICAS</th>
-                <td>Desarrollo de software - Programación modular</td>
+                <td>{{ ucfirst(strtolower($atributesUser->specific_competences ?? 'No asignado'))}}</td>
             </tr>
         </table>
 
@@ -83,7 +203,10 @@
                 <th colspan="2" class="section-title">COMPETENCIAS</th>
             </tr>
             <tr>
-                <td colspan="2"></td>
+                <td colspan="2">
+                    {{ucfirst(strtolower($classroom->learningResult->competence->description_competence ?? 'No
+                    asignado'))}}
+                </td>
             </tr>
         </table>
 
@@ -93,9 +216,7 @@
             </tr>
             <tr>
                 <td colspan="2">
-                    <ol>
-                        <li></li>
-                    </ol>
+                    {{ucfirst(strtolower($classroom->learningResult->description_learning_result ?? 'No asignado'))}}
                 </td>
             </tr>
         </table>
@@ -107,21 +228,15 @@
             <tr>
                 <td colspan="2">
                     <ol>
-                        <li>Fundamentos de programación
+                        @php $i = 1; @endphp
+                        @foreach($topics as $topic)
+                        <li>Temas semana {{$i}}:
                             <ul>
-                                <li>Conceptos básicos</li>
-                                <li>Manejo de datos</li>
-                                <li>Tipos de datos</li>
-                                <li>Diagramas de flujo y pseudocódigo</li>
+                                <li>{{ $topic->description_topic}}</li>
                             </ul>
                         </li>
-                        <li>Estructuras de control
-                            <ul>
-                                <li>Sentencias condicionales</li>
-                                <li>Sentencias condicionales anidadas</li>
-                                <li>Sentencias iterativas</li>
-                            </ul>
-                        </li>
+                        @php $i++; @endphp
+                        @endforeach
                     </ol>
                 </td>
             </tr>
@@ -161,5 +276,3 @@
         </table>
     </div>
 </body>
-
-</html>
