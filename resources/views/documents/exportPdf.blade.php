@@ -4,66 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Plan de Aula</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 12px;
-            color: #000;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            width: 90%;
-            margin: auto;
-            padding: 20px;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .header h2 {
-            font-size: 16px;
-            font-weight: bold;
-            text-decoration: underline;
-        }
-
-        .table,
-        .info-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-
-        .table td,
-        .table th,
-        .info-table td,
-        .info-table th {
-            border: 1px solid black;
-            padding: 6px;
-            text-align: left;
-        }
-
-        .table th,
-        .info-table th {
-            background-color: #e0e0e0;
-            font-weight: bold;
-        }
-
-        .info-table th,
-        .info-table td {
-            width: 50%;
-        }
-
-        .section-title {
-            background-color: #c0c0c0;
-            font-weight: bold;
-            padding: 4px;
-            text-align: center;
-        }
-    </style>
 </head>
 
 <body>
@@ -77,19 +17,19 @@
         <table class="info-table">
             <tr>
                 <th>FACULTAD</th>
-                <td>Ingeniería</td>
+                <td></td>
             </tr>
             <tr>
                 <th>PROGRAMA</th>
-                <td>Ingeniería del software y computación</td>
+                <td></td>
             </tr>
             <tr>
                 <th>NOMBRE DEL CURSO</th>
-                <td>Introducción a la programación</td>
+                <td></td>
             </tr>
             <tr>
                 <th>SEMESTRE</th>
-                <td>...</td>
+                <td></td>
             </tr>
             <tr>
                 <th>ÁREA</th>
@@ -97,11 +37,11 @@
             </tr>
             <tr>
                 <th>COMPONENTE</th>
-                <td>Ingeniería aplicada</td>
+                <td></td>
             </tr>
             <tr>
                 <th>TIPO DE CURSO</th>
-                <td>Teórico Práctico</td>
+                <td></td>
             </tr>
         </table>
 
@@ -143,8 +83,7 @@
                 <th colspan="2" class="section-title">COMPETENCIAS</th>
             </tr>
             <tr>
-                <td colspan="2">1. Construir soluciones software multiplataforma e interactivas basadas en las buenas
-                    prácticas de la aplicación de la Ingeniería del Software...</td>
+                <td colspan="2"></td>
             </tr>
         </table>
 
@@ -155,9 +94,7 @@
             <tr>
                 <td colspan="2">
                     <ol>
-                        <li>Analizar mediante procesos lógicos la solución a problemas computacionales.</li>
-                        <li>Diseñar algoritmos para la solución de problemas computacionales.</li>
-                        <li>Codificar un algoritmo según el diseño previamente realizado.</li>
+                        <li></li>
                     </ol>
                 </td>
             </tr>
