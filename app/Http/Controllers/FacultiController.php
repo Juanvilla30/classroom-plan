@@ -82,9 +82,9 @@ class FacultiController extends Controller
                     'relations.course.component.studyField',
                     'relations.course.semester',
                     'relations.course.courseType',
+                    'relations.program.faculty',
                     'relations.user',
-                    'relations.program',
-                    'learningResult',
+                    'learningResult.competence',
                     'generalObjective',
                 ])
                 ->orderBy('id')
