@@ -783,7 +783,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     return false; // Detener la ejecución
                 }
                 console.log(dataValueInput);
-                
+
                 if (dataValueSelect === '' || dataValueInput === '') {
                     Swal.fire({
                         title: 'Advertencia',
@@ -854,7 +854,63 @@ document.addEventListener('DOMContentLoaded', function () {
         const dataValueSelec = newSelect.value;
 
         const newInput = document.getElementById('inputNewPercentage');
-        const dataValueInput = newInput.value;
+        const dataValueInput = parseInt(newInput.value, 10);
+
+        validatePercentageSum(classroomId)
+            .then(response => {
+
+                if (dataValueSelec1 == 1) {
+                    const evaluations = response.evaluationInfo.filter(item => item.id_percentage === 1);
+                    const totalPercentage = evaluations.reduce((sum, evaluation) => sum + evaluation.percentage_number, 0);
+
+                    const newTotalPercentage = totalPercentage + dataValueInput;
+                    if (newTotalPercentage > 30) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Advertencia',
+                            text: `La suma de los valores de porcentaje en la Evaluación 1 es ${newTotalPercentage}, no puede ser mayor a 30.`,
+                            confirmButtonColor: '#1269DB',
+                            confirmButtonText: 'Entendido'
+                        });
+                        return false;
+                    }
+                }
+
+                if (dataValueSelec1 == 2) {
+                    const evaluations2 = response.evaluationInfo.filter(item => item.id_percentage === 2);
+                    const totalPercentage2 = evaluations2.reduce((sum, evaluation) => sum + evaluation.percentage_number, 0);
+                    const newTotalPercentage = totalPercentage2 + dataValueInput;
+                    if (newTotalPercentage !== 30) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Advertencia',
+                            text: `La suma de los valores de porcentaje en la Evaluación 2 es ${totalPercentage2}, debe ser igual a 30.`,
+                            confirmButtonColor: '#1269DB',
+                            confirmButtonText: 'Entendido'
+                        });
+                        return false;
+                    }
+                }
+
+                if (dataValueSelec1 == 3) {
+                    const evaluations3 = response.evaluationInfo.filter(item => item.id_percentage === 3);
+                    const totalPercentage3 = evaluations3.reduce((sum, evaluation) => sum + evaluation.percentage_number, 0);
+                    const newTotalPercentage = totalPercentage3 + dataValueInput;
+                    if (newTotalPercentage !== 40) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Advertencia',
+                            text: `La suma de los valores de porcentaje en la Evaluación 3 es ${totalPercentage3}, debe ser igual a 40.`,
+                            confirmButtonColor: '#1269DB',
+                            confirmButtonText: 'Entendido'
+                        });
+                        return false;
+                    }
+                }
+            })
+            .catch(error => {
+                console.error("Error en la solicitud AJAX:", error);
+            });
 
         if (dataValueSelec1 === '' || dataValueSelec === '' || newInput.value === '') {
             Swal.fire({
