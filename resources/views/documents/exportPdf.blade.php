@@ -128,10 +128,11 @@
         <div class="header">
             <h2>FORMATO PLAN DE AULA</h2>
             <p>Campo Profesional: <strong>Formación Académica</strong></p>
-            <p>Código: E-FA-004 | Versión: 2 | Fecha: 08-03-2022 | Pág: 1 de 2</p>
+            <p>Código: E-FA-004 | Versión: 2 | Fecha: 08-03-2022</p>
         </div>
 
         <table class="info-table">
+            @if($classroom->relations->id_program !== null)
             <tr>
                 <th>FACULTAD</th>
                 <td>{{ucfirst(strtolower($classroom->relations->program->faculty->name_faculty ?? 'No asignado'))}}</td>
@@ -140,6 +141,7 @@
                 <th>PROGRAMA</th>
                 <td>{{ucfirst(strtolower($classroom->relations->program->name_program ?? 'No asignado'))}}</td>
             </tr>
+            @endif
             <tr>
                 <th>NOMBRE DEL CURSO</th>
                 <td>{{ucfirst(strtolower($classroom->relations->course->name_course ?? 'No asignado'))}}</td>
@@ -153,11 +155,13 @@
                 <th>ÁREA</th>
                 <td>{{ucfirst(strtolower($classroom->relations->program->degree_type ?? 'No asignado'))}}</td>
             </tr>
+            @if($classroom->relations->course->component !== null)
             <tr>
                 <th>COMPONENTE</th>
                 <td>{{ ucfirst(strtolower($classroom->relations->course->component->name_component ?? 'No asignado')) }}
                 </td>
             </tr>
+            @endif
             <tr>
                 <th>TIPO DE CURSO</th>
                 <td>{{ucfirst(strtolower($classroom->relations->course->courseType->name_course_type ?? 'No
