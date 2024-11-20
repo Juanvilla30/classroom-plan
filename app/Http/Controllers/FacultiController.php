@@ -82,7 +82,7 @@ class FacultiController extends Controller
                     'relations.course.component.studyField',
                     'relations.course.semester',
                     'relations.course.courseType',
-                    'relations.course.user',
+                    'relations.user',
                     'relations.program',
                     'learningResult',
                     'generalObjective',
