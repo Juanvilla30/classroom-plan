@@ -625,7 +625,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const selectElement = document.getElementById('selectUpdateEvaluation');
         selectElement.innerHTML = '';
 
-        // Buscar y agregar la opción seleccionada al principio
         const selectedContent = assigEvaInfo.find(item => item.id === evaluationId) || null;
         if (selectedContent) {
             const selectedOption = document.createElement('option');
@@ -642,7 +641,6 @@ document.addEventListener('DOMContentLoaded', function () {
             selectElement.appendChild(selectedOption);
         }
 
-        // Agregar las demás opciones
         assigEvaInfo.forEach(function (evaluatio) {
             if (evaluatio.id !== evaluationId) { // Evitar duplicar la opción seleccionada
                 const option = document.createElement('option');
@@ -732,39 +730,89 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // VALIDATIONS
-    function ValidationUpdateEvaluation(assigEvaInfo) {
-        const updateSelect = document.getElementById('selectUpdateEvaluation')
+    function ValidationUpdateEvaluation(assigEvaInfo, classroomId) {
+        const updateSelect = document.getElementById('selectUpdateEvaluation');
         const dataValueSelect = updateSelect.value;
 
-        const updateInput = document.getElementById('inputPercentage')
+        const updateInput = document.getElementById('inputPercentage');
         const dataValueInput = updateInput.value;
         const dataId = updateInput.dataset.id;
         const dataValId = updateInput.dataset.valId;
 
-        if (dataValueSelect == '' || dataValueInput == '') {
-            Swal.fire({
-                title: 'Advertencia',
-                icon: 'warning',
-                text: 'Asegurate de llenar completo el registro',
-                confirmButtonColor: '#1572E8',
-                confirmButtonText: 'Aceptar',
-            })
-        } else {
-            Swal.fire({
-                title: 'Advertencia',
-                icon: 'warning',
-                text: '¿Estás seguro de que deseas actualizar?',
-                showCancelButton: true,
-                confirmButtonColor: '#1572E8',
-                cancelButtonColor: '#F25961',
-                confirmButtonText: 'Aceptar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    saveUpdateEvaluation(dataValueSelect, dataValueInput, dataValId, assigEvaInfo)
+        validatePercentageSum(classroomId)
+            .then(response => {
+
+                const evaluations = response.evaluationInfo.filter(item => item.id_percentage === 1);
+                const evaluations2 = response.evaluationInfo.filter(item => item.id_percentage === 2);
+                const evaluations3 = response.evaluationInfo.filter(item => item.id_percentage === 3);
+
+                const totalPercentage = evaluations.reduce((sum, evaluation) => sum + evaluation.percentage_number, 0);
+                const totalPercentage2 = evaluations2.reduce((sum, evaluation) => sum + evaluation.percentage_number, 0);
+                const totalPercentage3 = evaluations3.reduce((sum, evaluation) => sum + evaluation.percentage_number, 0);
+
+                if (evaluations.length > 1 && totalPercentage !== 30) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Advertencia',
+                        text: `La suma de los valores de porcentaje en la Evaluación 1 es ${totalPercentage}, debe ser igual a 30.`,
+                        confirmButtonColor: '#1269DB',
+                        confirmButtonText: 'Entendido'
+                    });
+                    return false; // Detener la ejecución
                 }
+
+                if (evaluations2.length > 1 && totalPercentage2 !== 30) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Advertencia',
+                        text: `La suma de los valores de porcentaje en la Evaluación 2 es ${totalPercentage2}, debe ser igual a 30.`,
+                        confirmButtonColor: '#1269DB',
+                        confirmButtonText: 'Entendido'
+                    });
+                    return false; // Detener la ejecución
+                }
+
+                if (evaluations3.length > 1 && totalPercentage3 !== 40) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Advertencia',
+                        text: `La suma de los valores de porcentaje en la Evaluación 3 es ${totalPercentage3}, debe ser igual a 40.`,
+                        confirmButtonColor: '#1269DB',
+                        confirmButtonText: 'Entendido'
+                    });
+                    return false; // Detener la ejecución
+                }
+                console.log(dataValueInput);
+                
+                if (dataValueSelect === '' || dataValueInput === '') {
+                    Swal.fire({
+                        title: 'Advertencia',
+                        icon: 'warning',
+                        text: 'Asegúrate de llenar completo el registro.',
+                        confirmButtonColor: '#1572E8',
+                        confirmButtonText: 'Aceptar',
+                    });
+                    return false; // Detener la ejecución
+                }
+
+                Swal.fire({
+                    title: 'Advertencia',
+                    icon: 'warning',
+                    text: '¿Estás seguro de que deseas actualizar?',
+                    showCancelButton: true,
+                    confirmButtonColor: '#1572E8',
+                    cancelButtonColor: '#F25961',
+                    confirmButtonText: 'Aceptar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        saveUpdateEvaluation(dataValueSelect, dataValueInput, dataValId, assigEvaInfo);
+                    }
+                });
+            })
+            .catch(error => {
+                console.error("Error en la solicitud AJAX:", error);
             });
-        }
     }
 
     function ValidationUpdateReference() {
@@ -900,6 +948,30 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    function validatePercentageSum(classroomId) {
+        return new Promise((resolve, reject) => {
+
+            $.ajax({
+                url: '/view-classroom-plan/validate-evaluation',
+                method: 'POST',
+                data: {
+                    classroomId: classroomId,
+                },
+                success: function (response) {
+                    console.log(response.evaluationInfo)
+                    resolve(response)
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error al eliminar el grupo:', xhr);
+                    console.error('Estado:', status);
+                    console.error('Error:', error);
+                    console.error('Respuesta del servidor:', xhr.responseText);
+                }
+            });
+        });
+
+    }
+
     function validationConfirmation() {
 
         const selectLearning = document.getElementById('selectLearning');
@@ -922,7 +994,6 @@ document.addEventListener('DOMContentLoaded', function () {
             textAreaValuesTopics.push(value);
         }
 
-        // Verificar si algún campo está vacío
         const allFields = [dataValueSelec, textAreaValue, ...textAreaValues, ...textAreaValuesTopics];
         const hasEmptyField = allFields.some(value => value.trim() === '');
 
@@ -937,7 +1008,10 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+
         $('#modalConfirmation').modal('show');
+
+
     }
 
     // DELETE
@@ -955,9 +1029,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 success: function (response) {
                     if (response.check == true) {
                         $('#modalConfirmationDelete').modal('hide');
-                        if(select == 1){
+                        if (select == 1) {
                             viewEvaluationUpdate(response, assigEvaInfo)
-                        }else{
+                        } else {
                             viewReferencesUpdate(response)
                         }
                     }
@@ -1180,7 +1254,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // SAVE
     document.getElementById('btnSaveUpdate').addEventListener('click', function () {
-        validationConfirmation();
+        validationConfirmation(classroomId);
     });
 
     document.getElementById('confirm-save').addEventListener('click', function () {
@@ -1206,7 +1280,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // EVALUATION UPDATE
     document.getElementById('confirm-update-evaluation').addEventListener('click', function () {
-        ValidationUpdateEvaluation(assigEvaInfo)
+        ValidationUpdateEvaluation(assigEvaInfo, classroomId)
     });
 
     // EVALUATION NEW
@@ -1246,6 +1320,7 @@ document.addEventListener('DOMContentLoaded', function () {
         ValidationNewReference(classroomId);
     });
 
+    // SEND
     document.getElementById('btnSendClassroom').addEventListener('click', function () {
         $('#modalConfirmationSend').modal('show');
     });

@@ -103,6 +103,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/view-classroom-plan/create-reference', [ViewClassroomPlanController::class, 'createReference'])->name('createReference');
     Route::put('/view-classroom-plan/send-classroom', [ViewClassroomPlanController::class, 'sendClassroom'])->name('sendClassroom');
     Route::delete('/view-classroom-plan/delet-content', [ViewClassroomPlanController::class, 'deleteContent'])->name('deleteContent');
+    Route::post('/view-classroom-plan/validate-evaluation', [ViewClassroomPlanController::class, 'validatePercentageSum'])->name('validatePercentageSum');
 
     // Rutas user
     Route::get('/user', [UserController::class, 'index'])->name('user');

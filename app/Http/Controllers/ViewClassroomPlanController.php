@@ -348,4 +348,24 @@ class ViewClassroomPlanController extends Controller
             );
         }
     }
+
+    function validatePercentageSum(Request $request)
+    {
+        try {
+            $classroomId = $request->input('classroomId');
+
+            $evaluationInfo = AssignmentEvaluation::where('id_classroom_plan', $classroomId)
+                ->orderBy('id_percentage')->get();
+
+            return response()->json([
+                'check' => true,
+                'evaluationInfo' => $evaluationInfo,
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with(
+                'error',
+                'Error al cargar la informacion.'
+            );
+        }
+    }
 }
