@@ -28,10 +28,12 @@
 </div>
 <!-- End Breadcumb Header -->
 
+<div class="d-none" id="userId" data-id="{{ auth()->user()->id }}" data-program="{{ auth()->user()->id_program }}" data-role="{{ auth()->user()->id_role }}"></div>
 
 <div>
     <div class="card">
         <div class="card-body">
+            @if (auth()->user()->id_role == 1 || auth()->user()->id_role == 2)
             <div class="form-group">
                 <label for="pillSelect">Seleccion de facultad</label>
                 <select class="form-control input-pill" id="selectfacultie">
@@ -47,6 +49,7 @@
                     <option disabled selected value="">Seleccione un programa</option>
                 </select>
             </div>
+            @endif
             <button type="button" class="btn btn-primary btn-lg btn-block d-none" id="btn-excel">Descargar excel</button>
         </div>
     </div>

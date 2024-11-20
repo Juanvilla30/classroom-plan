@@ -10,6 +10,11 @@ $.ajaxSetup({
  * VARIABLES
  *
  */
+const userElement = document.getElementById('userId');
+
+const userId = userElement.dataset.id;
+const userProgramId = userElement.dataset.program;
+const userRoleId = userElement.dataset.role;
 let facultyId;
 let programId;
 
@@ -25,6 +30,31 @@ document.addEventListener("DOMContentLoaded", function () {
      * FUNCIONES
      *
      */
+    validateUser(userRoleId, userProgramId).then(response => {
+        programId = response;
+    }).catch(error => {
+        console.error("Error en la solicitud AJAX:", error);
+    });;
+
+    function validateUser(userRoleId, userProgramId) {
+        return new Promise((resolve) => {
+            if (userRoleId == 1 || userRoleId == 2) {
+                document.getElementById("selectfacultie").addEventListener("change", function () {
+                    facultyId = this.value;
+                    searchProgram(facultyId);
+                });
+
+                document.getElementById("selectprogram").addEventListener("change", function () {
+                    programId = this.value;
+                    document.getElementById("btn-excel").classList.remove("d-none");
+                    resolve(programId)
+                });
+            } else if (userRoleId == 3) {
+                document.getElementById("btn-excel").classList.remove("d-none");
+                resolve(userProgramId)
+            }
+        });
+    }
 
     function capitalizeOrDefault(value) {
         if (value && value.trim() !== "") {
@@ -92,15 +122,7 @@ document.addEventListener("DOMContentLoaded", function () {
      * Event Listener
      *
      */
-    document.getElementById("selectfacultie").addEventListener("change", function () {
-        facultyId = this.value;
-        searchProgram(facultyId);
-    });
 
-    document.getElementById("selectprogram").addEventListener("change", function () {
-        programId = this.value;
-        document.getElementById("btn-excel").classList.remove("d-none");
-    });
 
     document.getElementById("btn-excel").addEventListener("click", function () {
         searchExport(programId);
