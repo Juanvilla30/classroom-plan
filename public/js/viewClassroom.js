@@ -731,58 +731,69 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // VALIDATIONS
     function ValidationUpdateEvaluation(assigEvaInfo, classroomId) {
-        const updateSelect = document.getElementById('selectUpdateEvaluation');
-        const dataValueSelect = updateSelect.value;
-
-        const updateInput = document.getElementById('inputPercentage');
-        const dataValueInput = updateInput.value;
-        const dataId = updateInput.dataset.id;
-        const dataValId = updateInput.dataset.valId;
 
         validatePercentageSum(classroomId)
             .then(response => {
+                const updateSelect = document.getElementById('selectUpdateEvaluation');
+                const dataValueSelect = updateSelect.value;
 
-                const evaluations = response.evaluationInfo.filter(item => item.id_percentage === 1);
-                const evaluations2 = response.evaluationInfo.filter(item => item.id_percentage === 2);
-                const evaluations3 = response.evaluationInfo.filter(item => item.id_percentage === 3);
+                const updateInput = document.getElementById('inputPercentage');
+                const dataValueInput = parseInt(updateInput.value, 10);
+                const dataId = updateInput.dataset.id;
+                const dataValId = updateInput.dataset.valId;
 
-                const totalPercentage = evaluations.reduce((sum, evaluation) => sum + evaluation.percentage_number, 0);
-                const totalPercentage2 = evaluations2.reduce((sum, evaluation) => sum + evaluation.percentage_number, 0);
-                const totalPercentage3 = evaluations3.reduce((sum, evaluation) => sum + evaluation.percentage_number, 0);
+                if (dataId == 1) {
+                    const evaluations = response.evaluationInfo.filter(item => item.id_percentage === 1);
 
-                if (evaluations.length > 1 && totalPercentage !== 30) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Advertencia',
-                        text: `La suma de los valores de porcentaje en la Evaluación 1 es ${totalPercentage}, debe ser igual a 30.`,
-                        confirmButtonColor: '#1269DB',
-                        confirmButtonText: 'Entendido'
-                    });
-                    return false; // Detener la ejecución
+                    const updatedEvaluations = evaluations.filter(item => item.id !== parseInt(dataValId));
+                    const totalPercentage = updatedEvaluations.reduce((sum, evaluation) => sum + evaluation.percentage_number, 0);
+                    const newTotalPercentage = totalPercentage + dataValueInput;
+
+                    if (evaluations.length > 1 && newTotalPercentage !== 30) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Advertencia',
+                            text: `La suma de los valores de porcentaje en la Evaluación 1 es ${newTotalPercentage}, debe ser igual a 30.`,
+                            confirmButtonColor: '#1269DB',
+                            confirmButtonText: 'Entendido'
+                        });
+                        return;
+                    }
                 }
 
-                if (evaluations2.length > 1 && totalPercentage2 !== 30) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Advertencia',
-                        text: `La suma de los valores de porcentaje en la Evaluación 2 es ${totalPercentage2}, debe ser igual a 30.`,
-                        confirmButtonColor: '#1269DB',
-                        confirmButtonText: 'Entendido'
-                    });
-                    return false; // Detener la ejecución
+                if (dataId == 2) {
+                    const evaluations2 = response.evaluationInfo.filter(item => item.id_percentage === 2);
+                    const updatedEvaluations = evaluations2.filter(item => item.id !== parseInt(dataValId));
+                    const totalPercentage2 = updatedEvaluations.reduce((sum, evaluation) => sum + evaluation.percentage_number, 0);
+                    const newTotalPercentage = totalPercentage2 + dataValueInput;
+                    if (evaluations2.length > 1 && newTotalPercentage !== 30) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Advertencia',
+                            text: `La suma de los valores de porcentaje en la Evaluación 2 es ${totalPercentage2}, debe ser igual a 30.`,
+                            confirmButtonColor: '#1269DB',
+                            confirmButtonText: 'Entendido'
+                        });
+                        return; // Detener la ejecución
+                    }
                 }
 
-                if (evaluations3.length > 1 && totalPercentage3 !== 40) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Advertencia',
-                        text: `La suma de los valores de porcentaje en la Evaluación 3 es ${totalPercentage3}, debe ser igual a 40.`,
-                        confirmButtonColor: '#1269DB',
-                        confirmButtonText: 'Entendido'
-                    });
-                    return false; // Detener la ejecución
+                if (dataId == 3) {
+                    const evaluations3 = response.evaluationInfo.filter(item => item.id_percentage === 3);
+                    const updatedEvaluations = evaluations3.filter(item => item.id !== parseInt(dataValId));
+                    const totalPercentage3 = updatedEvaluations.reduce((sum, evaluation) => sum + evaluation.percentage_number, 0);
+                    const newTotalPercentage = totalPercentage3 + dataValueInput;
+                    if (evaluations3.length > 1 && newTotalPercentage !== 40) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Advertencia',
+                            text: `La suma de los valores de porcentaje en la Evaluación 3 es ${totalPercentage3}, debe ser igual a 40.`,
+                            confirmButtonColor: '#1269DB',
+                            confirmButtonText: 'Entendido'
+                        });
+                        return; // Detener la ejecución
+                    }
                 }
-                console.log(dataValueInput);
 
                 if (dataValueSelect === '' || dataValueInput === '') {
                     Swal.fire({
@@ -792,7 +803,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         confirmButtonColor: '#1572E8',
                         confirmButtonText: 'Aceptar',
                     });
-                    return false; // Detener la ejecución
+                    return; // Detener la ejecución
                 }
 
                 Swal.fire({
@@ -847,17 +858,18 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function ValidationNewEvaluation(classroomId) {
-        const newSelect1 = document.getElementById('selectNewPercentage');
-        const dataValueSelec1 = newSelect1.value;
-
-        const newSelect = document.getElementById('selectNewEvaluation');
-        const dataValueSelec = newSelect.value;
-
-        const newInput = document.getElementById('inputNewPercentage');
-        const dataValueInput = parseInt(newInput.value, 10);
-
         validatePercentageSum(classroomId)
             .then(response => {
+
+                const newSelect1 = document.getElementById('selectNewPercentage');
+                const dataValueSelec1 = newSelect1.value;
+
+                const newSelect = document.getElementById('selectNewEvaluation');
+                const dataValueSelec = newSelect.value;
+
+                const newInput = document.getElementById('inputNewPercentage');
+                const dataValueInput = parseInt(newInput.value, 10);
+
 
                 if (dataValueSelec1 == 1) {
                     const evaluations = response.evaluationInfo.filter(item => item.id_percentage === 1);
@@ -872,7 +884,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             confirmButtonColor: '#1269DB',
                             confirmButtonText: 'Entendido'
                         });
-                        return false;
+                        return;
                     }
                 }
 
@@ -888,7 +900,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             confirmButtonColor: '#1269DB',
                             confirmButtonText: 'Entendido'
                         });
-                        return false;
+                        return;
                     }
                 }
 
@@ -904,70 +916,72 @@ document.addEventListener('DOMContentLoaded', function () {
                             confirmButtonColor: '#1269DB',
                             confirmButtonText: 'Entendido'
                         });
-                        return false;
+                        return;
                     }
                 }
+
+                if (dataValueSelec1 === '' || dataValueSelec === '' || newInput.value === '') {
+                    Swal.fire({
+                        title: 'Advertencia',
+                        icon: 'warning',
+                        text: 'Asegúrate de llenar completo el registro',
+                        confirmButtonColor: '#1572E8',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    return;
+                }
+
+                if (dataValueInput <= 0) {
+                    Swal.fire({
+                        title: 'Advertencia',
+                        icon: 'warning',
+                        text: 'El porcentaje no puede ser menor a 0',
+                        confirmButtonColor: '#1572E8',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    return;
+                }
+
+                if ((dataValueSelec1 == 1 || dataValueSelec1 == 2) && dataValueInput > 30) {
+                    Swal.fire({
+                        title: 'Advertencia',
+                        icon: 'warning',
+                        text: 'El porcentaje no puede ser mayor a 30',
+                        confirmButtonColor: '#1572E8',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    return;
+                } else if (dataValueSelec1 == 3 && dataValueInput > 40) {
+                    Swal.fire({
+                        title: 'Advertencia',
+                        icon: 'warning',
+                        text: 'El porcentaje no puede ser mayor a 40',
+                        confirmButtonColor: '#1572E8',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    return;
+                }
+
+                Swal.fire({
+                    title: 'Advertencia',
+                    icon: 'warning',
+                    text: '¿Estás seguro de que deseas crear?',
+                    showCancelButton: true,
+                    confirmButtonColor: '#1572E8',
+                    cancelButtonColor: '#F25961',
+                    confirmButtonText: 'Aceptar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        saveCreateEvaluation(classroomId, dataValueSelec1, dataValueSelec, dataValueInput);
+                    }
+                });
             })
             .catch(error => {
                 console.error("Error en la solicitud AJAX:", error);
             });
 
-        if (dataValueSelec1 === '' || dataValueSelec === '' || newInput.value === '') {
-            Swal.fire({
-                title: 'Advertencia',
-                icon: 'warning',
-                text: 'Asegúrate de llenar completo el registro',
-                confirmButtonColor: '#1572E8',
-                confirmButtonText: 'Aceptar'
-            });
-            return;
-        }
 
-        if (dataValueInput <= 0) {
-            Swal.fire({
-                title: 'Advertencia',
-                icon: 'warning',
-                text: 'El porcentaje no puede ser menor a 0',
-                confirmButtonColor: '#1572E8',
-                confirmButtonText: 'Aceptar'
-            });
-            return;
-        }
-
-        if ((dataValueSelec1 == 1 || dataValueSelec1 == 2) && dataValueInput > 30) {
-            Swal.fire({
-                title: 'Advertencia',
-                icon: 'warning',
-                text: 'El porcentaje no puede ser mayor a 30',
-                confirmButtonColor: '#1572E8',
-                confirmButtonText: 'Aceptar'
-            });
-            return;
-        } else if (dataValueSelec1 == 3 && dataValueInput > 40) {
-            Swal.fire({
-                title: 'Advertencia',
-                icon: 'warning',
-                text: 'El porcentaje no puede ser mayor a 40',
-                confirmButtonColor: '#1572E8',
-                confirmButtonText: 'Aceptar'
-            });
-            return;
-        }
-
-        Swal.fire({
-            title: 'Advertencia',
-            icon: 'warning',
-            text: '¿Estás seguro de que deseas crear?',
-            showCancelButton: true,
-            confirmButtonColor: '#1572E8',
-            cancelButtonColor: '#F25961',
-            confirmButtonText: 'Aceptar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                saveCreateEvaluation(classroomId, dataValueSelec1, dataValueSelec, dataValueInput);
-            }
-        });
     }
 
     function ValidationNewReference(classroomId) {
@@ -1014,7 +1028,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     classroomId: classroomId,
                 },
                 success: function (response) {
-                    console.log(response.evaluationInfo)
                     resolve(response)
                 },
                 error: function (xhr, status, error) {
