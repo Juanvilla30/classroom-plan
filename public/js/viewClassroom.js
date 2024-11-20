@@ -24,11 +24,8 @@ let percentageInfo;
 // EVALUATION
 let assigEvaInfo;
 
-// REFERENCE
-
 // CONT ACTIVATE
 let cont = true;
-
 
 document.addEventListener('DOMContentLoaded', function () {
 

@@ -49,8 +49,8 @@
                     <select class="form-control input-pill selectsFrom" id="selectTypeClassroom">
                         <option disabled selected value="">Seleccione un tipo de plan de aula</option>
                         <option value="1">Planes de aula campo comun</option>
-                        <option value="2">Planes de aula pensum</option>
-                        <option value="3">Planes de aula especializaciones</option>
+                        <option value="2">Planes de aula programas de pregrado</option>
+                        <option value="3">Planes de aula programas de posgrados</option>
                     </select>
                 </div>
                 <div class="form-group d-none" id="fromSelectFaculty">

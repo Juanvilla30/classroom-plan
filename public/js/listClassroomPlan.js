@@ -10,6 +10,12 @@ $.ajaxSetup({
     * VARIABLES
     *
 */
+const userElement = document.getElementById('userId');
+
+const userId = userElement.dataset.id;
+const userProgramId = userElement.dataset.program;
+const userRoleId = userElement.dataset.role;
+
 let classroomTypeId;
 let facultyId;
 let programId;
@@ -20,6 +26,8 @@ document.addEventListener('DOMContentLoaded', function () {
         * FUNCIONES
         *
     */
+    validateRole(userProgramId, userRoleId, userId);
+
     function capitalizeOrDefault(value) {
         if (value && value.trim() !== '') {
             return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
@@ -100,15 +108,16 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function searchCampoComun(classroomTypeId) {
+    function searchCampoComun(classroomTypeId, userId, userRoleId) {
         $.ajax({
             url: '/list-classroom-plan/search-campo-comun',
             method: 'POST',
             data: {
                 classroomTypeId: classroomTypeId,
+                userId: userId,
             },
             success: function (response) {
-                viewClassroomPlan(response);
+                viewClassroomPlan(response, userRoleId);
             },
             error: function (xhr, status, error) {
                 console.error('Error al eliminar el grupo:', xhr);
@@ -119,24 +128,20 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function searchClassroomPlan(programId, classroomTypeId) {
-        let educationId;
-        if (classroomTypeId == 2) {
-            educationId = 1;
-        } else {
-            educationId = 2;
-        }
+    function searchClassroomPlan(programId, educationId, userId, userRoleId) {
         $.ajax({
             url: '/list-classroom-plan/search-classroom-plan',
             method: 'POST',
             data: {
                 programId: programId,
+                userId: userId,
+                userRoleId: userRoleId,
             },
             success: function (response) {
                 if (educationId == 1) {
-                    viewClassroomPlan(response);
+                    viewClassroomPlan(response, userRoleId);
                 } else {
-                    viewSpecialization(response);
+                    viewSpecialization(response, userRoleId);
                 }
             },
             error: function (xhr, status, error) {
@@ -148,7 +153,28 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function searchData(classroomId) {
+    function searchInfoEducation(userProgramId) {
+        return new Promise((resolve) => {
+            $.ajax({
+                url: '/list-classroom-plan/search-info-education',
+                method: 'POST',
+                data: {
+                    userProgramId: userProgramId,
+                },
+                success: function (response) {
+                    resolve(response)
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error al eliminar el grupo:', xhr);
+                    console.error('Estado:', status);
+                    console.error('Error:', error);
+                    console.error('Respuesta del servidor:', xhr.responseText);
+                }
+            });
+        });
+    }
+
+    function searchData(classroomId, userRoleId) {
         $.ajax({
             url: '/list-classroom-plan/search-data',
             method: 'POST',
@@ -156,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 classroomId: classroomId,
             },
             success: function (response) {
-                viewModalUpdateState(response, classroomId);
+                viewModalUpdateState(response, classroomId, userRoleId);
             },
             error: function (xhr, status, error) {
                 console.error('Error al eliminar el grupo:', xhr);
@@ -222,7 +248,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function viewClassroomPlan(response) {
+    function viewClassroomPlan(response, userRoleId) {
         document.getElementById("card-1").classList.remove('d-none');
         blockCampos(true, true);
         let bodyContent = $('#bodyTableClassroom');
@@ -285,7 +311,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 element.addEventListener('click', function (e) {
                     e.preventDefault();
                     const classroomId = this.getAttribute('data-id');
-                    searchData(classroomId);
+                    searchData(classroomId, userRoleId);
                 });
             });
         } else {
@@ -293,7 +319,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function viewSpecialization(response) {
+    function viewSpecialization(response, userRoleId) {
         document.getElementById("card-1").classList.remove('d-none');
         blockCampos(false, false);
         console.log(response);
@@ -347,7 +373,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 element.addEventListener('click', function (e) {
                     e.preventDefault();
                     const classroomId = this.getAttribute('data-id');
-                    searchData(classroomId);
+                    searchData(classroomId, userRoleId);
                 });
             });
         } else {
@@ -355,35 +381,40 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function viewModalUpdateState(response, classroomId) {
-        $('#modalUpdateState').modal('show');
+    function viewModalUpdateState(response, classroomId, userRoleId) {
 
-        let stateId = response.classroomInfo[0].state.id;
+        if (userRoleId == 4) {
+            return;
+        } else {
+            $('#modalUpdateState').modal('show');
 
-        let stateInfo = response.stateInfo;
+            let stateId = response.classroomInfo[0].state.id;
 
-        const selectElement = document.getElementById('selectState');
-        selectElement.innerHTML = '';
+            let stateInfo = response.stateInfo;
 
-        const selectedContent = stateInfo.find(item => item.id === stateId) || null;
-        if (selectedContent) {
-            const selectedOption = document.createElement('option');
-            selectedOption.value = selectedContent.id;
-            selectedOption.text = capitalizeOrDefault(selectedContent.name_state);
-            selectedOption.selected = true;
-            selectElement.appendChild(selectedOption);
-        }
+            const selectElement = document.getElementById('selectState');
+            selectElement.innerHTML = '';
 
-        stateInfo.forEach(function (state) {
-            if (state.id !== stateId) {
-                const option = document.createElement('option');
-                option.value = state.id;
-                option.text = capitalizeOrDefault(state.name_state);
-                selectElement.appendChild(option);
+            const selectedContent = stateInfo.find(item => item.id === stateId) || null;
+            if (selectedContent) {
+                const selectedOption = document.createElement('option');
+                selectedOption.value = selectedContent.id;
+                selectedOption.text = capitalizeOrDefault(selectedContent.name_state);
+                selectedOption.selected = true;
+                selectElement.appendChild(selectedOption);
             }
-        });
 
-        document.getElementById('valueClassroomId').setAttribute('data-id', classroomId);
+            stateInfo.forEach(function (state) {
+                if (state.id !== stateId) {
+                    const option = document.createElement('option');
+                    option.value = state.id;
+                    option.text = capitalizeOrDefault(state.name_state);
+                    selectElement.appendChild(option);
+                }
+            });
+
+            document.getElementById('valueClassroomId').setAttribute('data-id', classroomId);
+        }
     }
 
     // VALIDATIONS
@@ -420,6 +451,58 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    function validateRole(userProgramId, userRoleId, userId) {
+        if (userRoleId == 1 || userRoleId == 2) {
+            document.getElementById('selectTypeClassroom').addEventListener('change', function () {
+                classroomTypeId = this.options[this.selectedIndex].value;
+                resetContent();
+                if (classroomTypeId !== '1') {
+                    searchFaculty();
+                } else {
+                    searchCampoComun(classroomTypeId, null);
+                }
+            });
+
+            document.getElementById('selectFaculty').addEventListener('change', function () {
+                facultyId = this.options[this.selectedIndex].value;
+                searchProgram(facultyId, classroomTypeId);
+            });
+
+            document.getElementById('selectProgram').addEventListener('change', function () {
+                programId = this.options[this.selectedIndex].value;
+                let educationId;
+                if (classroomTypeId == 2) {
+                    educationId = 1;
+                } else {
+                    educationId = 2;
+                }
+                searchClassroomPlan(programId, educationId, null, userRoleId);
+            });
+        } else if (userRoleId == 3) {
+            document.getElementById('card-1').classList.remove('d-none');
+            let educationId
+            searchInfoEducation(userProgramId).then(response => {
+                educationId = response.educationId[0];
+                searchClassroomPlan(userProgramId, educationId, null, userRoleId);
+            }).catch(error => {
+                console.error("Error en la solicitud AJAX:", error);
+            });;
+        } else if (userRoleId == 4) {
+            document.getElementById('card-1').classList.remove('d-none');
+            if (userProgramId == '') {
+                searchCampoComun(0, userId, userRoleId);
+            } else {
+                let educationId
+                searchInfoEducation(userProgramId).then(response => {
+                    educationId = response.educationId[0];
+                    searchClassroomPlan(userProgramId, educationId, userId, userRoleId);
+                }).catch(error => {
+                    console.error("Error en la solicitud AJAX:", error);
+                });;
+            }
+        }
+    }
+
     function saveUpdateState(dataValueSelec, classroomId, programId, classroomTypeId) {
         $.ajax({
             url: '/list-classroom-plan/update-state',
@@ -429,7 +512,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 dataValueSelec: dataValueSelec,
             },
             success: function (response) {
-                if(response.check == true){
+                if (response.check == true) {
                     $('#modalUpdateState').modal('hide');
                     Swal.fire({
                         icon: 'success',
@@ -437,14 +520,20 @@ document.addEventListener('DOMContentLoaded', function () {
                         text: 'Se ha registrado correctamente',
                         confirmButtonColor: '#1572E8',
                         confirmButtonText: 'Aceptar',
-                        allowOutsideClick: false, 
-                        allowEscapeKey: false  
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            if(classroomTypeId == 1){
+                            if (classroomTypeId == 1) {
                                 searchCampoComun(classroomTypeId)
-                            }else{
-                                searchClassroomPlan(programId, classroomTypeId)
+                            } else {
+                                let educationId;
+                                if (classroomTypeId == 2) {
+                                    educationId = 1;
+                                } else {
+                                    educationId = 2;
+                                }
+                                searchClassroomPlan(programId, educationId)
                             }
                         }
                     });
@@ -464,25 +553,6 @@ document.addEventListener('DOMContentLoaded', function () {
         * Event Listener
         *
     */
-    document.getElementById('selectTypeClassroom').addEventListener('change', function () {
-        classroomTypeId = this.options[this.selectedIndex].value;
-        resetContent();
-        if (classroomTypeId !== '1') {
-            searchFaculty();
-        } else {
-            searchCampoComun(classroomTypeId);
-        }
-    });
-
-    document.getElementById('selectFaculty').addEventListener('change', function () {
-        facultyId = this.options[this.selectedIndex].value;
-        searchProgram(facultyId, classroomTypeId);
-    });
-
-    document.getElementById('selectProgram').addEventListener('change', function () {
-        programId = this.options[this.selectedIndex].value;
-        searchClassroomPlan(programId, classroomTypeId);
-    });
 
     document.getElementById('confirm-update').addEventListener('click', function () {
         validateUpdateState(programId, classroomTypeId)

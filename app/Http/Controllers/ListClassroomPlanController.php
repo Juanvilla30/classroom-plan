@@ -83,15 +83,16 @@ class ListClassroomPlanController extends Controller
     {
         DB::beginTransaction();
         try {
-            $classroomTypeId = $request->input('classroomTypeId');
+            $validate = $request->input('classroomTypeId');
+            $userId = $request->input('userId');
 
-            $componentId = Component::where('id_study_field', $classroomTypeId)
-                ->orderBy('id')->pluck('id');
-
-            $courseId = Course::whereIn('id_component', $componentId)
-                ->orderBy('id')->pluck('id');
-
-            $relationId = ProgramCourseRelationship::whereIn('id_course', $courseId)->pluck('id');
+            if ($validate == 0) {
+                $relationId = ProgramCourseRelationship::whereNull('id_program')
+                    ->where('id_user', $userId)
+                    ->pluck('id');
+            } else {
+                $relationId = ProgramCourseRelationship::where('id_program', null)->pluck('id');
+            }
 
             $classroomInfo = ClassroomPlan::whereIn('id_relations', $relationId)
                 ->with([
@@ -124,10 +125,21 @@ class ListClassroomPlanController extends Controller
         DB::beginTransaction();
         try {
             $programId = $request->input('programId');
+            $userId = $request->input('userId');
+            $userRoleId = $request->input('userRoleId');
 
-            $relationId = ProgramCourseRelationship::where('id_program', $programId)
-                ->orderBy('id')->pluck('id');
-
+            if ($userRoleId == 1 || $userRoleId == 2) {
+                $relationId = ProgramCourseRelationship::where('id_program', $programId)
+                    ->orderBy('id')->pluck('id');
+            } else if($userRoleId == 3){
+                $relationId = ProgramCourseRelationship::whereNull('id_program')
+                    ->orWhere('id_program', $programId)
+                    ->pluck('id');
+            } else {
+                $relationId = ProgramCourseRelationship::where('id_program', $programId)
+                    ->where('id_user', $userId)
+                    ->orderBy('id')->pluck('id');
+            }
             $classroomInfo = ClassroomPlan::whereIn('id_relations', $relationId)
                 ->with([
                     'relations.course.component.studyField',
@@ -144,6 +156,28 @@ class ListClassroomPlanController extends Controller
             return response()->json([
                 'check' => true,
                 'classroomInfo' => $classroomInfo,
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'error' => 'No se pudo obtener respuesta.',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function searchInfoEducation(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $userProgramId = $request->input('userProgramId');
+
+            $educationId = Program::where('id', $userProgramId)->pluck('id_education_level');
+
+            DB::commit();
+            return response()->json([
+                'check' => true,
+                'educationId' => $educationId,
             ]);
         } catch (\Exception $e) {
             DB::rollback();

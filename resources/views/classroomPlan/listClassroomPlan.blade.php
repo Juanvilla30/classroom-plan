@@ -30,6 +30,9 @@
     </div>
     <!-- End Breadcumb Header -->
 
+    <div class="d-none" id="userId" data-id="{{ auth()->user()->id }}" data-program="{{ auth()->user()->id_program }}" data-role="{{ auth()->user()->id_role }}"></div>
+
+    @if (auth()->user()->id_role == 1 || auth()->user()->id_role == 2)
     <!-- Card -->
     <div class="card">
 
@@ -64,6 +67,7 @@
         </div>
     </div>
     <!-- End Card -->
+    @endif
 
     <!-- Card -->
     <div class="card d-none" id="card-1">

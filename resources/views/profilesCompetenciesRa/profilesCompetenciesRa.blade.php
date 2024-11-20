@@ -30,17 +30,31 @@
     </div>
     <!-- End Breadcumb Header -->
 
+    <div class="d-none" id="userId" data-id="{{ auth()->user()->id }}" data-program="{{ auth()->user()->id_program }}" data-role="{{ auth()->user()->id_role }}"></div>
+
     <!-- Card Profile -->
     <div class="card" id="card-1" style="display: block;">
 
         <div class="card-header">
-            <h5 class="card-title font-weight-bold text-primary">Asignación de perfil de egreso</h5>
+            <div class="row">
+                <div class="col-sm-12 col-md-6">
+                    <h5 class="card-title font-weight-bold text-primary">Asignación de perfil de egreso</h5>
+                </div>
+                @if (auth()->user()->id_role == 3)
+                <div class="col-sm-12 col-md-6 text-md-right d-none" id="btnActivateUpdate">
+                    <button class="btn btn-primary btn-round" id="activateUpdate">
+                        Vizualización
+                    </button>
+                </div>
+                @endif
+            </div>
         </div>
 
         <div class="card-body">
 
             <!-- Forms -->
             <form>
+                @if (auth()->user()->id_role == 1 || auth()->user()->id_role == 2)
                 <div class="form-group">
                     <label for="selectProfileInformation">Seleccionar el tipo de perfil</label>
                     <select class="form-control input-pill" id="selectProfileInformation">
@@ -68,6 +82,8 @@
 
                     </select>
                 </div>
+                @endif
+
                 <div class="form-group">
                     <label for="exampleFormControlTextarea1">Perfil de egreso</label>
                     <textarea class="form-control readonlyField" id="textAreaProfile" rows="8" readonly></textarea>

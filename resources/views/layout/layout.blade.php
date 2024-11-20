@@ -245,7 +245,9 @@
                                 <p>Gestionar perfil de egreso</p>
                             </a>
                         </li>
+                        @endif
 
+                        @if (auth()->user()->id_role == 1 || auth()->user()->id_role == 2)
                         <li class="nav-item {{ request()->routeIs('listProfilesCompetenciesRa') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('listProfilesCompetenciesRa') }}">
                                 <i class="fas fa-list"></i>
@@ -353,11 +355,11 @@
                     ¿Seguro que deseas cerrar sesión?
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-inline">
                         @csrf
                         <button type="submit" class="btn btn-primary">Aceptar</button>
                     </form>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
                 </div>
             </div>
         </div>

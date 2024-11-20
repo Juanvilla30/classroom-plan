@@ -84,12 +84,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 facultyId: facultyId
             },
             success: function (response) {
-                // Limpiar el contenedor antes de añadir nuevos elementos
                 $('#profileEgressContainer').empty();
 
-                // Verificar si hay perfiles de egreso
                 if (response.listProfiles !== 'Perfiles no encontrados') {
-                    // Generar y agregar tarjetas al contenedor
                     response.listProfiles.forEach(function (profileEgres) {
                         let cardHTML = `
                             <div class="col-sm-12 col-md-6">
@@ -110,17 +107,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
                         $('#profileEgressContainer').append(cardHTML);
 
-                        // Agregar el event listener después de agregar el HTML
                         $('.info-profile').on('click', function (e) {
-                            e.preventDefault(); // Prevenir el comportamiento predeterminado del enlace
-                            const id = $(this).data('id'); // Obtener el ID desde el atributo data-id
-                            redirect(id); // Llamar a la función redirect con el ID
+                            e.preventDefault(); 
+                            const id = $(this).data('id');
+                            redirect(id);
                         });
 
-                        // Agregar el event listener después de agregar el HTML
                         $('.link-delete').on('click', function (e) {
-                            e.preventDefault(); // Prevenir el comportamiento predeterminado del enlace
-                            const deleteId = $(this).data('id'); // Obtener el ID desde el atributo data-id
+                            e.preventDefault(); 
+                            const deleteId = $(this).data('id'); 
                             deleteProfile(deleteId);
                         });
                     });

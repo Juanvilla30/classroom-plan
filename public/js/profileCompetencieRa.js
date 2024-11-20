@@ -10,6 +10,12 @@ $.ajaxSetup({
     * VARIABLES
     *
 */
+const userElement = document.getElementById('userId');
+
+const userId = userElement.dataset.id;
+const userProgramId = userElement.dataset.program;
+const userRoleId = userElement.dataset.role;
+
 let profilInfoId;
 let faculty;
 let program;
@@ -45,7 +51,34 @@ document.addEventListener("DOMContentLoaded", function () {
         * FUNCIONES
         *
     */
-    // Función para capitalizar el primer carácter de un texto
+    if (userRoleId == 3) {
+        validareUser(userId, userProgramId, userRoleId).then(response => {
+            nameProfile = response;
+            program = userProgramId;
+        }).catch(error => {
+            console.error("Error capturado en la validación del usuario:", error);
+        });
+    }
+
+    function validareUser(userId, userProgramId, userRoleId) {
+        return new Promise((resolve, reject) => {
+
+            validateProfile(userProgramId, userRoleId);
+            getNameProgram(userProgramId).then(response => {
+                resolve(response);
+            }).catch(error => {
+                console.error("Error en la solicitud AJAX:", error);
+            });
+
+        });
+    }
+
+    // Función de redirección
+    function redirect(id) {
+        window.location.href = '/view-profiles-competencies-ra/' + id; // Cambia esto a la URL correcta
+    }
+
+
     function capitalizeText(text) {
         return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
     }
@@ -88,19 +121,15 @@ document.addEventListener("DOMContentLoaded", function () {
             selectElement.disabled = true;
         } else {
             selectElement.disabled = false;
-            // Realizar una solicitud AJAX para obtener los cursos según los parámetros proporcionados
             $.ajax({
-                url: '/profiles-competencies-ra/faculty-program', // URL 
-                method: 'POST', // Método de la solicitud: POST
+                url: '/profiles-competencies-ra/faculty-program',
+                method: 'POST',
                 data: {
                     faculty: faculty,
                 },
-                // Función que se ejecuta en caso de éxito en la solicitud
                 success: function (response) {
-                    // Limpiar el contenido actual del select antes de agregar opciones nuevas
                     selectElement.innerHTML = '<option disabled selected value="">Seleccione un programa</option>';
 
-                    // Iterar sobre los programas recibidos y agregarlos como opciones
                     response.listPrograms.forEach(function (program) {
                         const option = document.createElement('option');
                         option.value = program.id;
@@ -109,15 +138,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     });
 
                 },
-                // Función que se ejecuta en caso de error en la solicitud
                 error: function (xhr, status, error) {
-                    // Imprimir mensajes de error en la consola
                     console.error('Error al eliminar el grupo:', xhr);
                     console.error('Estado:', status);
                     console.error('Error:', error);
                     console.error('Respuesta del servidor:', xhr.responseText);
-
-                    // Mostrar un mensaje de error en la tabla en caso de error en la solicitud
                     $('#cursoTableBody').html('<tr><td colspan="6">Ocurrió un error al buscar los cursos. Inténtalo de nuevo.</td></tr>');
                 }
             });
@@ -126,7 +151,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function getNameProgram(program) {
-
         return new Promise((resolve, reject) => {
             if (program !== null) {
                 $.ajax({
@@ -300,43 +324,36 @@ document.addEventListener("DOMContentLoaded", function () {
         // Cerrar el modal
         $('#modalConfirmation').modal('hide');
 
-        // Obtener contenido de los campos de texto
         var contentProfile = document.getElementById('textAreaProfile').value;
         var contentCompetitionOne = document.getElementById('textAreaCompetitionOne').value;
         var contentCompetitionTwo = document.getElementById('textAreaCompetitionTwo').value;
 
-        // Resultados de aprendizaje
         var contentRaOne = document.getElementById('textAreaRaOne').value;
         var contentRaTwo = document.getElementById('textAreaRaTwo').value;
         var contentRaThree = document.getElementById('textAreaRaThree').value;
         var contentRaFour = document.getElementById('textAreaRaFour').value;
 
         if (contentCompetitionOne.trim() !== '') {
-            // Establecer el contenido en el acordeón
             document.querySelector('#contCompeOne .card-body').innerText = contentCompetitionOne;
         }
         if (contentCompetitionTwo.trim() !== '') {
-            // Establecer el contenido en el acordeón
             document.querySelector('#contCompeTwo .card-body').innerText = contentCompetitionTwo;
         }
 
-        // Guardar el perfil si el contenido no está vacío
         if (contentProfile.trim() !== '') {
             saveProfile(nameProfile, contentProfile, program)
-                .then(({ profileId, competitionIds, rAIds }) => { // Desestructuración de la respuesta
+                .then(({ profileId, competitionIds, rAIds }) => {
 
-                    competenceId0 = competitionIds[0]; // Asegúrate de que response sea un array
-                    competenceId1 = competitionIds[1]; // También debe ser un array
+                    competenceId0 = competitionIds[0];
+                    competenceId1 = competitionIds[1];
                     profileIds = profileId;
                     rAIdsOne = rAIds[0];
                     rAIdsTwo = rAIds[1];
                     rAIdsThree = rAIds[2];
                     rAIdsFour = rAIds[3];
 
-                    // Asignar el ID del perfil guardado
-                    contentProfile = ''; // Limpiar el contenido después de guardarlo
+                    contentProfile = '';
 
-                    // Reiniciar el formulario después de guardar
                     resetForm();
                 })
                 .catch(error => {
@@ -346,10 +363,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (contentCompetitionOne.trim() !== '' && contentCompetitionTwo.trim() !== '') {
             saveCompetition(competenceId0, competenceId1, contentCompetitionOne, contentCompetitionTwo, profileIds).then(response => {
-                contentCompetitionOne = ''; // Limpiar después de guardar
+                contentCompetitionOne = '';
                 contentCompetitionTwo = '';
 
-                // Reiniciar el formulario después de guardar
                 resetForm();
             })
                 .catch(error => {
@@ -361,13 +377,12 @@ document.addEventListener("DOMContentLoaded", function () {
             var nameRaOne = 'Resultados de aprendizaje #1';
             var nameRaTwo = 'Resultados de aprendizaje #2';
             saveRA(rAIdsOne, rAIdsTwo, nameRaOne, nameRaTwo, contentRaOne, contentRaTwo, competenceId0).then(() => {
-                contentRaOne = ''; // Limpiar después de guardar
+                contentRaOne = '';
                 contentRaTwo = '';
             }).catch(error => {
                 console.error("Error en la solicitud AJAX:", error);
             });
 
-            // Reiniciar el formulario después de guardar
             resetForm();
         }
 
@@ -404,7 +419,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function validateProfile(programId) {
+    function validateProfile(programId, userRoleId) {
         $.ajax({
             url: '/profiles-competencies-ra/validate-profile',
             method: 'POST',
@@ -436,6 +451,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     var profileCont = response.profileId[0].description_profile_egres;
                     var competenceCont = response.competencesId;
                     var learningCont = response.learningResultsId;
+                    let id = response.profileId[0].id
+
+                    if (userRoleId == 3) {
+                        document.getElementById('btnActivateUpdate').classList.remove('d-none')
+                        document.getElementById('activateUpdate').addEventListener('click', function () {
+                            redirect(id);
+                        });
+                    }
 
                     document.querySelectorAll('.readonlyField').forEach(function (textarea) {
                         textarea.value = '';
@@ -501,6 +524,7 @@ document.addEventListener("DOMContentLoaded", function () {
             document.querySelectorAll('.nextCard').forEach(function (button) {
                 button.classList.add('d-none');
             });
+
             document.getElementById('showFaculty').classList.remove('d-none');
             document.getElementById('showProgram').classList.remove('d-none');
             const pillSelectFaculty = document.getElementById("pillSelectFaculty");
@@ -508,11 +532,11 @@ document.addEventListener("DOMContentLoaded", function () {
             const textAreaProfile = document.getElementById("textAreaProfile");
 
             if (pillSelectFaculty) {
-                pillSelectFaculty.selectedIndex = 0; // Restablece al primer elemento (mensaje de selección)
+                pillSelectFaculty.selectedIndex = 0;
             }
             if (pillSelectProgram) {
-                pillSelectProgram.selectedIndex = 0; // Restablece al primer elemento (mensaje de selección)
-                pillSelectProgram.disabled = true;   // Desactiva el campo
+                pillSelectProgram.selectedIndex = 0;
+                pillSelectProgram.disabled = true;
             }
             if (textAreaProfile) {
                 textAreaProfile.value = '';
@@ -550,26 +574,28 @@ document.addEventListener("DOMContentLoaded", function () {
         * Event Listener
         *
     */
-    document.getElementById('selectProfileInformation').addEventListener('change', function () {
-        profilInfoId = this.options[this.selectedIndex].value;
-        validateProfileInformation(profilInfoId);
-    });
+    if (userRoleId == 1 || userRoleId == 2) {
 
-    document.getElementById('pillSelectFaculty').addEventListener('change', function () {
-        faculty = this.options[this.selectedIndex].value;
-        selectProgram(faculty);
-    });
+        document.getElementById('selectProfileInformation').addEventListener('change', function () {
+            profilInfoId = this.value;
+            validateProfileInformation(profilInfoId);
+        });
 
-    document.getElementById('pillSelectProgram').addEventListener('change', function () {
-        program = this.options[this.selectedIndex].value;
-        validateProfile(program);
-        getNameProgram(program).then(response => {
-            nameProfile = response;
-        })
-            .catch(error => {
+        document.getElementById('pillSelectFaculty').addEventListener('change', function () {
+            faculty = this.value;
+            selectProgram(faculty);
+        });
+
+        document.getElementById('pillSelectProgram').addEventListener('change', function () {
+            program = this.value;
+            validateProfile(program, userRoleId);
+            getNameProgram(program).then(response => {
+                nameProfile = response;
+            }).catch(error => {
                 console.error("Error en la solicitud AJAX:", error);
             });
-    });
+        });
+    }
 
     // Escuchar el click en el botón de confirmación del modal
     document.getElementById('confirmationEmptyOne').addEventListener('click', function () {

@@ -344,7 +344,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const percentageField = document.getElementById(`inputPercentage${data}`);
         const evaluationField = document.getElementById(`selectEvaluation${data}`);
         const buttonField = document.getElementById(`savePercentage${data}`);
-        const percentageContent = parseFloat(percentageField.value);  // Convertir a número
+        const percentageContent = parseFloat(percentageField.value);
         const evaluationContent = evaluationField.value;
         const selectedOption = evaluationField.options[evaluationField.selectedIndex];
         const nameEvaluation = selectedOption.getAttribute('data-name');
@@ -352,7 +352,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const maxPercentage = data === '3' ? 40 : 30;
 
         if (percentageContent !== '' && evaluationContent !== '') {
-            // Comprobar si el evaluationContent ya existe en el arreglo correspondiente
             if (data == 1) {
                 if (savesEvaluation1.some(evaluation => evaluation.evaluationId == evaluationContent)) {
                     Swal.fire({
@@ -372,8 +371,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         nameEvaluation: nameEvaluation,
                         percentageValue: percentageContent,
                     });
-                    sumPercentage1 += percentageContent; // Actualizar la suma
-                    // Deshabilitar los campos si la suma llega al máximo
+                    sumPercentage1 += percentageContent;
                     if (sumPercentage1 === maxPercentage) {
                         percentageField.disabled = true;
                         evaluationField.disabled = true;
@@ -408,8 +406,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         nameEvaluation: nameEvaluation,
                         percentageValue: percentageContent,
                     });
-                    sumPercentage2 += percentageContent; // Actualizar la suma
-                    // Deshabilitar los campos si la suma llega al máximo
+                    sumPercentage2 += percentageContent;
+
                     if (sumPercentage2 === maxPercentage) {
                         percentageField.disabled = true;
                         evaluationField.disabled = true;
@@ -493,6 +491,47 @@ document.addEventListener('DOMContentLoaded', function () {
 
     }
 
+    function validatePercentageSum(evaluations, evaluations2, evaluations3) {
+        const totalPercentage = evaluations.reduce((sum, evaluation) => sum + evaluation.percentageValue, 0);
+        const totalPercentage2 = evaluations2.reduce((sum, evaluation) => sum + evaluation.percentageValue, 0);
+        const totalPercentage3 = evaluations3.reduce((sum, evaluation) => sum + evaluation.percentageValue, 0);
+
+        if (totalPercentage !== 30) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Advertencia',
+                text: `La suma de los valores de porcentaje en la Evaluación 1 es ${totalPercentage}, debe ser igual a 30.`,
+                confirmButtonColor: '#1269DB',
+                confirmButtonText: 'Entendido'
+            });
+            return false;
+        }
+
+        if (totalPercentage2 !== 30) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Advertencia',
+                text: `La suma de los valores de porcentaje en la Evaluación 2 es ${totalPercentage2}, debe ser igual a 30.`,
+                confirmButtonColor: '#1269DB',
+                confirmButtonText: 'Entendido'
+            });
+            return false;
+        }
+
+        if (totalPercentage3 !== 40) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Advertencia',
+                text: `La suma de los valores de porcentaje en la Evaluación 3 es ${totalPercentage3}, debe ser igual a 40.`,
+                confirmButtonColor: '#1269DB',
+                confirmButtonText: 'Entendido'
+            });
+            return false;
+        }
+
+        return true;
+    }
+
     // SEARCH
     function searchProgram(facultyId, typeClassroomId) {
         const selectElement = document.getElementById('selectProgram');
@@ -538,13 +577,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 userId: userId,
             },
             success: function (response) {
-                if (response.educationId == 1) {
-                    viewSelectPensum(response)
-                    typeClassroomId = 2
+                if (programIds == null) {
+                    viewSelectCampoComun(response)
                 } else {
-                    viewSelectSpecialization(response);
-                    typeClassroomId = 3
+                    if (response.educationId == 1) {
+                        viewSelectPensum(response)
+                        typeClassroomId = 2
+                    } else {
+                        viewSelectSpecialization(response);
+                        typeClassroomId = 3
+                    }
                 }
+
                 programId = programIds;
             },
             error: function (xhr, status, error) {
@@ -1296,7 +1340,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // COMFIRMATIONS
-    function confirmationSave(dataConfirmation) {
+    function confirmationSave(dataConfirmation, savesEvaluation1, savesEvaluation2, savesEvaluation3) {
         if (dataConfirmation == '1') {
             validate(
                 ['selectLearning'],
@@ -1328,7 +1372,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 'Los campos de temas no pueden estar vacíos.'
             );
         } else if (dataConfirmation == '7') {
-            $('#modalConfirmation').modal('show');
+            const isValid = validatePercentageSum(savesEvaluation1, savesEvaluation2, savesEvaluation3);
+            if (isValid) {
+                $('#modalConfirmation').modal('show');
+            }
         } else if (dataConfirmation == '8') {
             validateReferences();
         }
@@ -1723,7 +1770,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.confirmationSave').forEach(function (button) {
         button.addEventListener('click', function () {
             dataConfirmation = this.getAttribute('data-confirmation');
-            confirmationSave(dataConfirmation);
+            confirmationSave(dataConfirmation, savesEvaluation1, savesEvaluation2, savesEvaluation3);
         });
     });
 

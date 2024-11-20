@@ -88,6 +88,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/list-classroom-plan/search-program', [ListClassroomPlanController::class, 'searchProgram'])->name('searchProgram');
     Route::post('/list-classroom-plan/search-campo-comun', [ListClassroomPlanController::class, 'searchCampoComun'])->name('searchCampoComun');
     Route::post('/list-classroom-plan/search-classroom-plan', [ListClassroomPlanController::class, 'searchClassroomPlan'])->name('searchClassroomPlan');
+    Route::post('/list-classroom-plan/search-info-education', [ListClassroomPlanController::class, 'searchInfoEducation'])->name('searchInfoEducation');
     Route::post('/list-classroom-plan/search-data', [ListClassroomPlanController::class, 'searchData'])->name('searchData');
     Route::put('/list-classroom-plan/update-state', [ListClassroomPlanController::class, 'saveUpdateState'])->name('saveUpdateState');
 
