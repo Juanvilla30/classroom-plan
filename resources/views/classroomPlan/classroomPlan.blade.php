@@ -29,7 +29,7 @@
         </ul>
     </div>
     <!-- End Breadcumb Header -->
-    
+
     <div class="d-none" id="userId" data-id="{{ json_encode(auth()->user()) }}"></div>
 
     @if (auth()->user()->id_role == 1 || auth()->user()->id_role == 2)
@@ -90,7 +90,7 @@
 
         <div class="card-body">
             <!-- Forms -->
-            <form>            
+            <form>
                 <button type="button" class="btn btn-primary btn-lg btn-block" style="margin-top: 20px;" id="searchCourseBtn">
                     Seleccione el curso
                 </button>
@@ -940,11 +940,10 @@
     <!-- Modal List Courses -->
     <div class="modal fade bd-example-modal-lg" id="modalListCourses" tabindex="-1" role="dialog"
         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document" style="max-width: 90%;">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="card-title font-weight-bold text-primary">Nueva evaluación</h5>
-
+                    <h5 class="card-title font-weight-bold text-primary">Selección de curso</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -952,18 +951,95 @@
                 <div class="modal-body">
                     <form>
                         <div class="form-group">
-                            <label for="pillInput">Ingrese el nombre de la evaluación</label>
-                            <input type="text" class="form-control input-pill" id="pillInput" placeholder="Nombre de Evaluación">
+                            <label for="exampleFormControlTextarea1">Resultado de aprendizaje</label>
+                            <textarea class="form-control" id="textAreaDescriptionLearning" rows="6" disabled></textarea>
                         </div>
                         <div class="form-group">
-                            <label for="exampleFormControlTextarea1">Ingrese la descripción</label>
-                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="4"></textarea>
+                            <label for="exampleFormControlTextarea1">Objetivo general</label>
+                            <textarea class="form-control unlockFields" id="textAreaDescriptionGeneral" rows="8" disabled></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 col-md-4 mx-auto">
+                                <div class="form-group">
+                                    <div class="form-group">
+                                        <label for="exampleFormControlTextarea1">Objetivo especifico #1</label>
+                                        <textarea class="form-control unlockFields" id="textAreaDescriptionSpecific1" rows="6" disabled></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-4 mx-auto">
+                                <div class="form-group">
+                                    <div class="form-group">
+                                        <label for="exampleFormControlTextarea1">Objetivo especifico #1</label>
+                                        <textarea class="form-control unlockFields" id="textAreaDescriptionSpecific2" rows="6" disabled></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-4 mx-auto">
+                                <div class="form-group">
+                                    <div class="form-group">
+                                        <label for="exampleFormControlTextarea1">Objetivo especifico #1</label>
+                                        <textarea class="form-control unlockFields" id="textAreaDescriptionSpecific3" rows="6" disabled></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <ul class="nav nav-pills nav-primary nav-pills-no-bd justify-content-center mb-3" id="pills-tab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link" id="weeks1" data-toggle="pill" href="#fromWeeks1"
+                                    role="tab" aria-controls="pills-home-nobd" aria-selected="true">Semana 1-5</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="weeks2" data-toggle="pill" href="#fromWeeks2"
+                                    role="tab" aria-controls="pills-profile-nobd" aria-selected="false">Semana 6-10</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="weeks3" data-toggle="pill" href="#fromWeeks3"
+                                    role="tab" aria-controls="pills-contact-nobd" aria-selected="false">Semana 11-16</a>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content mb-3" id="pills-tabContent">
+                            <div class="tab-pane fade" id="fromWeeks1" role="tabpanel"
+                                aria-labelledby="pills-home-tab-nobd">
+                            </div>
+                            <div class="tab-pane fade" id="fromWeeks2" role="tabpanel"
+                                aria-labelledby="pills-profile-tab-nobd">
+                            </div>
+                            <div class="tab-pane fade" id="fromWeeks3" role="tabpanel"
+                                aria-labelledby="pills-contact-tab-nobd">
+                            </div>
+                        </div>
+                        <div class="table-responsive" id="tableEvaluation">
+                            <table class="table table-head-bg-primary">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Evaluación</th>
+                                        <th scope="col">Porcenteje</th>
+                                        <th scope="col">Nombre porcenteje</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bodyEvaluation2">
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="table-responsive" id="tableReferences">
+                            <table class="table table-head-bg-primary">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Referencia</th>
+                                        <th scope="col">Links</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bodyReferences2">
+                                </tbody>
+                            </table>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary">Guardar</button>
                 </div>
             </div>
         </div>

@@ -87,7 +87,7 @@ class ClassroomPlanController extends Controller
                     ])->orderBy('id')
                     ->get();
                 $educationId = Program::where('id', $programId)->pluck('id_education_level');
-            } else {                
+            } else {
                 $relationInfo = ProgramCourseRelationship::where('id_program', $programId)
                     ->where('id_user', $userId)
                     ->with([
@@ -151,6 +151,61 @@ class ClassroomPlanController extends Controller
             return response()->json([
                 'check' => true,
                 'relationInfo' => $relationInfo,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error al asignar curso',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function searchData(Request $request)
+    {
+        try {
+            $classroomId = $request->input('classroomId');
+
+            $classroomInfo = ClassroomPlan::with([
+                'relations.course.component.studyField',
+                'relations.course.semester',
+                'relations.course.courseType',
+                'relations.program',
+                'learningResult',
+                'generalObjective',
+                'state',
+            ])->where('id', $classroomId)
+                ->orderBy('id')
+                ->get();
+
+            $evaluationsId = AssignmentEvaluation::where('id_classroom_plan', $classroomId)
+                ->with('evaluation', 'percentage')
+                ->orderBy('id')
+                ->get();
+
+            $referencesId = Reference::where('id_classroom_plan', $classroomId)
+                ->orderBy('id')
+                ->get();
+
+            $specifics = SpecificObjective::where('id_classroom_plan', $classroomId)
+                ->orderBy('id')
+                ->get();
+
+            $specificsIds = $specifics->pluck('id')->toArray();
+
+            $specificsArray = $specifics->toArray();
+
+            $topicsId = Topic::whereIn('id_specific_objective', $specificsIds)
+                ->with('specificObjective')
+                ->orderBy('id')
+                ->get();
+
+            return response()->json([
+                'check' => true,
+                'classroomInfo' => $classroomInfo,
+                'assigEvaluationInfo' => $evaluationsId,
+                'referencsInfo' => $referencesId,
+                'specificInfo' => $specificsArray,
+                'topicInfo' => $topicsId,
             ]);
         } catch (\Exception $e) {
             return response()->json([

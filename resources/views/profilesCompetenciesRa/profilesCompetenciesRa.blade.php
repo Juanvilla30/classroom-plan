@@ -88,7 +88,10 @@
                     <label for="exampleFormControlTextarea1">Perfil de egreso</label>
                     <textarea class="form-control readonlyField" id="textAreaProfile" rows="8" readonly></textarea>
                 </div>
-                <button type="button" class="btn btn-primary btn-lg btn-block savePCRA d-none" id="confirmationEmptyOne">Guardar</button>
+                <button type="button" class="btn btn-primary btn-lg btn-block confirmationSave d-none" style="margin-top: 10px;"
+                    data-confirmation="1">
+                    Guardar
+                </button>
                 <button type="button" class="btn btn-primary btn-lg btn-block nextCard d-none">Siguiente</button>
             </form>
             <!-- End Forms -->
@@ -116,8 +119,8 @@
                     <label for="exampleFormControlTextarea1">Competencia 2</label>
                     <textarea class="form-control readonlyField" id="textAreaCompetitionTwo" rows="6"></textarea>
                 </div>
-                <button type="button" class="btn btn-primary btn-lg btn-block savePCRA d-none" style="margin-top: 10px;"
-                    id="confirmationEmptyTwo">
+                <button type="button" class="btn btn-primary btn-lg btn-block confirmationSave d-none" style="margin-top: 10px;"
+                    data-confirmation="2">
                     Guardar
                 </button>
                 <button type="button" class="btn btn-primary btn-lg btn-block nextCard d-none">Siguiente</button>
@@ -174,8 +177,8 @@
 
             <!-- Forms -->
             <form>
-                <button type="button" class="btn btn-primary btn-lg btn-block savePCRA d-none" style="margin-top: 10px;"
-                    id="confirmationEmptyThree">
+                <button type="button" class="btn btn-primary btn-lg btn-block confirmationSave d-none" style="margin-top: 10px;"
+                    data-confirmation="3">
                     Guardar
                 </button>
                 <button type="button" class="btn btn-primary btn-lg btn-block nextCard d-none">Siguiente</button>
@@ -226,8 +229,8 @@
                     <label for="exampleFormControlTextarea1">Resultado de aprendizaje #4</label>
                     <textarea class="form-control readonlyField" id="textAreaRaFour" rows="8"></textarea>
                 </div>
-                <button type="button" class="btn btn-primary btn-lg btn-block savePCRA d-none" style="margin-top: 10px;"
-                    id="confirmationEmptyFour">
+                <button type="button" class="btn btn-primary btn-lg btn-block confirmationSave d-none" style="margin-top: 10px;"
+                    data-confirmation="4">
                     Guardar
                 </button>
                 <button type="button" class="btn btn-primary btn-lg btn-block nextCard d-none">Siguiente</button>

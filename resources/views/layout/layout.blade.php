@@ -113,7 +113,7 @@
                             <a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#"
                                 aria-expanded="false">
                                 <div class="avatar-sm">
-                                    <img src="\img\perfil_dos.png" alt="..." class="avatar-img rounded-circle">
+                                    <img src="\img\logo-blanco.svg" alt="..." class="avatar-img rounded-circle">
                                 </div>
                             </a>
                             <ul class="dropdown-menu dropdown-user animated fadeIn">
@@ -123,7 +123,7 @@
                                         style="height: auto; margin-bottom: 0px; margin-right: 0px; max-height: 0px;">
                                         <li>
                                             <div class="user-box">
-                                                <div class="avatar-lg"><img src="\img\perfil_uno.png"
+                                                <div class="avatar-lg"><img src="\img\logo-azul.svg"
                                                         alt="image profile" class="avatar-img rounded"></div>
                                                 <div class="u-text">
                                                     <h4 style="text-transform: capitalize;">{{ auth()->user()->name }}</h4>
@@ -170,7 +170,7 @@
                 <div class="sidebar-content">
                     <div class="user">
                         <div class="avatar-sm float-left mr-2">
-                            <img src="\img\perfil_uno.png" alt=".." class="avatar-img rounded-circle">
+                            <img src="\img\logo-azul.svg" alt=".." class="avatar-img rounded-circle">
                         </div>
                         <div class="info">
                             <a data-toggle="collapse" href="#logoutDropdown" aria-expanded="false" class="collapsed">
