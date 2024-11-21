@@ -170,8 +170,12 @@
     <div class="container">
         <div class="header">
             <h2>FORMATO PLAN DE AULA</h2>
-            <img src="{{ public_path() . '/img/logo_pdf.jpg'}}" alt=""/>
+            <center><img src="{{ public_path('img/logo_pdf.jpg') }}"  height="100"/></center>
+            @if($classroom->relations->id_program !== null)
             <p>Campo: {{$classroom->relations->program->degree_type}} <strong>Formación Académica</strong></p>
+            @else
+            <p>Campo: comun <strong>Formación Académica</strong></p>
+            @endif
             <a>Código: {{$classroom->relations->course->course_code}}| Versión: 2 | Fecha: {{ date('d-m-Y')}}</a>
         </div>
 
@@ -414,10 +418,10 @@
             <a>Fecha: {{date('d-m-Y')}}</a>
             <br>
             <a>Verificado por:</a>
-            <a>Fecha: {{date('d-m-Y')}}</a>
+            <a>Fecha: </a>
             <br>
             <a>Aprobado por:</a>
-            <a>Fechan: {{date('d-m-Y')}}</a>
+            <a>Fechan: </a>
         </div>
         <br>
 

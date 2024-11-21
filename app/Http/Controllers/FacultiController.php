@@ -17,6 +17,7 @@ use App\Models\SpecificObjective;
 use App\Models\StudyField;
 use App\Models\Topic;
 use App\Models\UserAttributes;
+use Dompdf\Options;
 use Illuminate\Http\Request;
 use App\Models\Faculty;
 use Illuminate\Support\Facades\Validator;
@@ -77,6 +78,7 @@ class FacultiController extends Controller
                 ])
                 ->orderBy('id')
                 ->get();
+
                 
 
             $classromRelationId = $classroomPlans->pluck('id_relations');
@@ -114,7 +116,10 @@ class FacultiController extends Controller
                 ->orderBy('id')
                 ->get();
 
-            $dompdf = new Dompdf();
+            $options = new Options();
+            $options->set('isRemoteEnabled', true);
+            $options->set('chroot', public_path());
+            $dompdf = new Dompdf($options);
 
             $html = view('documents.exportPdf', [
                 'classroom' => $classroomPlans->first(),  
