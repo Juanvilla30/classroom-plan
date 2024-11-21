@@ -78,7 +78,6 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.href = '/view-profiles-competencies-ra/' + id; // Cambia esto a la URL correcta
     }
 
-
     function capitalizeText(text) {
         return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
     }
@@ -173,25 +172,35 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function resetForm() {
-        // Reiniciar el selector de facultad
-        var facultySelect = document.getElementById('pillSelectFaculty');
-        facultySelect.selectedIndex = 0; // Seleccionar la opción por defecto
+    function resetForm(userRoleId) {
+        if (userRoleId == '1' || userRoleId == '1') {
+            // Reiniciar el selector de facultad
+            var facultySelect = document.getElementById('pillSelectFaculty');
+            facultySelect.selectedIndex = 0; // Seleccionar la opción por defecto
 
-        // Reiniciar el selector de programas y deshabilitarlo
-        var programSelect = document.getElementById('pillSelectProgram');
-        programSelect.selectedIndex = 0; // Seleccionar la opción por defecto
-        programSelect.disabled = true; // Deshabilitar el select
+            // Reiniciar el selector de programas y deshabilitarlo
+            var programSelect = document.getElementById('pillSelectProgram');
+            programSelect.selectedIndex = 0; // Seleccionar la opción por defecto
+            programSelect.disabled = true; // Deshabilitar el select
 
-        // Limpiar el textarea
-        document.getElementById('textAreaProfile').value = '';
-        document.getElementById('textAreaCompetitionOne').value = '';
-        document.getElementById('textAreaCompetitionTwo').value = '';
-        document.getElementById('textAreaRaOne').value = '';
-        document.getElementById('textAreaRaTwo').value = '';
-        document.getElementById('textAreaRaThree').value = '';
-        document.getElementById('textAreaRaFour').value = '';
-        // (Si necesitas reiniciar otros textareas, hazlo aquí)
+            // Limpiar el textarea
+            document.getElementById('textAreaProfile').value = '';
+            document.getElementById('textAreaCompetitionOne').value = '';
+            document.getElementById('textAreaCompetitionTwo').value = '';
+            document.getElementById('textAreaRaOne').value = '';
+            document.getElementById('textAreaRaTwo').value = '';
+            document.getElementById('textAreaRaThree').value = '';
+            document.getElementById('textAreaRaFour').value = '';
+        } else {
+            // Limpiar el textarea
+            document.getElementById('textAreaProfile').value = '';
+            document.getElementById('textAreaCompetitionOne').value = '';
+            document.getElementById('textAreaCompetitionTwo').value = '';
+            document.getElementById('textAreaRaOne').value = '';
+            document.getElementById('textAreaRaTwo').value = '';
+            document.getElementById('textAreaRaThree').value = '';
+            document.getElementById('textAreaRaFour').value = '';
+        }
     }
 
     function saveProfile(nameProfile, profile, program) {
@@ -317,7 +326,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
-    function confirmButton() {
+    function confirmationSave(dataConfirmation) {
+        if (dataConfirmation == '1') {
+            validate(
+                ['textAreaProfile'],
+                'El campo de perfil de egreso no pueden estar vacíos.'
+            );
+        } else if (dataConfirmation == '2') {
+            validate(
+                ['textAreaCompetitionOne', 'textAreaCompetitionTwo'],
+                'Los campo de competencias no pueden estar vacíos.'
+            );
+        } else if (dataConfirmation == '3') {
+            validate(
+                ['textAreaRaOne', 'textAreaRaTwo'],
+                'Los campo de resultados de aprendizaje no pueden estar vacíos.'
+            );
+        } else if (dataConfirmation == '4') {
+            validate(
+                ['textAreaRaThree', 'textAreaRaFour'],
+                'Los campo de resultados de aprendizaje no pueden estar vacíos.'
+            );
+        }
+    }
+
+    function confirmButton(dataConfirmation, userRoleId) {
         // Cambiar a la siguiente card
         showNextCard();
 
@@ -340,66 +373,60 @@ document.addEventListener("DOMContentLoaded", function () {
             document.querySelector('#contCompeTwo .card-body').innerText = contentCompetitionTwo;
         }
 
-        if (contentProfile.trim() !== '') {
-            saveProfile(nameProfile, contentProfile, program)
-                .then(({ profileId, competitionIds, rAIds }) => {
-
-                    competenceId0 = competitionIds[0];
-                    competenceId1 = competitionIds[1];
-                    profileIds = profileId;
-                    rAIdsOne = rAIds[0];
-                    rAIdsTwo = rAIds[1];
-                    rAIdsThree = rAIds[2];
-                    rAIdsFour = rAIds[3];
-
-                    contentProfile = '';
-
-                    resetForm();
+        if (dataConfirmation == '1') {
+            if (contentProfile.trim() !== '') {
+                saveProfile(nameProfile, contentProfile, program)
+                    .then(({ profileId, competitionIds, rAIds }) => {
+                        competenceId0 = competitionIds[0];
+                        competenceId1 = competitionIds[1];
+                        profileIds = profileId;
+                        rAIdsOne = rAIds[0];
+                        rAIdsTwo = rAIds[1];
+                        rAIdsThree = rAIds[2];
+                        rAIdsFour = rAIds[3];
+                    })
+                    .catch(error => {
+                        console.error("Error en la solicitud AJAX:", error);
+                    });
+                resetForm(userRoleId);
+            }
+        } else if (dataConfirmation == '2') {
+            if (contentCompetitionOne.trim() !== '' && contentCompetitionTwo.trim() !== '') {
+                saveCompetition(competenceId0, competenceId1, contentCompetitionOne, contentCompetitionTwo, profileIds).then(response => {
+                    contentCompetitionOne = '';
+                    contentCompetitionTwo = '';
                 })
-                .catch(error => {
+                    .catch(error => {
+                        console.error("Error en la solicitud AJAX:", error);
+                    });
+                resetForm(userRoleId);
+            }
+        } else if (dataConfirmation == '3') {
+            if (contentRaOne.trim() !== '' && contentRaTwo.trim() !== '') {
+                var nameRaOne = 'Resultados de aprendizaje #1';
+                var nameRaTwo = 'Resultados de aprendizaje #2';
+                saveRA(rAIdsOne, rAIdsTwo, nameRaOne, nameRaTwo, contentRaOne, contentRaTwo, competenceId0).then(() => {
+                    contentRaOne = '';
+                    contentRaTwo = '';
+                }).catch(error => {
                     console.error("Error en la solicitud AJAX:", error);
                 });
-        }
-
-        if (contentCompetitionOne.trim() !== '' && contentCompetitionTwo.trim() !== '') {
-            saveCompetition(competenceId0, competenceId1, contentCompetitionOne, contentCompetitionTwo, profileIds).then(response => {
-                contentCompetitionOne = '';
-                contentCompetitionTwo = '';
-
-                resetForm();
-            })
-                .catch(error => {
+                resetForm(userRoleId);
+            }
+        } else if (dataConfirmation == '4') {
+            if (contentRaThree.trim() !== '' && contentRaFour.trim() !== '') {
+                var nameRaThree = 'Resultados de aprendizaje #3';
+                var nameRaFour = 'Resultados de aprendizaje #4';
+                saveRA(rAIdsThree, rAIdsFour, nameRaThree, nameRaFour, contentRaThree, contentRaFour, competenceId1).then(() => {
+                    contentRaThree = '';
+                    contentRaFour = '';
+                }).catch(error => {
                     console.error("Error en la solicitud AJAX:", error);
                 });
+                resetForm(userRoleId);
+            }
         }
 
-        if (contentRaOne.trim() !== '' && contentRaTwo.trim() !== '') {
-            var nameRaOne = 'Resultados de aprendizaje #1';
-            var nameRaTwo = 'Resultados de aprendizaje #2';
-            saveRA(rAIdsOne, rAIdsTwo, nameRaOne, nameRaTwo, contentRaOne, contentRaTwo, competenceId0).then(() => {
-                contentRaOne = '';
-                contentRaTwo = '';
-            }).catch(error => {
-                console.error("Error en la solicitud AJAX:", error);
-            });
-
-            resetForm();
-        }
-
-        if (contentRaThree.trim() !== '' && contentRaFour.trim() !== '') {
-            var nameRaThree = 'Resultados de aprendizaje #3';
-            var nameRaFour = 'Resultados de aprendizaje #4';
-            saveRA(rAIdsThree, rAIdsFour, nameRaThree, nameRaFour, contentRaThree, contentRaFour, competenceId1).then(() => {
-                contentRaThree = ''; // Limpiar después de guardar
-                contentRaFour = '';
-            }).catch(error => {
-                console.error("Error en la solicitud AJAX:", error);
-            });
-
-            // Reiniciar el formulario después de guardar
-            resetForm();
-
-        }
     }
 
     function validate(fields, alertMessage) {
@@ -434,7 +461,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         textarea.value = '';
                     });
 
-                    document.querySelectorAll('.savePCRA').forEach(function (button) {
+                    document.querySelectorAll('.confirmationSave').forEach(function (button) {
                         button.classList.remove('d-none');
                     });
 
@@ -472,7 +499,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         element.setAttribute('readonly', true);
                     });
 
-                    document.querySelectorAll('.savePCRA').forEach(function (button) {
+                    document.querySelectorAll('.confirmationSave').forEach(function (button) {
                         button.classList.add('d-none');
                     });
 
@@ -517,7 +544,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function validateProfileInformation(profilInfoId) {
         if (profilInfoId == 'true') {
-            document.querySelectorAll('.savePCRA').forEach(function (button) {
+            document.querySelectorAll('.confirmationSave').forEach(function (button) {
                 button.classList.add('d-none');
             });
 
@@ -543,7 +570,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
         } else if (profilInfoId == 'false') {
-            document.querySelectorAll('.savePCRA').forEach(function (button) {
+            document.querySelectorAll('.confirmationSave').forEach(function (button) {
                 button.classList.add('d-none');
             });
 
@@ -597,48 +624,19 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Escuchar el click en el botón de confirmación del modal
-    document.getElementById('confirmationEmptyOne').addEventListener('click', function () {
-        validate(
-            ['textAreaProfile'],
-            'El campo de perfil de egreso no pueden estar vacíos.'
-        );
+    document.querySelectorAll('.confirmationSave').forEach(function (button) {
+        button.addEventListener('click', function () {
+            dataConfirmation = this.getAttribute('data-confirmation');
+            confirmationSave(dataConfirmation);
+        });
     });
 
-    // Escuchar el click en el botón de confirmación del modal
-    document.getElementById('confirmationEmptyTwo').addEventListener('click', function () {
-        validate(
-            ['textAreaCompetitionOne', 'textAreaCompetitionTwo'],
-            'Los campo de competencias no pueden estar vacíos.'
-        );
-    });
-
-    // Escuchar el click en el botón de confirmación del modal
-    document.getElementById('confirmationEmptyThree').addEventListener('click', function () {
-        validate(
-            ['textAreaRaOne', 'textAreaRaTwo'],
-            'Los campo de resultados de aprendizaje no pueden estar vacíos.'
-        );
-    });
-
-    // Escuchar el click en el botón de confirmación del modal
-    document.getElementById('confirmationEmptyFour').addEventListener('click', function () {
-        validate(
-            ['textAreaRaThree', 'textAreaRaFour'],
-            'Los campo de resultados de aprendizaje no pueden estar vacíos.'
-        );
-    });
-
-    // Escuchar el click en el botón de confirmación del modal
     document.getElementById('confirm-button').addEventListener('click', function () {
-        confirmButton();
+        confirmButton(dataConfirmation, userRoleId);
     });
 
-    // Seleccionar todos los elementos con la clase 'nextCard' y agregar el evento click
     document.querySelectorAll('.nextCard').forEach(function (button) {
         button.addEventListener('click', function () {
-            console.log('confirmar');
-            // Cambiar a la siguiente card
             showNextCard();
         });
     });

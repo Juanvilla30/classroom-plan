@@ -774,6 +774,114 @@ document.addEventListener('DOMContentLoaded', function () {
 
     }
 
+    function searchData(classroomId) {
+        $.ajax({
+            url: '/classroom-plan/search-data',
+            method: 'POST',
+            data: {
+                classroomId: classroomId,
+            },
+            success: function (response) {
+                console.log(response)
+                viewAllInfo(response)
+            },
+            error: function (xhr, status, error) {
+                console.error('Error al eliminar el grupo:', xhr);
+                console.error('Estado:', status);
+                console.error('Error:', error);
+                console.error('Respuesta del servidor:', xhr.responseText);
+            }
+        });
+    }
+
+    function viewAllInfo(response) {
+        // Competencias y resultados de aprendizaje
+        const descriptionLearning = response.classroomInfo[0].learning_result.description_learning_result;
+
+        document.getElementById('textAreaDescriptionLearning').value = descriptionLearning; // TEXTAREA
+
+        // Objetivos generales y específicos
+        const descriptionGeneral = response.classroomInfo[0].general_objective.description_general_objective;
+        const specificContent = response.specificInfo;
+
+        const generalTextArea = document.getElementById('textAreaDescriptionGeneral');
+        generalTextArea.value = capitalizeOrDefault(descriptionGeneral); // TEXTAREA
+
+        specificContent.forEach((specific, index) => {
+            const i = index + 1;
+            const specificTextArea = document.getElementById(`textAreaDescriptionSpecific${i}`);
+            specificTextArea.value = capitalizeOrDefault(specific.description_specific_objective); // TEXTAREA
+        });
+
+        const topicInfo = response.topicInfo;
+
+        const sections = [
+            { id: "fromWeeks1", start: 0, end: 5 },  // Semanas 1-5
+            { id: "fromWeeks2", start: 5, end: 10 }, // Semanas 6-10
+            { id: "fromWeeks3", start: 10, end: 17 } // Semanas 11-16
+        ];
+
+        sections.forEach((section, index) => {
+            // Inicia el contenido de cada sección
+            let topicsContent = '<div class="row">';
+
+            // Genera las tarjetas de temas dentro del rango especificado
+            const topics = topicInfo.slice(section.start, section.end).map((topic, i) => `
+                <div class="col-sm-12 col-md-6">
+                    <div class="form-group">
+                        <label for="textAreaTopic${section.start + i + 1}">Tema semana ${section.start + i + 1}:</label>
+                        <textarea class="form-control unlockFields" data-topics-id="${topic.id}" id="textAreaTopic${section.start + i + 1}" rows="5" disabled>${capitalizeOrDefault(topic.description_topic)}</textarea>
+                    </div>
+                </div>
+            `).join('');
+
+            // Cierra el contenido y lo inyecta en el DOM
+            topicsContent += topics + '</div>';
+            document.getElementById(section.id).innerHTML = topicsContent || '<h3>No se encontraron resultados.</h3>';
+        });
+
+        // Evaluaciones
+        const evaluationInfo = response.assigEvaluationInfo;
+        const bodyEvaluation = $('#bodyEvaluation2');
+        bodyEvaluation.empty();
+
+        if (evaluationInfo.length > 0) {
+            evaluationInfo.forEach(evaluation => {
+                bodyEvaluation.append(`
+                    <tr>
+                        <td>${capitalizeOrDefault(evaluation.evaluation.name_evaluation)}</td>
+                        <td>${evaluation.percentage_number}%</td>
+                        <td>${capitalizeOrDefault(evaluation.percentage.name_percentage)}</td>
+                    </tr>
+                `);
+            });
+        } else {
+            bodyEvaluation.append('<tr><td colspan="6">No se encontraron.</td></tr>');
+        }
+
+        // Referencias
+        const referencesId = response.referencsInfo;
+        const bodyReferences = $('#bodyReferences2');
+        bodyReferences.empty();
+
+        if (referencesId.length > 0) {
+            referencesId.forEach((reference, index) => {
+                bodyReferences.append(`
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${capitalizeOrDefault(reference.name_reference)}</td>
+                        <td>${reference.link_reference}</td>
+                    </tr>
+                `);
+            });
+        } else {
+            bodyReferences.append('<tr><td colspan="6">No se encontraron.</td></tr>');
+        }
+
+        $('#modalListCourses').modal('show');
+    }
+
+
     // VIEW
     function viewSelectProgram(programInfo, selectElement) {
         // Limpiar el contenido actual del select antes de agregar opciones nuevas
@@ -1045,51 +1153,51 @@ document.addEventListener('DOMContentLoaded', function () {
             arrayContent.forEach(function (array) {
                 let row = `
                         <tr class="highlight-row">                
-                            <td class="detalle-user" class="detalle-courses" data-course-id="${array.id}"
-                                data-toggle="modal" data-target="#modalListCourses">
-                                <a href="#" class="text-dark">
+                            <td>
+                                <a href="#" class="text-dark viewInfoCp" data-id="${array.id}">
                                     ${capitalizeOrDefault(array.relations.course.component.study_field.name_study_field)}
                                 </a>
                             </td>
-                            <td class="detalle-user" class="detalle-courses" data-course-id="${array.id}"
-                                data-toggle="modal" data-target="#modalListCourses">
-                                <a href="#" class="text-dark">
+                            <td>
+                                <a href="#" class="text-dark viewInfoCp" data-id="${array.id}">
                                     ${capitalizeOrDefault(array.relations.course.component.name_component)}
                                 </a>
                             </td>
-                            <td class="detalle-user" class="detalle-courses" data-course-id="${array.id}"
-                                data-toggle="modal" data-target="#modalListCourses">
-                                <a href="#" class="text-dark">
+                            <td>
+                                <a href="#" class="text-dark viewInfoCp" data-id="${array.id}">
                                     ${capitalizeOrDefault(array.relations.course.course_code)}                        
                                 </a>
                             </td>
-                            <td class="detalle-user" class="detalle-courses" data-course-id="${array.id}"
-                                data-toggle="modal" data-target="#modalListCourses">
-                                <a href="#" class="text-dark">
+                            <td>
+                                <a href="#" class="text-dark viewInfoCp" data-id="${array.id}">
                                     ${capitalizeOrDefault(array.relations.course.name_course)}                        
                                 </a>
                             </td>
-                            <td class="detalle-user" class="detalle-courses" data-course-id="${array.id}"
-                                data-toggle="modal" data-target="#modalListCourses">
-                                <a href="#" class="text-dark">
+                            <td>
+                                <a href="#" class="text-dark viewInfoCp" data-id="${array.id}">
                                     ${capitalizeOrDefault(array.relations.course.semester.name_semester)}                                
                                 </a>
                             </td>
-                            <td align="center" class="detalle-user" class="detalle-courses" data-course-id="${array.id}"
-                                data-toggle="modal" data-target="#modalListCourses">
-                                <a href="#" class="text-dark">
+                            <td align="center" >
+                                <a href="#" class="text-dark viewInfoCp" data-id="${array.id}">
                                     ${array.relations.course.credit}
                                 </a>
                             </td>
-                            <td class="detalle-user" class="detalle-courses" data-course-id="${array.id}"
-                                data-toggle="modal" data-target="#modalListCourses">
-                                <a href="#" class="text-dark">
+                            <td>
+                                <a href="#" class="text-dark viewInfoCp" data-id="${array.id}">
                                     ${capitalizeOrDefault(array.relations.course.course_type.name_course_type)}
                                 </a>
                             </td>
                         </tr>
                 `;
                 bodyComponent.append(row);
+            });
+            document.querySelectorAll('.viewInfoCp').forEach(function (element) {
+                element.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const classroomId = this.getAttribute('data-id');
+                    searchData(classroomId);
+                });
             });
         } else {
             bodyComponent.append('<tr><td colspan="6">No se encontraron resultados.</td></tr>');
@@ -1108,39 +1216,41 @@ document.addEventListener('DOMContentLoaded', function () {
             arrayContent.forEach(function (array) {
                 let row = `
                         <tr class="highlight-row">                            
-                            <td class="detalle-user" class="detalle-courses" data-course-id="${array.id}"
-                                data-toggle="modal" data-target="#modalListCourses">
-                                <a href="#" class="text-dark">
+                            <td>
+                                <a href="#" class="text-dark viewInfoCp" data-id="${array.id}">
                                     ${capitalizeOrDefault(array.relations.course.course_code)}                        
                                 </a>
                             </td>
-                            <td class="detalle-user" class="detalle-courses" data-course-id="${array.id}"
-                                data-toggle="modal" data-target="#modalListCourses">
-                                <a href="#" class="text-dark">
+                            <td>
+                                <a href="#" class="text-dark viewInfoCp" data-id="${array.id}">
                                     ${capitalizeOrDefault(array.relations.course.name_course)}                        
                                 </a>
                             </td>
-                            <td class="detalle-user" class="detalle-courses" data-course-id="${array.id}"
-                                data-toggle="modal" data-target="#modalListCourses">
-                                <a href="#" class="text-dark">
+                            <td>
+                                <a href="#" class="text-dark viewInfoCp" data-id="${array.id}">
                                     ${capitalizeOrDefault(array.relations.course.semester.name_semester)}                                
                                 </a>
                             </td>
-                            <td align="center" class="detalle-user" class="detalle-courses" data-course-id="${array.id}"
-                                data-toggle="modal" data-target="#modalListCourses">
-                                <a href="#" class="text-dark">
+                            <td align="center">
+                                <a href="#" class="text-dark viewInfoCp" data-id="${array.id}">
                                     ${array.relations.course.credit}
                                 </a>
                             </td>
-                            <td class="detalle-user" class="detalle-courses" data-course-id="${array.id}"
-                                data-toggle="modal" data-target="#modalListCourses">
-                                <a href="#" class="text-dark">
+                            <td>
+                                <a href="#" class="text-dark viewInfoCp" data-id="${array.id}">
                                     ${capitalizeOrDefault(array.relations.course.course_type.name_course_type)}
                                 </a>
                             </td>
                         </tr>
                 `;
                 bodyComponent.append(row);
+            });
+            document.querySelectorAll('.viewInfoCp').forEach(function (element) {
+                element.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const classroomId = this.getAttribute('data-id');
+                    searchData(classroomId);
+                });
             });
         } else {
             bodyComponent.append('<tr><td colspan="6">No se encontraron.</td></tr>');

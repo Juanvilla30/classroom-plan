@@ -189,6 +189,7 @@ class FacultiController extends Controller
                 'references' => $referencesId,
                 'specifics' => $specificsArray,
                 'topics' => $topicsId,
+                'userId' => $userId,
                 'atributesUser' => $atributesUserInfo[0],
             ])->render();
 

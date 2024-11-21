@@ -75,6 +75,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/classroom-plan/search-classroom-plans', [ClassroomPlanController::class, 'searchClassroomPlan'])->name('searchClassroomPlan');
     Route::post('/classroom-plan/search-learning', [ClassroomPlanController::class, 'searchLearning'])->name('searchLearning');
     Route::post('/classroom-plan/search-description-Learning', [ClassroomPlanController::class, 'searchDescriptionLearning'])->name('searchDescriptionLearning');
+    Route::post('/classroom-plan/search-data', [ClassroomPlanController::class, 'searchData'])->name('searchData');
     Route::post('/classroom-plan/create-classroom-plans', [ClassroomPlanController::class, 'createClassroomPlan'])->name('createClassroomPlan');
     Route::put('/classroom-plan/save-general-objective', [ClassroomPlanController::class, 'createObjectiveGeneral'])->name('createObjectiveGeneral');
     Route::put('/classroom-plan/save-specific-objective', [ClassroomPlanController::class, 'createObjectiveSpecific'])->name('createObjectiveSpecific');
