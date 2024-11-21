@@ -120,6 +120,49 @@
             margin-top: 20px;
             color: #777;
         }
+
+        table th,
+        table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+            font-size: 12px;
+            word-wrap: break-word;
+            /* Permite que las URLs largas se ajusten dentro de las celdas */
+        }
+
+        /* Ajuste específico para el texto de la bibliografía */
+        table td {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        /* Lista dentro de la bibliografía */
+        ol {
+            padding-left: 20px;
+        }
+
+        ul {
+            padding-left: 25px;
+        }
+
+        ul li {
+            margin-bottom: 5px;
+        }
+
+        ol li {
+            margin-bottom: 10px;
+        }
+
+        .created-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .created-info a {
+            margin-right: 10px;
+        }
     </style>
 </head>
 
@@ -127,8 +170,9 @@
     <div class="container">
         <div class="header">
             <h2>FORMATO PLAN DE AULA</h2>
-            <p>Campo Profesional: <strong>Formación Académica</strong></p>
-            <p>Código: E-FA-004 | Versión: 2 | Fecha: 08-03-2022</p>
+            <img src="{{ public_path() . '/img/logo_pdf.jpg'}}" alt=""/>
+            <p>Campo: {{$classroom->relations->program->degree_type}} <strong>Formación Académica</strong></p>
+            <a>Código: {{$classroom->relations->course->course_code}}| Versión: 2 | Fecha: {{ date('d-m-Y')}}</a>
         </div>
 
         <table class="info-table">
@@ -178,8 +222,10 @@
             </tr>
             <tr>
                 <td style="text-align: center;">{{ $classroom->relations->course->credit ?? 'No asignado' }}</td>
-                <td style="text-align: center;">{{ $classroom->relations->course->pretential_time ?? 'No asignado'}}</td>
-                <td style="text-align: center;">{{ $classroom->relations->course->independent_time ?? 'No asignado'}}</td>
+                <td style="text-align: center;">{{ $classroom->relations->course->pretential_time ?? 'No asignado'}}
+                </td>
+                <td style="text-align: center;">{{ $classroom->relations->course->independent_time ?? 'No asignado'}}
+                </td>
                 <td style="text-align: center;">0</td>
             </tr>
         </table>
@@ -190,15 +236,27 @@
             </tr>
             <tr>
                 <th>PROFESION</th>
+                @if(!empty($atributesUser))
                 <td>{{ ucfirst(strtolower($atributesUser->profession ?? 'No asignado'))}}</td>
+                @else
+                <td>No asignado</td>
+                @endif
             </tr>
             <tr>
                 <th>ESTUDIOS DE POSTGRADO</th>
+                @if(!empty($atributesUser))
                 <td>{{ ucfirst(strtolower($atributesUser->postgraduate_studies ?? 'No asignado'))}}</td>
+                @else
+                <td>No asignado</td>
+                @endif
             </tr>
             <tr>
                 <th>COMPETENCIAS ESPECÍFICAS</th>
+                @if(!empty($atributesUser))
                 <td>{{ ucfirst(strtolower($atributesUser->specific_competences ?? 'No asignado'))}}</td>
+                @else
+                <td>No asignado</td>
+                @endif
             </tr>
         </table>
 
@@ -278,7 +336,8 @@
                             @if ( $evaluation->id_percentage == 1)
                             <ul>
                                 <li>
-                                    {{ucfirst(strtolower($evaluation->evaluation->name_evaluation))}} - {{$evaluation->percentage_number}}%
+                                    {{ucfirst(strtolower($evaluation->evaluation->name_evaluation))}} -
+                                    {{$evaluation->percentage_number}}%
                                 </li>
                             </ul>
                             @endif
@@ -290,7 +349,8 @@
                             @if ( $evaluation->id_percentage == 2)
                             <ul>
                                 <li>
-                                    {{ucfirst(strtolower($evaluation->evaluation->name_evaluation))}} - {{$evaluation->percentage_number}}%
+                                    {{ucfirst(strtolower($evaluation->evaluation->name_evaluation))}} -
+                                    {{$evaluation->percentage_number}}%
                                 </li>
                             </ul>
                             @endif
@@ -302,7 +362,8 @@
                             @if ( $evaluation->id_percentage == 3)
                             <ul>
                                 <li>
-                                    {{ucfirst(strtolower($evaluation->evaluation->name_evaluation))}} - {{$evaluation->percentage_number}}%
+                                    {{ucfirst(strtolower($evaluation->evaluation->name_evaluation))}} -
+                                    {{$evaluation->percentage_number}}%
                                 </li>
                             </ul>
                             @endif
@@ -348,5 +409,17 @@
                 </td>
             </tr>
         </table>
+        <div class="created-info">
+            <a>Creado por: {{Auth::user()->name}} {{Auth::user()->last_name}}</a>
+            <a>Fecha: {{date('d-m-Y')}}</a>
+            <br>
+            <a>Verificado por:</a>
+            <a>Fecha: {{date('d-m-Y')}}</a>
+            <br>
+            <a>Aprobado por:</a>
+            <a>Fechan: {{date('d-m-Y')}}</a>
+        </div>
+        <br>
+
     </div>
 </body>

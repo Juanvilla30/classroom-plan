@@ -60,6 +60,82 @@ class FacultiController extends Controller
         }
     }
 
+    public function pdfPlanAula($id)
+    {
+        try {
+
+
+            $classroomPlans = ClassroomPlan::where('id', $id)
+                ->with([
+                    'relations.course.component.studyField',
+                    'relations.course.semester',
+                    'relations.course.courseType',
+                    'relations.program.faculty',
+                    'relations.user',
+                    'learningResult.competence',
+                    'generalObjective',
+                ])
+                ->orderBy('id')
+                ->get();
+                
+
+            $classromRelationId = $classroomPlans->pluck('id_relations');
+
+            $userId = ProgramCourseRelationship::where('id', $classromRelationId)
+                ->pluck('id_user');
+
+            if($userId !== null){
+                $atributesUserInfo = UserAttributes::where('id_user', $userId)
+                ->orderBy('id')
+                ->get();
+            }
+
+            // dd($userId);
+            
+            $evaluationsId = AssignmentEvaluation::where('id_classroom_plan', $id)
+                ->with('evaluation', 'percentage')
+                ->orderBy('id_percentage')
+                ->get();
+            
+            $referencesId = Reference::where('id_classroom_plan', $id)
+                ->orderBy('id')
+                ->get();
+            
+            $specifics = SpecificObjective::where('id_classroom_plan', $id)
+                ->orderBy('id')
+                ->get();
+
+            $specificsIds = $specifics->pluck('id')->toArray();
+
+            $specificsArray = $specifics->toArray();
+
+            $topicsId = Topic::whereIn('id_specific_objective', $specificsIds)
+                ->with('specificObjective')
+                ->orderBy('id')
+                ->get();
+
+            $dompdf = new Dompdf();
+
+            $html = view('documents.exportPdf', [
+                'classroom' => $classroomPlans->first(),  
+                'evaluations' => $evaluationsId,
+                'references' => $referencesId,
+                'specifics' => $specificsArray,
+                'topics' => $topicsId,
+                'user' => $userId,
+                'atributesUser' => $atributesUserInfo->first(),
+            ])->render();
+
+            $dompdf->LoadHtml($html); //renderisa el html a pdf
+            $dompdf->render(); //descargar el pdf
+
+
+            return $dompdf->stream("plan-aula.pdf", array("Attachment" => false));
+        } catch (\Throwable $th) {
+            Log::error('Error en export: ' . $th->getMessage());
+        }
+    }
+
     public function export(Request $request)
     {
         try {
@@ -134,70 +210,5 @@ class FacultiController extends Controller
     }
 
 
-    public function pdfPlanAula($id)
-    {
-        try {
-
-            $classroomPlans = ClassroomPlan::where('id', $id)
-                ->with([
-                    'relations.course.component.studyField',
-                    'relations.course.semester',
-                    'relations.course.courseType',
-                    'relations.program.faculty',
-                    'relations.user',
-                    'learningResult.competence',
-                    'generalObjective',
-                ])
-                ->orderBy('id')
-                ->get();
-
-            $classromRelationId = $classroomPlans->pluck('id_relations');
-
-            $userId = ProgramCourseRelationship::where('id', $classromRelationId)
-                ->pluck('id_user');
-
-            $atributesUserInfo = UserAttributes::where('id_user', $userId)->orderBy('id')
-                ->get();
-
-            $evaluationsId = AssignmentEvaluation::where('id_classroom_plan', $id)
-                ->with('evaluation', 'percentage')
-                ->orderBy('id_percentage')
-                ->get();
-            
-            $referencesId = Reference::where('id_classroom_plan', $id)
-                ->orderBy('id')
-                ->get();
-            
-            $specifics = SpecificObjective::where('id_classroom_plan', $id)
-                ->orderBy('id')
-                ->get();
-
-            $specificsIds = $specifics->pluck('id')->toArray();
-
-            $specificsArray = $specifics->toArray();
-
-            $topicsId = Topic::whereIn('id_specific_objective', $specificsIds)
-                ->with('specificObjective')
-                ->orderBy('id')
-                ->get();
-
-            $dompdf = new Dompdf();
-
-            $html = view('documents.exportPdf', [
-                'classroom' => $classroomPlans[0],
-                'evaluations' => $evaluationsId,
-                'references' => $referencesId,
-                'specifics' => $specificsArray,
-                'topics' => $topicsId,
-                'atributesUser' => $atributesUserInfo[0],
-            ])->render();
-
-            $dompdf->LoadHtml($html); //renderisa el html a pdf
-            $dompdf->render(); //descargar el pdf
-
-            return $dompdf->stream("plan-aula.pdf", array("Attachment" => false));
-        } catch (\Throwable $th) {
-            Log::error('Error en export: ' . $th->getMessage());
-        }
-    }
+    
 }

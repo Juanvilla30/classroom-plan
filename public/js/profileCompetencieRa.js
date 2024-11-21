@@ -339,7 +339,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (contentCompetitionTwo.trim() !== '') {
             document.querySelector('#contCompeTwo .card-body').innerText = contentCompetitionTwo;
         }
-
+        console.log(nameProfile, contentProfile, program)
         if (contentProfile.trim() !== '') {
             saveProfile(nameProfile, contentProfile, program)
                 .then(({ profileId, competitionIds, rAIds }) => {
