@@ -80,7 +80,7 @@
             <div class="logo-header" data-background-color="blue">
 
                 <a href="/home" class="logo">
-                    <img src="\img\logo_autonoma.svg" alt="navbar brand" class="navbar" width="90%" height="100%"
+                    <img src="{{ asset('img/logo_autonoma.svg') }}" alt="navbar brand" class="navbar" width="90%" height="100%"
                         style="filter: grayscale(100%) brightness(0) invert(100%);">
                 </a>
 
@@ -113,7 +113,7 @@
                             <a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#"
                                 aria-expanded="false">
                                 <div class="avatar-sm">
-                                    <img src="\img\logo-blanco.svg" alt="..." class="avatar-img rounded-circle">
+                                    <img src="{{ asset('img/logo-blanco.svg') }}" alt="Logo" class="avatar-img rounded-circle">
                                 </div>
                             </a>
                             <ul class="dropdown-menu dropdown-user animated fadeIn">
@@ -123,11 +123,15 @@
                                         style="height: auto; margin-bottom: 0px; margin-right: 0px; max-height: 0px;">
                                         <li>
                                             <div class="user-box">
-                                                <div class="avatar-lg"><img src="\img\logo-azul.svg"
-                                                        alt="image profile" class="avatar-img rounded"></div>
+                                                <div class="avatar-lg">
+                                                    <img src="{{ asset('img/logo-azul.svg') }}" alt="image profile" class="avatar-img rounded">
+                                                </div>
                                                 <div class="u-text">
-                                                    <h4 style="text-transform: capitalize;">{{ auth()->user()->name }}</h4>
-                                                    <h4 style="text-transform: capitalize;">{{ auth()->user()->last_name }}</h4>
+                                                    <h4 style="text-transform: capitalize;">{{ auth()->user()->name }}
+                                                    </h4>
+                                                    <h4 style="text-transform: capitalize;">
+                                                        {{ auth()->user()->last_name }}
+                                                    </h4>
                                                     <p class="text-muted">{{ auth()->user()->email }}</p>
                                                 </div>
                                             </div>
@@ -170,14 +174,17 @@
                 <div class="sidebar-content">
                     <div class="user">
                         <div class="avatar-sm float-left mr-2">
-                            <img src="\img\logo-azul.svg" alt=".." class="avatar-img rounded-circle">
+                            <img src="{{ asset('img/logo-azul.svg') }}" alt=".." class="avatar-img rounded-circle">
                         </div>
                         <div class="info">
                             <a data-toggle="collapse" href="#logoutDropdown" aria-expanded="false" class="collapsed">
                                 <span>
-                                    <span class="username" style="text-transform: capitalize;">{{ auth()->user()->name }}</span>
-                                    <span class="userlastname" style="text-transform: capitalize;">{{ auth()->user()->last_name }}</span>
-                                    <span class="user-level" style="text-transform: capitalize;">{{ auth()->user()->roles->name_role}}</span>
+                                    <span class="username"
+                                        style="text-transform: capitalize;">{{ auth()->user()->name }}</span>
+                                    <span class="userlastname"
+                                        style="text-transform: capitalize;">{{ auth()->user()->last_name }}</span>
+                                    <span class="user-level"
+                                        style="text-transform: capitalize;">{{ auth()->user()->roles->name_role}}</span>
                                     <span class="caret"></span>
                                 </span>
                             </a>

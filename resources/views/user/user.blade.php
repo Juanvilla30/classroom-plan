@@ -44,53 +44,56 @@
     <div class="card-body">
         <!-- User Management Table -->
         <div class="table table-head-bg-primary">
-            <table class="display table table-striped table-hover" id="multi-filter-select">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Nombre</th>
-                        <th scope="col">Apellido</th>
-                        <th scope="col">Correo</th>
-                        <th scope="col">Acción</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($users as $user)
-                    <tr>
-                        <td class="detalle-user" data-user-id="{{ $user->id }}">
-                            <a href="{{ route('ListUsers')}}" class="text-dark">
-                                {{ $loop->iteration }}
-                            </a>
-                        </td>
-                        <td class="detalle-user" data-user-id="{{ $user->id }}">
-                            <a href="{{ route('ListUsers')}}" class="text-dark">
-                                {{ $user->name }}
-                            </a>
-                        </td>
-                        <td class="detalle-user" data-user-id="{{ $user->id }}">
-                            <a href="{{ route('ListUsers')}}" class="text-dark">
-                                {{ $user->last_name }}
-                            </a>
-                        </td>
-                        <td class="detalle-user" data-user-id="{{ $user->id }}">
-                            <a href="{{ route('ListUsers')}}" class="text-dark">
-                                {{ $user->email }}
-                            </a>
-                        </td>
-                        <td>
-                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
-                                data-target="#ModalUpdate" onclick="reloadModal({{ $user->id }})" id="btnmodal-update">
-                                <i class="fas fa-pencil-alt"></i>
-                            </button>
-                            <button type="button" class="btn btn-danger btn-sm" data-toggle="modal"
-                                data-target="#exampleModalCenter" onclick="setUserId({{ $user->id}})">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="display table table-striped table-hover" id="multi-filter-select">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Apellido</th>
+                            <th scope="col">Correo</th>
+                            <th scope="col">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($users as $user)
+                        <tr>
+                            <td class="detalle-user" data-user-id="{{ $user->id }}">
+                                <a href="{{ route('ListUsers')}}" class="text-dark">
+                                    {{ $loop->iteration }}
+                                </a>
+                            </td>
+                            <td class="detalle-user" data-user-id="{{ $user->id }}">
+                                <a href="{{ route('ListUsers')}}" class="text-dark">
+                                    {{ $user->name }}
+                                </a>
+                            </td>
+                            <td class="detalle-user" data-user-id="{{ $user->id }}">
+                                <a href="{{ route('ListUsers')}}" class="text-dark">
+                                    {{ $user->last_name }}
+                                </a>
+                            </td>
+                            <td class="detalle-user" data-user-id="{{ $user->id }}">
+                                <a href="{{ route('ListUsers')}}" class="text-dark">
+                                    {{ $user->email }}
+                                </a>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                                    data-target="#ModalUpdate" onclick="reloadModal({{ $user->id }})" id="btnmodal-update">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal"
+                                    data-target="#exampleModalCenter" onclick="setUserId({{ $user->id}})">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
         </div>
         <!-- End of User Management Table -->
 
