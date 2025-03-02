@@ -14,7 +14,7 @@ use App\Http\Controllers\ListUsersController;
 use App\http\Controllers\GenerateDocumentController;
 use App\Http\Controllers\ViewClassroomPlanController;
 use App\Http\Controllers\ViewProfilesCompetenciesRaController;
-use App\http\Controllers\FacultiController;
+use App\Http\Controllers\FacultiController;
 
 
 /*
