@@ -4,6 +4,7 @@ use App\Exports\PlanAulaExport;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ActivitiesController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\ClassroomPlanController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ListClassroomPlanController;
@@ -15,7 +16,6 @@ use App\http\Controllers\GenerateDocumentController;
 use App\Http\Controllers\ViewClassroomPlanController;
 use App\Http\Controllers\ViewProfilesCompetenciesRaController;
 use App\Http\Controllers\FacultiController;
-
 
 /*
 |--------------------------------------------------------------------------
@@ -35,6 +35,8 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
 Route::middleware('auth')->group(function () {
 

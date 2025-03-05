@@ -180,6 +180,7 @@
         </div>
 
         <table class="info-table">
+            <!--
             @if($classroom->relations->id_program !== null)
             <tr>
                 <th>FACULTAD</th>
@@ -190,6 +191,7 @@
                 <td>{{ucfirst(strtolower($classroom->relations->program->name_program ?? 'No asignado'))}}</td>
             </tr>
             @endif
+            -->
             <tr>
                 <th>NOMBRE DEL CURSO</th>
                 <td>{{ucfirst(strtolower($classroom->relations->course->name_course ?? 'No asignado'))}}</td>
@@ -199,10 +201,12 @@
                 <td>{{ucfirst(strtolower($classroom->relations->course->semester->name_semester ?? 'No asignado'))}}
                 </td>
             </tr>
+            <!--
             <tr>
                 <th>ÁREA</th>
                 <td>{{ucfirst(strtolower($classroom->relations->program->degree_type ?? 'No asignado'))}}</td>
             </tr>
+            -->
             @if($classroom->relations->course->component !== null)
             <tr>
                 <th>COMPONENTE</th>
@@ -233,7 +237,8 @@
                 <td style="text-align: center;">0</td>
             </tr>
         </table>
-
+        
+        <!--
         <table class="table">
             <tr>
                 <th colspan="2" class="section-title">PERFIL DEL DOCENTE GENÉRICO</th>
@@ -263,7 +268,8 @@
                 @endif
             </tr>
         </table>
-
+        --->
+        
         <table class="table">
             <tr>
                 <th colspan="2" class="section-title">COMPETENCIAS</th>
@@ -283,6 +289,18 @@
             <tr>
                 <td colspan="2">
                     {{ucfirst(strtolower($classroom->learningResult->description_learning_result ?? 'No asignado'))}}
+                </td>
+            </tr>
+        </table>
+
+        <table class="table">
+            <tr>
+                <th colspan="2" class="section-title">OBJETIVO GENERAL</th>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    {{ucfirst(strtolower($classroom->generalObjective->name_general_objective ?? 'No
+                    asignado'))}}
                 </td>
             </tr>
         </table>

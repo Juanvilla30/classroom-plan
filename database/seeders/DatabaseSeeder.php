@@ -362,12 +362,15 @@ class DatabaseSeeder extends Seeder
 
         // Evaluaciones
         DB::table('evaluations')->insert([
-            ['id' => 1, 'name_evaluation' => 'taller', 'id_course_type' => 1],
-            ['id' => 2, 'name_evaluation' => 'actividad', 'id_course_type' => 2],
-            ['id' => 3, 'name_evaluation' => 'quiz', 'id_course_type' => 3],
-            ['id' => 4, 'name_evaluation' => 'evaluación', 'id_course_type' => 1],
-            ['id' => 5, 'name_evaluation' => 'parcial', 'id_course_type' => 1],
-            ['id' => 6, 'name_evaluation' => 'proyecto', 'id_course_type' => 1],
+            ['id' => 1, 'name_evaluation' => 'actividad 1', 'id_course_type' => 1],
+            ['id' => 2, 'name_evaluation' => 'actividad 2', 'id_course_type' => 1],
+            ['id' => 3, 'name_evaluation' => 'actividad 3', 'id_course_type' => 1],
+            ['id' => 4, 'name_evaluation' => 'tarea 1', 'id_course_type' => 2],
+            ['id' => 5, 'name_evaluation' => 'tarea 2', 'id_course_type' => 2],
+            ['id' => 6, 'name_evaluation' => 'tarea 3', 'id_course_type' => 2],
+            ['id' => 4, 'name_evaluation' => 'taller 1', 'id_course_type' => 3],
+            ['id' => 5, 'name_evaluation' => 'taller 2', 'id_course_type' => 3],
+            ['id' => 6, 'name_evaluation' => 'taller 3', 'id_course_type' => 3],
         ]);
 
         // Porcentajes

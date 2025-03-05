@@ -4,6 +4,7 @@
 
 @section('content')
 
+@if (auth()->user()->id_role == 1)
 <!-- Breadcumb Header -->
 <div style="margin-bottom: 20px">
     <ul class="breadcrumbs">
@@ -60,4 +61,9 @@
         </div>
     </div>
 </div>
+@else
+    <div class="alert alert-danger" role="alert">
+        No puedes acceder al contenido!
+    </div>
+@endif
 @endsection

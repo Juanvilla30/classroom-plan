@@ -4,6 +4,7 @@
 
 @section('content')
 
+@if (auth()->user()->id_role !== 4)
 <!-- Breadcumb Header -->
 <div style="margin-bottom: 20px">
     <ul class="breadcrumbs">
@@ -59,5 +60,11 @@
 <script src="{{asset('js/report.js')}}"></script>
 <!-- end script -->
 </div>
+
+@else
+    <div class="alert alert-danger" role="alert">
+        No puedes acceder al contenido!
+    </div>
+@endif
 
 @endsection
