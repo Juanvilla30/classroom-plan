@@ -1,71 +1,78 @@
 //Create
 document.addEventListener("DOMContentLoaded", function () {
-    document
-        .getElementById("addRowButton")
-        .addEventListener("click", function () {
-            const name = document.getElementById("addName").value;
-            const last_name = document.getElementById("addLastName").value;
-            const email = document.getElementById("addEmail").value;
-            const password = document.getElementById("addPassword").value;
-            const phone = document.getElementById("addPhone").value;
-            const idRol = document.getElementById("addRole").value;
-            const verfemail = "@uniatonoma.edu.co";
-            const csrfToken = document
-                .querySelector('meta[name="csrf-token"]')
-                .getAttribute("content");
+    document.getElementById("addRowButton").addEventListener("click", function () {
+        const name = document.getElementById("addName").value.trim();
+        const last_name = document.getElementById("addLastName").value.trim();
+        const email = document.getElementById("addEmail").value.trim();
+        const password = document.getElementById("addPassword").value.trim();
+        const phone = document.getElementById("addPhone").value.trim();
+        const idRol = document.getElementById("addRole").value.trim();
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
 
-            console.log({ name, last_name, email, password, phone, idRol }); //verificacion de valores
+        // Validación de campos vacíos
+        let missingFields = [];
+        if (!name) missingFields.push("Nombre");
+        if (!last_name) missingFields.push("Apellido");
+        if (!email) missingFields.push("Correo Electrónico");
+        if (!password) missingFields.push("Contraseña");
+        if (!phone) missingFields.push("Teléfono");
+        if (!idRol) missingFields.push("Rol");
 
-            if (name && last_name && phone && email && password && idRol) {
-                fetch("/user/create", {
-                    method: "POST",
-                    headers: {
-                        Accept: "application/json",
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": csrfToken,
-                    },
-                    body: JSON.stringify({
-                        name: name,
-                        last_name: last_name,
-                        email: email,
-                        password: password,
-                        phone: phone,
-                        id_role: idRol,
-                    }),
-                })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        if (data.success) {
-                            Swal.fire({
-                                icon: "success",
-                                title: "Advertencia",
-                                text: "Se ha creado un nuevo usuario",
-                                confirmButtonColor: "#3085d6",
-                                confirmButtonText: "Entendido",
-                            }).then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: "error Toast",
-                                title: "Advertencia",
-                                text:
-                                    "No se ha podidio crear el usuario" +
-                                    error.message,
-                                confirmButtonColor: "#3085d6",
-                                confirmButtonText: "Entendido",
-                            });
-                        }
-                    })
-                    .catch((error) => {
-                        console.error("Error:", error);
-                        alert(
-                            "Error al procesar la solicitud: " + error.message
-                        );
+        if (missingFields.length > 0) {
+            Swal.fire({
+                icon: "error",
+                title: "Campos requeridos",
+                text: "Faltan los siguientes campos: " + missingFields.join(", "),
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "Entendido",
+            });
+            return; // Detener ejecución si faltan campos
+        }
+
+        fetch("/user/create", {
+            method: "POST",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": csrfToken,
+            },
+            body: JSON.stringify({ name, last_name, email, password, phone, id_role: idRol }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Éxito",
+                        text: "Se ha creado un nuevo usuario",
+                        confirmButtonColor: "#3085d6",
+                        confirmButtonText: "Entendido",
+                    }).then(() => {
+                        location.reload();
                     });
-            }
-        });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: "No se ha podido crear el usuario. " + (data.errors ? Object.values(data.errors).join(", ") : ""),
+                        confirmButtonColor: "#3085d6",
+                        confirmButtonText: "Entendido",
+                    });
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Error de red",
+                    text: "Error al procesar la solicitud: " + error.message,
+                    confirmButtonColor: "#3085d6",
+                    confirmButtonText: "Entendido",
+                });
+            });
+    });
 });
+
 
 //Capture
 $(document).ready(function () {
@@ -178,7 +185,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const id = this.getAttribute("data-user-id");
 
             if (!id) {
-                console.log("el id no es null", id);
+                console.log("El ID no puede ser nulo", id);
                 return;
             }
 
@@ -204,12 +211,28 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
 
                 if (!response.ok) {
-                    throw new Error(
-                        `Error en la solicitud: ${response.status}`
-                    );
+                    const errorData = await response.json(); // Obtener JSON de errores
+                    let errorMessage = "No se ha podido actualizar el usuario.";
+
+                    if (errorData.errors) {
+                        // Obtener los mensajes de error detallados
+                        errorMessage += "\n" + Object.values(errorData.errors).join("\n");
+                    }
+
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error en la actualización",
+                        text: errorMessage,
+                        confirmButtonColor: "#3085d6",
+                        confirmButtonText: "Entendido",
+                    });
+
+                    throw new Error(errorMessage);
                 }
+
                 const data = await response.json();
-                console.log("datos llegados para actualizar", data);
+                console.log("Datos actualizados", data);
+
                 Swal.fire({
                     icon: "success",
                     title: "Actualización exitosa",
@@ -219,17 +242,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 }).then(() => {
                     location.reload();
                 });
+
             } catch (error) {
-                console.log("error", error);
-                Swal.fire({
-                    icon: "error",
-                    title: "Advertencia",
-                    text: "No se ha podido actualizar el usuario",
-                    confirmButtonColor: "#3085d6",
-                    confirmButtonText: "Entendido",
-                }).then(() => {
-                    location.reload();
-                });
+                console.error("Error:", error);
             }
         });
 });

@@ -71,7 +71,7 @@ class DatabaseSeeder extends Seeder
 
         \App\Models\User::factory()->create([
             'name' => 'vicerrector',
-            'last_name' => 'vice',
+            'last_name' => 'vicerrector',
             'phone' => '0',
             'email' => 'vicerrectoria@uniautonoma.edu.co',
             'password' => 'vicerrectoria',
