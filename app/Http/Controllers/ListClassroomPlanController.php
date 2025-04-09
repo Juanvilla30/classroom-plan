@@ -10,6 +10,7 @@ use App\Models\Faculty;
 use App\Models\Program;
 use App\Models\ProgramCourseRelationship;
 use App\Models\Reference;
+use App\Models\RelationUser;
 use App\Models\SpecificObjective;
 use App\Models\State;
 use App\Models\Topic;
@@ -136,8 +137,10 @@ class ListClassroomPlanController extends Controller
                     ->orWhere('id_program', $programId)
                     ->pluck('id');
             } else {
+                $query1 = RelationUser::where('id_user', $userId)->pluck('id_relation');
+
                 $relationId = ProgramCourseRelationship::where('id_program', $programId)
-                    ->where('id_user', $userId)
+                    ->whereIn('id', $query1)
                     ->orderBy('id')->pluck('id');
             }
             $classroomInfo = ClassroomPlan::whereIn('id_relations', $relationId)

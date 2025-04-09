@@ -1,80 +1,133 @@
 @php
-    $campoMostrado = false;
+$campoMostrado = false;
+$colores = ['#4CAF50', '#2196F3', '#FF9800', '#9C27B0', '#3F51B5', '#009688', '#795548', '#F44336', '#673AB7', '#607D8B'];
+$colorIndex = 0;
 @endphp
-<table>
+
+<table style="width: 100%; border-collapse: collapse; word-break: break-word; table-layout: auto;">
     <thead>
         <tr>
-            <th>Codigo curso</th>
-            <th>Curso</th>
+            @php $titulos = ['Codigo curso', 'Curso']; @endphp
+            @foreach ($titulos as $titulo)
+            <th style="width: 200px; background-color: {{ $colores[$colorIndex++] }}; color: white; font-weight: bold; font-family: Arial, sans-serif; font-size: 13px; text-transform: uppercase; border: 1px solid #ccc; padding: 8px; text-align: center; vertical-align: middle; white-space: normal; word-break: break-word;">{{ $titulo }}</th>
+            @endforeach
+
             @foreach ($classrooms as $classroom)
             @if($classroom['relations']['course']['component'] !== null && !$campoMostrado)
-                <th>Campo</th>
-                <th>Componente</th>
-                @php
-                    $campoMostrado = true;
-                @endphp
+            @php $campoMostrado = true; @endphp
+            <th style="width: 200px; background-color: {{ $colores[$colorIndex++] }}; color: white; font-weight: bold; font-family: Arial, sans-serif; font-size: 13px; text-transform: uppercase; border: 1px solid #ccc; padding: 8px; text-align: center; vertical-align: middle; white-space: normal; word-break: break-word;">Campo</th>
+            <th style="width: 200px; background-color: {{ $colores[$colorIndex++] }}; color: white; font-weight: bold; font-family: Arial, sans-serif; font-size: 13px; text-transform: uppercase; border: 1px solid #ccc; padding: 8px; text-align: center; vertical-align: middle; white-space: normal; word-break: break-word;">Componente</th>
             @endif
             @endforeach
-            <th>Semestre</th>
-            <th>Creditos</th>
-            <th>Tipo curso</th>
-            <th>Resultado de aprendizaje</th>
-            <th>Objetivo general</th>
+
+            @php
+            $titulosExtras = ['Semestre', 'Creditos', 'Tipo curso', 'Resultado de aprendizaje', 'Objetivo general'];
+            $anchoExtras = [200, 80, 120, 250, 250]; // Puedes ajustar estos valores
+            @endphp
+            @foreach ($titulosExtras as $index => $titulo)
+            <th style="width: {{ $anchoExtras[$index] }}px; background-color: {{ $colores[$colorIndex++ % count($colores)] }}; color: white; font-weight: bold; font-family: Arial, sans-serif; font-size: 13px; text-transform: uppercase; border: 1px solid #ccc; padding: 8px; text-align: center; vertical-align: middle; white-space: normal; word-break: break-word;">{{ $titulo }}</th>
+            @endforeach
+
             @for ($i = 1; $i <= 3; $i++)
-                <th>Objetivo específico {{ $i }}</th>
+                <th style="width: 250px; background-color: #607D8B; color: white; font-weight: bold; font-family: Arial, sans-serif; font-size: 13px; text-transform: uppercase; border: 1px solid #ccc; padding: 8px; text-align: center; vertical-align: middle; white-space: normal; word-break: break-word;">Objetivo específico {{ $i }}</th>
                 @endfor
+
                 @for ($i = 1; $i <= 16; $i++)
-                    <th>Tema semana {{ $i }}</th>
+                    <th style="width: 250px; background-color: #9E9E9E; color: white; font-weight: bold; font-family: Arial, sans-serif; font-size: 13px; text-transform: uppercase; border: 1px solid #ccc; padding: 8px; text-align: center; vertical-align: middle; white-space: normal; word-break: break-word;">Tema semana {{ $i }}</th>
                     @endfor
+
                     @foreach ($percentages as $percentage)
-                    <th>{{ ucfirst(strtolower($percentage->name_percentage)) }}</th>
+                    <th style="width: 250px; background-color: #607D8B; color: white; font-weight: bold; font-family: Arial, sans-serif; font-size: 13px; text-transform: uppercase; border: 1px solid #ccc; padding: 8px; text-align: center; vertical-align: middle; white-space: normal; word-break: break-word;">{{ strtoupper($percentage->name_percentage) }}</th>
                     @endforeach
-                    <th>Docente</th>
+
+                    <th style="width: 250px; background-color: #3F51B5; color: white; font-weight: bold; font-family: Arial, sans-serif; font-size: 13px; text-transform: uppercase; border: 1px solid #ccc; padding: 8px; text-align: center; vertical-align: middle; white-space: normal; word-break: break-word;">Docente</th>
         </tr>
     </thead>
+
     <tbody>
         @foreach ($classrooms as $classroom)
         <tr>
-            <td>{{ ucfirst(strtolower($classroom['relations']['course']['course_code'] ))}}</td>
-            <td>{{ ucfirst(strtolower($classroom['relations']['course']['name_course'] ))}}</td>
+            <td style="border: 1px solid #ccc; padding: 8px; text-align: left; vertical-align: middle; white-space: normal; word-break: break-word;">
+                {{ ucfirst(strtolower($classroom['relations']['course']['course_code'])) }}
+            </td>
+            <td style="border: 1px solid #ccc; padding: 8px; text-align: left; vertical-align: middle; white-space: normal; word-break: break-word;">
+                {{ ucfirst(strtolower($classroom['relations']['course']['name_course'])) }}
+            </td>
+
             @if($classroom['relations']['course']['component'] !== null)
-            <td>{{ ucfirst(strtolower($classroom['relations']['course']['component']['studyField']['name_study_field'] ?? 'No asignado'))}}</td>
-            <td>{{ ucfirst(strtolower($classroom['relations']['course']['component']['name_component'] ?? 'No asignado' ))}}</td>
+            <td style="border: 1px solid #ccc; padding: 8px; text-align: left; vertical-align: middle; white-space: normal; word-break: break-word;">
+                {{ ucfirst(strtolower($classroom['relations']['course']['component']['studyField']['name_study_field'] ?? 'No asignado')) }}
+            </td>
+            <td style="border: 1px solid #ccc; padding: 8px; text-align: left; vertical-align: middle; white-space: normal; word-break: break-word;">
+                {{ ucfirst(strtolower($classroom['relations']['course']['component']['name_component'] ?? 'No asignado')) }}
+            </td>
             @endif
-            <td>{{ ucfirst(strtolower($classroom['relations']['course']['semester']['name_semester'] ))}}</td>
-            <td>{{ $classroom['relations']['course']['credit'] }}</td>
-            <td>{{ ucfirst(strtolower($classroom['relations']['course']['courseType']['name_course_type'] ))}}</td>
-            <td>{{ ucfirst(strtolower($classroom['learningResult']['description_learning_result'] ))}}</td>
-            <td>{{ ucfirst(strtolower($classroom['generalObjective']['description_general_objective'] ))}}</td>
+
+            <td style="border: 1px solid #ccc; padding: 8px; text-align: left; vertical-align: middle; white-space: normal; word-break: break-word;">
+                {{ ucfirst(strtolower($classroom['relations']['course']['semester']['name_semester'])) }}
+            </td>
+            <td style="border: 1px solid #ccc; padding: 8px; text-align: left; vertical-align: middle; white-space: normal; word-break: break-word;">
+                {{ $classroom['relations']['course']['credit'] }}
+            </td>
+            <td style="border: 1px solid #ccc; padding: 8px; text-align: left; vertical-align: middle; white-space: normal; word-break: break-word;">
+                {{ ucfirst(strtolower($classroom['relations']['course']['courseType']['name_course_type'])) }}
+            </td>
+            <td style="border: 1px solid #ccc; padding: 8px; text-align: left; vertical-align: middle; white-space: normal; word-break: break-word;">
+                {{ ucfirst(strtolower($classroom['learningResult']['description_learning_result'])) }}
+            </td>
+            <td style="border: 1px solid #ccc; padding: 8px; text-align: left; vertical-align: middle; white-space: normal; word-break: break-word;">
+                {{ ucfirst(strtolower($classroom['generalObjective']['description_general_objective'])) }}
+            </td>
+
+            @php $countSpecific = 0; @endphp
             @foreach ($specifics as $specific)
             @if($classroom['id'] == $specific['id_classroom_plan'])
-            <td>{{ ucfirst(strtolower($specific['description_specific_objective'] ))}}</td>
+            @php $countSpecific++; @endphp
+            <td style="border: 1px solid #ccc; padding: 8px; text-align: left; vertical-align: middle; white-space: normal; word-break: break-word;">
+                {{ ucfirst(strtolower($specific['description_specific_objective'])) }}
+            </td>
             @endif
             @endforeach
-            @foreach ($specifics as $specific)
-            @if ($classroom['id'] == $specific['id_classroom_plan'])
-            @foreach ($topics as $topic)
-            @if ($specific['id'] == $topic['id_specific_objective'])
-            <td>{{ucfirst(strtolower( $topic['description_topic'] ))}}</td>
-            @endif
-            @endforeach
-            @endif
-            @endforeach
-            @foreach ([1, 2, 3] as $id)
-            <td>
-                @foreach ($evaluationss as $evaluations)
-                @if ($classroom['id'] == $evaluations['id_classroom_plan'])
-                @if ($evaluations['id_percentage'] == $id)
-                {{ ucfirst(strtolower($evaluations['evaluation']['name_evaluation'] ))}} - {{ $evaluations['percentage_number']}}% <br>
-                @endif
+
+            @for ($j = $countSpecific; $j < 3; $j++)
+                <td style="border: 1px solid #ccc; padding: 8px; text-align: left; vertical-align: middle; white-space: normal; word-break: break-word;">
+                </td>
+                @endfor
+
+                @php $countTopics = 0; @endphp
+                @foreach ($specifics as $specific)
+                @if ($classroom['id'] == $specific['id_classroom_plan'])
+                @foreach ($topics as $topic)
+                @if ($specific['id'] == $topic['id_specific_objective'])
+                @php $countTopics++; @endphp
+                <td style="border: 1px solid #ccc; padding: 8px; text-align: left; vertical-align: middle; white-space: normal; word-break: break-word;">
+                    {{ ucfirst(strtolower($topic['description_topic'])) }}
+                </td>
                 @endif
                 @endforeach
-            </td>
-            @endforeach
-            <td>
-                {{ ucfirst(strtolower($classroom['relations']['user']['name'] ?? 'No asignado' ))}} {{ $classroom['relations']['user']['last_name'] ?? '' }}
-            </td>
+                @endif
+                @endforeach
+
+                @for ($j = $countTopics; $j < 16; $j++)
+                    <td style="border: 1px solid #ccc; padding: 8px; text-align: left; vertical-align: middle; white-space: normal; word-break: break-word;">
+                    </td>
+                    @endfor
+
+                    @foreach ([1, 2, 3] as $id)
+                    <td style="border: 1px solid #ccc; padding: 8px; text-align: left; vertical-align: middle; white-space: normal; word-break: break-word;">
+                        @foreach ($evaluationss as $evaluations)
+                        @if ($classroom['id'] == $evaluations['id_classroom_plan'] && $evaluations['id_percentage'] == $id)
+                        {{ ucfirst(strtolower($evaluations['evaluation']['name_evaluation'])) }} - {{ $evaluations['percentage_number'] }}%<br>
+                        @endif
+                        @endforeach
+                    </td>
+                    @endforeach
+
+                    <td style="border: 1px solid #ccc; padding: 8px; text-align: left; vertical-align: middle; white-space: normal; word-break: break-word;">
+                        {{ ucfirst(strtolower($classroom['relations']['user']['name'] ?? 'No asignado')) }} {{ $classroom['relations']['user']['last_name'] ?? '' }}
+                    </td>
         </tr>
         @endforeach
     </tbody>
+
 </table>

@@ -18,6 +18,7 @@ use App\Models\ProfileEgress;
 use App\Models\Program;
 use App\Models\ProgramCourseRelationship;
 use App\Models\Reference;
+use App\Models\RelationUser;
 use App\Models\SpecificObjective;
 use App\Models\State;
 use App\Models\StudyField;
@@ -75,33 +76,35 @@ class ClassroomPlanController extends Controller
             $programId = $request->input('programId');
             $userId = $request->input('userId');
 
-            if ($userId == null) {
-                $relationInfo = ProgramCourseRelationship::where('id_program', $programId)
-                    ->with([
-                        'program.faculty',
-                        'program.educationLevel',
-                        'course.component.studyField',
-                        'course.semester',
-                        'course.courseType',
-                        'user',
-                    ])->orderBy('id')
-                    ->get();
-                $educationId = Program::where('id', $programId)->pluck('id_education_level');
-            } else {
-                $relationInfo = ProgramCourseRelationship::where('id_program', $programId)
-                    ->where('id_user', $userId)
-                    ->with([
-                        'program.faculty',
-                        'program.educationLevel',
-                        'course.component.studyField',
-                        'course.semester',
-                        'course.courseType',
-                        'user',
-                    ])->orderBy('id')
-                    ->get();
-                $educationId = Program::where('id', $programId)->pluck('id_education_level');
-            }
+            $query1 = RelationUser::where('id_user', $userId)->pluck('id_relation');
 
+            // Consulta base
+            $query = ProgramCourseRelationship::where('id_program', $programId)
+                ->with([
+                    'program.faculty',
+                    'program.educationLevel',
+                    'course.component.studyField',
+                    'course.semester',
+                    'course.courseType',
+                ])->orderBy('id');
+
+            // Filtrar por usuario si se envía un userId
+            if ($userId != null) {
+                $query->whereIn('id', $query1);
+            }            
+
+            // Obtener los datos sin duplicados y sin valores null
+            $relationInfo = $query->get()
+                ->unique('course.id') // Mantener solo un curso por ID
+                ->filter(function ($item) {
+                    return $item->course !== null; // Evitar valores null
+                })->values(); // Resetear los índices
+
+            // Obtener el nivel educativo sin valores null
+            $educationId = Program::where('id', $programId)
+                ->whereNotNull('id_education_level')
+                ->pluck('id_education_level');
+            
             return response()->json([
                 'check' => true,
                 'relationInfo' => $relationInfo,
@@ -115,38 +118,38 @@ class ClassroomPlanController extends Controller
         }
     }
 
+
     public function searchCourses(Request $request)
     {
         try {
             $programId = $request->input('programId');
             $educationId = $request->input('educationId');
 
-            if ($programId == null) {
-                $relationInfo = ProgramCourseRelationship::where('id_program', $programId)
-                    ->with([
-                        'program.faculty',
-                        'program.educationLevel',
-                        'course.component.studyField',
-                        'course.semester',
-                        'course.courseType',
-                    ])->orderBy('id')
-                    ->get();
-            } else {
+            // Definir consulta base
+            $query = ProgramCourseRelationship::with([
+                'program.faculty',
+                'program.educationLevel',
+                'course.component.studyField',
+                'course.semester',
+                'course.courseType',
+            ])->orderBy('id');
 
+            if ($programId !== null) {
+                // Obtener programas según el nivel educativo
                 $programsId = Program::where('id_education_level', $educationId)
                     ->where('id', $programId)
                     ->pluck('id');
 
-                $relationInfo = ProgramCourseRelationship::where('id_program', $programsId)
-                    ->with([
-                        'program.faculty',
-                        'program.educationLevel',
-                        'course.component.studyField',
-                        'course.semester',
-                        'course.courseType',
-                    ])->orderBy('id')
-                    ->get();
+                // Filtrar por programas obtenidos
+                $query->whereIn('id_program', $programsId);
             }
+
+            // Obtener resultados y aplicar filtros
+            $relationInfo = $query->get()
+                ->unique('course.id') // Filtra cursos duplicados
+                ->filter(function ($item) {
+                    return $item->course !== null; // Elimina cursos nulos
+                })->values(); // Reindexa la colección
 
             return response()->json([
                 'check' => true,

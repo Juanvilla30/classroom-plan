@@ -618,6 +618,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     educationId: educationId,
                 },
                 success: function (response) {
+                    console.log("Cantidad de cursos obtenidos:", response.relationInfo.length);
+
                     if (programId == null) {
                         viewSelectCampoComun(response)
                     } else if (educationId == 1) {
@@ -880,7 +882,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         $('#modalListCourses').modal('show');
     }
-
 
     // VIEW
     function viewSelectProgram(programInfo, selectElement) {
@@ -1827,6 +1828,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('tablePensum').addEventListener('click', async function (event) {
         if (event.target.classList.contains('pensumSelect')) {
             realtionId = event.target.dataset.id;
+            console.log(realtionId)
             await resetForm();
             await searchInfoCourse(realtionId, typeClassroomId).then(response => {
                 componentId = response;

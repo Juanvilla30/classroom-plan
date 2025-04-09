@@ -82,12 +82,12 @@
                                 </a>
                             </td>
                             <td>
-                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
-                                    data-target="#ModalUpdate" onclick="reloadModal({{ $user->id }})" id="btnmodal-update">
+                                <button id="btn_update" type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                                    data-target="#ModalUpdate" id="btnmodal-update" data-user-id="{{ $user->id }}">
                                     <i class="fas fa-pencil-alt"></i>
                                 </button>
-                                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal"
-                                    data-target="#exampleModalCenter" onclick="setUserId({{ $user->id}})">
+                                <button id="btn_delete" type="button" class="btn btn-danger btn-sm" data-toggle="modal"
+                                    data-target="#modalDelete" data-user-id="{{ $user->id }}">
                                     <i class="fas fa-times"></i>
                                 </button>
                             </td>
@@ -103,7 +103,7 @@
         <!-- Agrega esto en tu sección <head> para cargar Font Awesome -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
-        <!-- Modal -->
+        <!-- Modal create -->
         <form method="POST" action="/user" id="userForm">
             @csrf
             <div class="modal fade" id="addRowModal" tabindex="-1" role="dialog" style="display: none;"
@@ -117,7 +117,7 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <p class="small">asegúrate de completarlos todos los campos correctamente.
+                            <p class="small">Asegúrate de completarlos todos los campos correctamente.
                             </p>
                             <div class="row">
                                 <div class="col-sm-12">
@@ -159,8 +159,22 @@
                                     <div class="form-group form-group-default">
                                         <label>Rol</label>
                                         <select id="addRole" class="form-control" required>
+                                            <option disabled selected value="">Seleccione un rol</option>
                                             @foreach($roles as $rol)
-                                            <option value="{{$rol->id}}">{{$rol->name_role}}</option>
+                                            @if($rol->id != 1)
+                                            <option value="{{ $rol->id }}">{{ ucfirst(strtolower($rol->name_role)) }}</option>
+                                            @endif
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12">
+                                    <div id="programShow" class="form-group form-group-default d-none">
+                                        <label>Programa</label>
+                                        <select id="selectProgram" class="form-control" required>
+                                            <option disabled selected value="">Seleccione un programa</option>
+                                            @foreach($programs as $program)
+                                            <option value="{{ $program->id }}">{{ ucfirst(strtolower($program->name_program)) }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -210,7 +224,7 @@
                                 <div class="col-sm-12">
                                     <div class="form-group form-group-default">
                                         <label>Teléfono</label>
-                                        <input id="updatePhone" type="text" class="form-control" placeholder="Teléfono"
+                                        <input id="updatePhone" type="number" class="form-control" placeholder="Teléfono"
                                             required>
                                     </div>
                                 </div>
@@ -238,13 +252,24 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="col-sm-12">
+                                    <div id="programShowUpdate" class="form-group form-group-default d-none">
+                                        <label>Programa</label>
+                                        <select id="updateProgram" class="form-control" required>
+                                            <option disabled selected value="">Seleccione un programa</option>
+                                            @foreach($programs as $program)
+                                            <option value="{{ $program->id }}">{{ ucfirst(strtolower($program->name_program)) }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer no-bd">
                         <input type="hidden" id="userId">
-                        <button type="button" class="btn btn-primary" id="btn-update"
-                            id="btn-update" data-user-id="{{$user->id}}">Actualizar</button>
+                        <button type="button" class="btn btn-primary" id="btnUpdate"
+                            data-user-id="{{$user->id}}">Actualizar</button>
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
                     </div>
                 </div>
@@ -253,7 +278,7 @@
         <!-- end modal update -->
 
         <!-- Modal eliminate -->
-        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+        <div class="modal fade" id="modalDelete" tabindex="-1" role="dialog"
             aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">

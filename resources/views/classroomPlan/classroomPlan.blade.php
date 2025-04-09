@@ -315,7 +315,7 @@
     <!-- End Card -->
 
     <!-- Card RA -->
-    <div class="card" id="card-1" style="display:block;">
+    <div class="card" id="card-1" style="display:block;">   
 
         <div class="card-header">
             <h5 class="card-title font-weight-bold text-primary">Resultados de aprendizaje</h5>

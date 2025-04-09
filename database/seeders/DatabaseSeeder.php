@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 use App\Models\Role;
+use App\Models\User;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -60,35 +61,35 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Usuarios
-        \App\Models\User::factory()->create([
+        User::create([
             'name' => 'admin',
             'last_name' => 'suport',
             'phone' => '0',
             'email' => 'aulamanager.support@gmail.com',
             'password' => 'admin',
             'id_role' => '1',
-        ]);
+        ]); //1
 
-        \App\Models\User::factory()->create([
+        User::create([
             'name' => 'vicerrector',
-            'last_name' => 'vicerrector',
+            'last_name' => 'vice',
             'phone' => '0',
             'email' => 'vicerrectoria@uniautonoma.edu.co',
             'password' => 'vicerrectoria',
             'id_role' => '2',
-        ]);
+        ]); //2
 
-        \App\Models\User::factory()->create([
-            'name' => 'Zulema Yidney',
-            'last_name' => 'León Escobar',
+        User::create([
+            'name' => 'coordinador',
+            'last_name' => 'software',
             'phone' => '0',
             'email' => 'coordinacion.software@uniautonoma.edu.co',
             'password' => 'coordinacion',
             'id_role' => '3',
             'id_program' => '3',
-        ]);
+        ]); //3
 
-        \App\Models\User::factory()->create([
+        User::create([
             'name' => 'coordinador',
             'last_name' => 'energetica',
             'phone' => '0',
@@ -96,9 +97,9 @@ class DatabaseSeeder extends Seeder
             'password' => 'coordinacion',
             'id_role' => '3',
             'id_program' => '1',
-        ]);
+        ]); //4
 
-        \App\Models\User::factory()->create([
+        User::create([
             'name' => 'coordinador',
             'last_name' => 'especialización en derecho penal',
             'phone' => '0',
@@ -106,39 +107,9 @@ class DatabaseSeeder extends Seeder
             'password' => 'coordinacion',
             'id_role' => '3',
             'id_program' => '13',
-        ]);
+        ]); //5
 
-        \App\Models\User::factory()->create([
-            'name' => 'docente',
-            'last_name' => 'software',
-            'phone' => '0',
-            'email' => 'docente.software@uniautonoma.edu.co',
-            'password' => 'docente',
-            'id_role' => '4',
-            'id_program' => '3',
-        ]);
-
-        \App\Models\User::factory()->create([
-            'name' => 'docente',
-            'last_name' => 'energetica',
-            'phone' => '0',
-            'email' => 'docente.energetica@uniautonoma.edu.co',
-            'password' => 'docente',
-            'id_role' => '4',
-            'id_program' => '1',
-        ]);
-
-        \App\Models\User::factory()->create([
-            'name' => 'docente',
-            'last_name' => 'especialización en derecho penal',
-            'phone' => '0',
-            'email' => 'docente.especializacion.penal@uniautonoma.edu.co',
-            'password' => 'docente',
-            'id_role' => '4',
-            'id_program' => '13',
-        ]);
-
-        \App\Models\User::factory()->create([
+        User::create([
             'name' => 'docente',
             'last_name' => 'campo comun',
             'phone' => '0',
@@ -146,7 +117,197 @@ class DatabaseSeeder extends Seeder
             'password' => 'docente',
             'id_role' => '4',
             'id_program' => null,
-        ]);
+        ]); //6
+
+        User::create([
+            'name' => 'Juan Pablo',
+            'last_name' => 'Diago Rodriguez',
+            'phone' => '0',
+            'email' => 'juan.diago.r@uniautonoma.edu.co',
+            'password' => 'docente',
+            'id_role' => '4',
+            'id_program' => '3',
+        ]); //7
+
+        User::create([
+            'name' => 'Zulema Yidney',
+            'last_name' => 'León Escobar',
+            'phone' => '0',
+            'email' => 'zulema.leon.e@uniautonoma.edu.co',
+            'password' => 'docente',
+            'id_role' => '4',
+            'id_program' => '3',
+        ]); //8
+
+        User::create([
+            'name' => 'Carlos Antonio',
+            'last_name' => 'Flores Arias',
+            'phone' => '0',
+            'email' => 'carlos.antonio.f@uniautonoma.edu.co',
+            'password' => 'docente',
+            'id_role' => '4',
+            'id_program' => '3',
+        ]); //9
+
+        User::create([
+            'name' => 'Jose Fernando',
+            'last_name' => 'Concha',
+            'phone' => '0',
+            'email' => 'jose.fernando.c@uniautonoma.edu.co',
+            'password' => 'docente',
+            'id_role' => '4',
+            'id_program' => '3',
+        ]); //10
+
+        User::create([
+            'name' => 'Cristian',
+            'last_name' => 'Cañar',
+            'phone' => '0',
+            'email' => 'cristian.canar@uniautonoma.edu.co',
+            'password' => 'docente',
+            'id_role' => '4',
+            'id_program' => '3',
+        ]); //11
+
+        User::create([
+            'name' => 'Ana María',
+            'last_name' => 'Caviedes Castillo',
+            'phone' => '0',
+            'email' => 'ana.caviedes.c@uniautonoma.edu.co',
+            'password' => 'docente',
+            'id_role' => '4',
+            'id_program' => '3',
+        ]); //12
+
+        User::create([
+            'name' => 'Diego Fernando',
+            'last_name' => 'Prado Osorio',
+            'phone' => '0',
+            'email' => 'diego.prado.o@uniautonoma.edu.co',
+            'password' => 'docente',
+            'id_role' => '4',
+            'id_program' => '3',
+        ]); //13
+
+        User::create([
+            'name' => 'Jose Guerlly',
+            'last_name' => 'Lara Anaya',
+            'phone' => '0',
+            'email' => 'jose.lara.a@uniautonoma.edu.co',
+            'password' => 'docente',
+            'id_role' => '4',
+            'id_program' => '3',
+        ]); //14
+
+        User::create([
+            'name' => 'Ana Gabriela',
+            'last_name' => 'Fernandez Morantes',
+            'phone' => '0',
+            'email' => 'ana.fernandez.m@uniautonoma.edu.co',
+            'password' => 'docente',
+            'id_role' => '4',
+            'id_program' => '3',
+        ]); //15
+
+        User::create([
+            'name' => 'Santiago',
+            'last_name' => 'Muñoz de la Rosa',
+            'phone' => '0',
+            'email' => 'santiago.muñoz.r@uniautonoma.edu.co',
+            'password' => 'docente',
+            'id_role' => '4',
+            'id_program' => '3',
+        ]); //16
+
+        User::create([
+            'name' => 'Julián',
+            'last_name' => 'Bermúdez',
+            'phone' => '0',
+            'email' => 'julian.bermudez.d@uniautonoma.edu.co',
+            'password' => 'docente',
+            'id_role' => '4',
+            'id_program' => '3',
+        ]); //17
+
+        User::create([
+            'name' => 'Angela Maria',
+            'last_name' => 'Romero Arias',
+            'phone' => '0',
+            'email' => 'angela.romero.a@uniautonoma.edu.co',
+            'password' => 'docente',
+            'id_role' => '4',
+            'id_program' => '3',
+        ]); //18
+
+        User::create([
+            'name' => 'Victor Hugo',
+            'last_name' => 'Ruiz Guachetá',
+            'phone' => '0',
+            'email' => 'victor.ruiz.g@uniautonoma.edu.co',
+            'password' => 'docente',
+            'id_role' => '4',
+            'id_program' => '3',
+        ]); //19
+
+        User::create([
+            'name' => 'Jose Orlando',
+            'last_name' => 'Ante',
+            'phone' => '0',
+            'email' => 'Jose.orlando.a@uniautonoma.edu.co',
+            'password' => 'docente',
+            'id_role' => '4',
+            'id_program' => '3',
+        ]); //20
+
+        User::create([
+            'name' => 'Oscar Alexander',
+            'last_name' => 'Tobar M',
+            'phone' => '0',
+            'email' => 'oscar.tobar.m@uniautonoma.edu.co',
+            'password' => 'docente',
+            'id_role' => '4',
+            'id_program' => '3',
+        ]); //21
+
+        User::create([
+            'name' => 'Diego',
+            'last_name' => 'Vasquez',
+            'phone' => '0',
+            'email' => 'diego.vasquez.d@uniautonoma.edu.co',
+            'password' => 'docente',
+            'id_role' => '4',
+            'id_program' => '3',
+        ]); //22
+
+        User::create([
+            'name' => 'Nohora Lucia',
+            'last_name' => 'Urbano',
+            'phone' => '0',
+            'email' => 'nohora.lucia.u@uniautonoma.edu.co',
+            'password' => 'docente',
+            'id_role' => '4',
+            'id_program' => '3',
+        ]); //23
+
+        User::create([
+            'name' => 'Natalia',
+            'last_name' => 'Reyes',
+            'phone' => '0',
+            'email' => 'natalia.reyes.d@uniautonoma.edu.co',
+            'password' => 'docente',
+            'id_role' => '4',
+            'id_program' => '3',
+        ]); //24
+
+        User::create([
+            'name' => 'Valentina Arciniegas',
+            'last_name' => 'Solarte',
+            'phone' => '0',
+            'email' => 'valentina.solarte.d@uniautonoma.edu.co',
+            'password' => 'docente',
+            'id_role' => '4',
+            'id_program' => '3',
+        ]); //25
 
         // Atributos usuario
         DB::table('user_attributes')->insert([
@@ -272,6 +433,7 @@ class DatabaseSeeder extends Seeder
             ['id' => 57, 'name_course' => 'electiva IV (especializada)', 'credit' => 3, 'id_modality' => 1, 'id_component' => 16, 'id_semester' => 9, 'id_course_type' => 2, 'course_code' => '12190942', 'pretential_time' => null, 'independent_time' => null],
             ['id' => 58, 'name_course' => 'electiva VI (especializada)', 'credit' => 3, 'id_modality' => 1, 'id_component' => 16, 'id_semester' => 9, 'id_course_type' => 2, 'course_code' => '12190943', 'pretential_time' => null, 'independent_time' => null],
             ['id' => 59, 'name_course' => 'inteligencia social y pensamiento critico', 'credit' => 2, 'id_modality' => 1, 'id_component' => 5, 'id_semester' => 9, 'id_course_type' => 1, 'course_code' => '12190944', 'pretential_time' => null, 'independent_time' => null],
+
             ['id' => 60, 'name_course' => 'Desarrollo de la Ciencia del Derecho Penal', 'credit' => 3, 'id_modality' => 1, 'id_component' => null, 'id_semester' => 1, 'id_course_type' => 3, 'course_code' => 'E14150101', 'pretential_time' => null, 'independent_time' => null],
             ['id' => 61, 'name_course' => 'Constitución y Fuentes del Derecho Penal', 'credit' => 2, 'id_modality' => 1, 'id_component' => null, 'id_semester' => 1, 'id_course_type' => 3, 'course_code' => 'E14150102', 'pretential_time' => null, 'independent_time' => null],
             ['id' => 62, 'name_course' => 'Tipicidad e Imputación Objetiva', 'credit' => 2, 'id_modality' => 1, 'id_component' => null, 'id_semester' => 1, 'id_course_type' => 3, 'course_code' => 'E14150103', 'pretential_time' => null, 'independent_time' => null],
@@ -285,92 +447,202 @@ class DatabaseSeeder extends Seeder
             ['id' => 70, 'name_course' => 'Electiva', 'credit' => 2, 'id_modality' => 2, 'id_component' => null, 'id_semester' => 2, 'id_course_type' => 3, 'course_code' => 'E14150211', 'pretential_time' => null, 'independent_time' => null],
         ]);
 
-        // Relacion
+        //Relations programs and courses
         DB::table('programs_courses_relationships')->insert([
-            ['id' => 1, 'id_program' => 3, 'id_user' => 6, 'id_course' => 1],
-            ['id' => 2, 'id_program' => 3, 'id_user' => 6, 'id_course' => 2],
-            ['id' => 3, 'id_program' => 3, 'id_user' => 6, 'id_course' => 3],
-            ['id' => 4, 'id_program' => 3, 'id_user' => null, 'id_course' => 7],
-            ['id' => 5, 'id_program' => 3, 'id_user' => null, 'id_course' => 8],
-            ['id' => 6, 'id_program' => 3, 'id_user' => null, 'id_course' => 9],
-            ['id' => 7, 'id_program' => 3, 'id_user' => null, 'id_course' => 10],
-            ['id' => 8, 'id_program' => 3, 'id_user' => null, 'id_course' => 14],
-            ['id' => 9, 'id_program' => 3, 'id_user' => null, 'id_course' => 15],
-            ['id' => 10, 'id_program' => 3, 'id_user' => null, 'id_course' => 16],
-            ['id' => 11, 'id_program' => 3, 'id_user' => null, 'id_course' => 18],
-            ['id' => 12, 'id_program' => 3, 'id_user' => null, 'id_course' => 20],
-            ['id' => 13, 'id_program' => 3, 'id_user' => null, 'id_course' => 21],
-            ['id' => 14, 'id_program' => 3, 'id_user' => null, 'id_course' => 22],
-            ['id' => 15, 'id_program' => 3, 'id_user' => null, 'id_course' => 23],
-            ['id' => 16, 'id_program' => 3, 'id_user' => null, 'id_course' => 26],
-            ['id' => 17, 'id_program' => 3, 'id_user' => null, 'id_course' => 27],
-            ['id' => 18, 'id_program' => 3, 'id_user' => null, 'id_course' => 28],
-            ['id' => 19, 'id_program' => 3, 'id_user' => null, 'id_course' => 29],
-            ['id' => 20, 'id_program' => 3, 'id_user' => null, 'id_course' => 30],
-            ['id' => 21, 'id_program' => 3, 'id_user' => null, 'id_course' => 32],
-            ['id' => 22, 'id_program' => 3, 'id_user' => null, 'id_course' => 33],
-            ['id' => 23, 'id_program' => 3, 'id_user' => null, 'id_course' => 34],
-            ['id' => 24, 'id_program' => 3, 'id_user' => null, 'id_course' => 35],
-            ['id' => 25, 'id_program' => 3, 'id_user' => null, 'id_course' => 36],
-            ['id' => 26, 'id_program' => 3, 'id_user' => null, 'id_course' => 37],
-            ['id' => 27, 'id_program' => 3, 'id_user' => null, 'id_course' => 39],
-            ['id' => 28, 'id_program' => 3, 'id_user' => null, 'id_course' => 40],
-            ['id' => 29, 'id_program' => 3, 'id_user' => null, 'id_course' => 41],
-            ['id' => 30, 'id_program' => 3, 'id_user' => null, 'id_course' => 42],
-            ['id' => 31, 'id_program' => 3, 'id_user' => null, 'id_course' => 43],
-            ['id' => 32, 'id_program' => 3, 'id_user' => null, 'id_course' => 46],
-            ['id' => 33, 'id_program' => 3, 'id_user' => null, 'id_course' => 47],
-            ['id' => 34, 'id_program' => 3, 'id_user' => null, 'id_course' => 48],
-            ['id' => 35, 'id_program' => 3, 'id_user' => null, 'id_course' => 49],
-            ['id' => 36, 'id_program' => 3, 'id_user' => null, 'id_course' => 50],
-            ['id' => 37, 'id_program' => 3, 'id_user' => null, 'id_course' => 53],
-            ['id' => 38, 'id_program' => 3, 'id_user' => null, 'id_course' => 54],
-            ['id' => 39, 'id_program' => 3, 'id_user' => null, 'id_course' => 55],
-            ['id' => 40, 'id_program' => 3, 'id_user' => null, 'id_course' => 56],
-            ['id' => 41, 'id_program' => 3, 'id_user' => null, 'id_course' => 57],
-            ['id' => 42, 'id_program' => 3, 'id_user' => null, 'id_course' => 58],
-            ['id' => 43, 'id_program' => null, 'id_user' => 9, 'id_course' => 4],
-            ['id' => 44, 'id_program' => null, 'id_user' => 9, 'id_course' => 5],
-            ['id' => 45, 'id_program' => null, 'id_user' => null, 'id_course' => 6],
-            ['id' => 46, 'id_program' => null, 'id_user' => null, 'id_course' => 11],
-            ['id' => 47, 'id_program' => null, 'id_user' => null, 'id_course' => 12],
-            ['id' => 48, 'id_program' => null, 'id_user' => null, 'id_course' => 13],
-            ['id' => 49, 'id_program' => null, 'id_user' => null, 'id_course' => 19],
-            ['id' => 50, 'id_program' => null, 'id_user' => null, 'id_course' => 24],
-            ['id' => 51, 'id_program' => null, 'id_user' => null, 'id_course' => 25],
-            ['id' => 52, 'id_program' => null, 'id_user' => null, 'id_course' => 31],
-            ['id' => 53, 'id_program' => null, 'id_user' => null, 'id_course' => 38],
-            ['id' => 54, 'id_program' => null, 'id_user' => null, 'id_course' => 44],
-            ['id' => 55, 'id_program' => null, 'id_user' => null, 'id_course' => 45],
-            ['id' => 56, 'id_program' => null, 'id_user' => null, 'id_course' => 51],
-            ['id' => 57, 'id_program' => null, 'id_user' => null, 'id_course' => 52],
-            ['id' => 58, 'id_program' => null, 'id_user' => null, 'id_course' => 59],
-            ['id' => 59, 'id_program' => 13, 'id_user' => 8, 'id_course' => 60],
-            ['id' => 60, 'id_program' => 13, 'id_user' => 8, 'id_course' => 61],
-            ['id' => 61, 'id_program' => 13, 'id_user' => null, 'id_course' => 62],
-            ['id' => 62, 'id_program' => 13, 'id_user' => null, 'id_course' => 63],
-            ['id' => 63, 'id_program' => 13, 'id_user' => null, 'id_course' => 64],
-            ['id' => 64, 'id_program' => 13, 'id_user' => null, 'id_course' => 65],
-            ['id' => 65, 'id_program' => 13, 'id_user' => null, 'id_course' => 66],
-            ['id' => 67, 'id_program' => 13, 'id_user' => null, 'id_course' => 67],
-            ['id' => 68, 'id_program' => 13, 'id_user' => null, 'id_course' => 68],
-            ['id' => 69, 'id_program' => 13, 'id_user' => null, 'id_course' => 69],
-            ['id' => 70, 'id_program' => 13, 'id_user' => null, 'id_course' => 70],
-            ['id' => 71, 'id_program' => 1, 'id_user' => 7, 'id_course' => 1],
-            ['id' => 72, 'id_program' => 1, 'id_user' => null, 'id_course' => 10],
+            ['id' => 1, 'id_program' => 3, 'id_course' => 1],
+            ['id' => 2, 'id_program' => 3, 'id_course' => 2],
+            ['id' => 3, 'id_program' => 3, 'id_course' => 3],
+            ['id' => 4, 'id_program' => 3, 'id_course' => 7],
+            ['id' => 5, 'id_program' => 3, 'id_course' => 8],
+            ['id' => 6, 'id_program' => 3, 'id_course' => 9],
+            ['id' => 7, 'id_program' => 3, 'id_course' => 10],
+            ['id' => 8, 'id_program' => 3, 'id_course' => 14],
+            ['id' => 9, 'id_program' => 3, 'id_course' => 15],
+            ['id' => 10, 'id_program' => 3, 'id_course' => 16],
+            ['id' => 11, 'id_program' => 3, 'id_course' => 17],
+            ['id' => 12, 'id_program' => 3, 'id_course' => 18],
+            ['id' => 13, 'id_program' => 3, 'id_course' => 20],
+            ['id' => 14, 'id_program' => 3, 'id_course' => 21],
+            ['id' => 15, 'id_program' => 3, 'id_course' => 22],
+            ['id' => 16, 'id_program' => 3, 'id_course' => 23],
+            ['id' => 17, 'id_program' => 3, 'id_course' => 26],
+            ['id' => 18, 'id_program' => 3, 'id_course' => 27],
+            ['id' => 19, 'id_program' => 3, 'id_course' => 28],
+            ['id' => 20, 'id_program' => 3, 'id_course' => 29],
+            ['id' => 21, 'id_program' => 3, 'id_course' => 30],
+            ['id' => 22, 'id_program' => 3, 'id_course' => 32],
+            ['id' => 23, 'id_program' => 3, 'id_course' => 33],
+            ['id' => 24, 'id_program' => 3, 'id_course' => 34],
+            ['id' => 25, 'id_program' => 3, 'id_course' => 35],
+            ['id' => 26, 'id_program' => 3, 'id_course' => 36],
+            ['id' => 27, 'id_program' => 3, 'id_course' => 37],
+            ['id' => 28, 'id_program' => 3, 'id_course' => 39],
+            ['id' => 29, 'id_program' => 3, 'id_course' => 40],
+            ['id' => 30, 'id_program' => 3, 'id_course' => 41],
+            ['id' => 31, 'id_program' => 3, 'id_course' => 42],
+            ['id' => 32, 'id_program' => 3, 'id_course' => 43],
+            ['id' => 33, 'id_program' => 3, 'id_course' => 46],
+            ['id' => 34, 'id_program' => 3, 'id_course' => 47],
+            ['id' => 35, 'id_program' => 3, 'id_course' => 48],
+            ['id' => 36, 'id_program' => 3, 'id_course' => 49],
+            ['id' => 37, 'id_program' => 3, 'id_course' => 50],
+            ['id' => 38, 'id_program' => 3, 'id_course' => 53],
+            ['id' => 39, 'id_program' => 3, 'id_course' => 54],
+            ['id' => 40, 'id_program' => 3, 'id_course' => 55],
+            ['id' => 41, 'id_program' => 3, 'id_course' => 56],
+            ['id' => 42, 'id_program' => 3, 'id_course' => 57],
+            ['id' => 43, 'id_program' => 3, 'id_course' => 58],
+
+            ['id' => 44, 'id_program' => null, 'id_course' => 4],
+            ['id' => 45, 'id_program' => null, 'id_course' => 5],
+            ['id' => 46, 'id_program' => null, 'id_course' => 6],
+            ['id' => 47, 'id_program' => null, 'id_course' => 11],
+            ['id' => 48, 'id_program' => null, 'id_course' => 12],
+            ['id' => 49, 'id_program' => null, 'id_course' => 13],
+            ['id' => 50, 'id_program' => null, 'id_course' => 19],
+            ['id' => 51, 'id_program' => null, 'id_course' => 24],
+            ['id' => 52, 'id_program' => null, 'id_course' => 25],
+            ['id' => 53, 'id_program' => null, 'id_course' => 31],
+            ['id' => 54, 'id_program' => null, 'id_course' => 38],
+            ['id' => 55, 'id_program' => null, 'id_course' => 44],
+            ['id' => 56, 'id_program' => null, 'id_course' => 45],
+            ['id' => 57, 'id_program' => null, 'id_course' => 51],
+            ['id' => 58, 'id_program' => null, 'id_course' => 52],
+            ['id' => 59, 'id_program' => null, 'id_course' => 59],
+
+            ['id' => 60, 'id_program' => 13, 'id_course' => 60],
+            ['id' => 61, 'id_program' => 13, 'id_course' => 61],
+            ['id' => 62, 'id_program' => 13, 'id_course' => 62],
+            ['id' => 63, 'id_program' => 13, 'id_course' => 63],
+            ['id' => 64, 'id_program' => 13, 'id_course' => 64],
+            ['id' => 65, 'id_program' => 13, 'id_course' => 65],
+            ['id' => 66, 'id_program' => 13, 'id_course' => 66],
+            ['id' => 67, 'id_program' => 13, 'id_course' => 67],
+            ['id' => 68, 'id_program' => 13, 'id_course' => 68],
+            ['id' => 69, 'id_program' => 13, 'id_course' => 69],
+            ['id' => 70, 'id_program' => 13, 'id_course' => 70],
+        ]);
+
+        //Relation user
+        DB::table('relations_users')->insert([
+            ['id_relation' => null, 'id_user' => 7],
+            ['id_relation' => 37, 'id_user' => 7],
+
+            ['id_relation' => 12, 'id_user' => 8],  // For course 18
+            ['id_relation' => 39, 'id_user' => 8],  // For course 54
+            ['id_relation' => 26, 'id_user' => 8],  // For course 36
+            ['id_relation' => 42, 'id_user' => 8],  // For course 57
+
+            ['id_relation' => 52, 'id_user' => 9],  // id_course 25 
+            ['id_relation' => null, 'id_user' => 9],  // id_course null
+            ['id_relation' => 11, 'id_user' => 9],  // id_course 17 
+            ['id_relation' => 23, 'id_user' => 9],  // id_course 33 
+            ['id_relation' => null, 'id_user' => 9],  // id_course null
+            ['id_relation' => 40, 'id_user' => 9],  // id_course 55 
+            ['id_relation' => 29, 'id_user' => 9],  // id_course 40 
+
+            ['id_relation' => 7, 'id_user' => 10],   // id_course => 10
+            ['id_relation' => 35, 'id_user' => 10],  // id_course => 48
+            ['id_relation' => 16, 'id_user' => 10],  // id_course => 23
+            ['id_relation' => 3, 'id_user' => 10],   // id_course => 3
+            ['id_relation' => 17, 'id_user' => 10],  // id_course => 26
+            ['id_relation' => null, 'id_user' => 10], // id_course => null
+
+            ['id_relation' => 20, 'id_user' => 11], // id_course => 29
+            ['id_relation' => 26, 'id_user' => 11], // id_course => 36
+            ['id_relation' => 12, 'id_user' => 11], // id_course => 18
+            ['id_relation' => 41, 'id_user' => 11], // id_course => 56
+            ['id_relation' => 3,  'id_user' => 11], // id_course => 3
+
+            ['id_relation' => 15, 'id_user' => 12], // id_course => 22
+            ['id_relation' => 19, 'id_user' => 12], // id_course => 28
+            ['id_relation' => 21, 'id_user' => 12], // id_course => 30
+            ['id_relation' => 27, 'id_user' => 12], // id_course => 37
+            ['id_relation' => 32, 'id_user' => 12], // id_course => 43
+            ['id_relation' => 34, 'id_user' => 12], // id_course => 47
+            ['id_relation' => 31, 'id_user' => 12], // id_course => 42
+
+            ['id_relation' => 24, 'id_user' => 13], // id_course => 34
+            ['id_relation' => 41, 'id_user' => 13], // id_course => 56
+            ['id_relation' => 2,  'id_user' => 13], // id_course => 2
+            ['id_relation' => 28, 'id_user' => 13], // id_course => 39
+            ['id_relation' => 3,  'id_user' => 13], // id_course => 3
+            ['id_relation' => 9,  'id_user' => 13], // id_course => 15
+            ['id_relation' => 18, 'id_user' => 13], // id_course => 27
+            ['id_relation' => 19, 'id_user' => 13], // id_course => 28
+
+            ['id_relation' => 14, 'id_user' => 14], // id_course => 21
+            ['id_relation' => 15, 'id_user' => 14], // id_course => 22
+            ['id_relation' => 30, 'id_user' => 14], // id_course => 41
+            ['id_relation' => 33, 'id_user' => 14], // id_course => 46
+            ['id_relation' => 11, 'id_user' => 14], // id_course => 17
+            ['id_relation' => 3,  'id_user' => 14], // id_course => 3
+
+            ['id_relation' => 21, 'id_user' => 15], // id_course => 30
+            ['id_relation' => 20, 'id_user' => 15], // id_course => 29
+            ['id_relation' => 18, 'id_user' => 15], // id_course => 27
+            ['id_relation' => 45, 'id_user' => 15], // id_course => 5 
+            ['id_relation' => 7,  'id_user' => 15], // id_course => 10
+
+            ['id_relation' => 38, 'id_user' => 16], // id_course => 53
+
+            ['id_relation' => 43, 'id_user' => 17], // id_course => 58
+
+            ['id_relation' => 36, 'id_user' => 18], // id_course => 49
+
+            ['id_relation' => null, 'id_user' => 19], // id_course => null
+            ['id_relation' => 13,   'id_user' => 19], // id_course => 20
+            ['id_relation' => null, 'id_user' => 19], // id_course => null
+            ['id_relation' => 9,    'id_user' => 19], // id_course => 15
+
+            ['id_relation' => null, 'id_user' => 20], // id_course => null
+            ['id_relation' => 1,    'id_user' => 20], // id_course => 1
+            ['id_relation' => 5,    'id_user' => 20], // id_course => 8
+            ['id_relation' => null, 'id_user' => 20], // id_course => null
+            ['id_relation' => null, 'id_user' => 20], // id_course => null
+
+            ['id_relation' => 8,    'id_user' => 21], // id_course => 14
+            ['id_relation' => null, 'id_user' => 21], // id_course => null
+            ['id_relation' => 22,   'id_user' => 21], // id_course => 32
+            ['id_relation' => 9,    'id_user' => 21], // id_course => 15
+            ['id_relation' => null, 'id_user' => 21], // id_course => null
+
+            ['id_relation' => 4,    'id_user' => 22], // id_course => 7
+            ['id_relation' => null, 'id_user' => 22], // id_course => null
+            ['id_relation' => null, 'id_user' => 22], // id_course => null
+            ['id_relation' => 8,    'id_user' => 22], // id_course => 14
+
+            ['id_relation' => 17,   'id_user' => 23], // id_course => 26
+            ['id_relation' => null, 'id_user' => 23], // id_course => null
+            ['id_relation' => null, 'id_user' => 23], // id_course => null
+            ['id_relation' => null, 'id_user' => 23], // id_course => null
+
+            ['id_relation' => 2,    'id_user' => 24], // id_course => 2 
+            ['id_relation' => 3,    'id_user' => 24], // id_course => 3 
+            ['id_relation' => null, 'id_user' => 24], // id_course => null
+            ['id_relation' => null, 'id_user' => 24], // id_course => null
+            ['id_relation' => null, 'id_user' => 24], // id_course => null
+            ['id_relation' => 5,    'id_user' => 24], // id_course => 8 
+
+            ['id_relation' => 1,    'id_user' => 25], // id_course => 1 
+            ['id_relation' => 6,    'id_user' => 25], // id_course => 9
+            ['id_relation' => null, 'id_user' => 25], // id_course => null
+            ['id_relation' => 1,    'id_user' => 25], // id_course => 1 
+            ['id_relation' => null, 'id_user' => 25], // id_course => null
+            ['id_relation' => 5,    'id_user' => 25], // id_course => 8 
         ]);
 
         // Evaluaciones
         DB::table('evaluations')->insert([
-            ['id' => 1, 'name_evaluation' => 'actividad 1', 'id_course_type' => 1],
-            ['id' => 2, 'name_evaluation' => 'actividad 2', 'id_course_type' => 1],
-            ['id' => 3, 'name_evaluation' => 'actividad 3', 'id_course_type' => 1],
-            ['id' => 4, 'name_evaluation' => 'tarea 1', 'id_course_type' => 2],
-            ['id' => 5, 'name_evaluation' => 'tarea 2', 'id_course_type' => 2],
-            ['id' => 6, 'name_evaluation' => 'tarea 3', 'id_course_type' => 2],
-            ['id' => 4, 'name_evaluation' => 'taller 1', 'id_course_type' => 3],
-            ['id' => 5, 'name_evaluation' => 'taller 2', 'id_course_type' => 3],
-            ['id' => 6, 'name_evaluation' => 'taller 3', 'id_course_type' => 3],
+            ['name_evaluation' => 'actividad 1', 'id_course_type' => 1],
+            ['name_evaluation' => 'actividad 2', 'id_course_type' => 1],
+            ['name_evaluation' => 'actividad 3', 'id_course_type' => 1],
+            ['name_evaluation' => 'tarea 1', 'id_course_type' => 2],
+            ['name_evaluation' => 'tarea 2', 'id_course_type' => 2],
+            ['name_evaluation' => 'tarea 3', 'id_course_type' => 2],
+            ['name_evaluation' => 'taller 1', 'id_course_type' => 3],
+            ['name_evaluation' => 'taller 2', 'id_course_type' => 3],
+            ['name_evaluation' => 'taller 3', 'id_course_type' => 3],
         ]);
 
         // Porcentajes

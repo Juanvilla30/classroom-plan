@@ -169,33 +169,37 @@
 <body>
     <div class="container">
         <div class="header">
-            <h2>FORMATO PLAN DE AULA</h2>
             <center><img src="{{ public_path('img/logo_pdf.jpg') }}"  height="100"/></center>
+            <h2>FORMATO PLAN DE AULA</h2>
             @if($classroom->relations->id_program !== null)
             <p>Campo: {{$classroom->relations->program->degree_type}} <strong>Formación Académica</strong></p>
             @else
             <p>Campo: comun <strong>Formación Académica</strong></p>
             @endif
-            <a>Código: {{$classroom->relations->course->course_code}}| Versión: 2 | Fecha: {{ date('d-m-Y')}}</a>
+            <a>Código: 0001| Versión: 1 | Fecha: {{ date('d-m-Y')}}</a>
         </div>
 
         <table class="info-table">
             <!--
-            @if($classroom->relations->id_program !== null)
             <tr>
                 <th>FACULTAD</th>
                 <td>{{ucfirst(strtolower($classroom->relations->program->faculty->name_faculty ?? 'No asignado'))}}</td>
             </tr>
+            -->
+            <tr>
+                <th>CÓDIGO DEL CURSO</th>
+                <td>{{$classroom->relations->course->course_code}}</td>
+            </tr>
+            <tr>
+                <th>NOMBRE DEL CURSO</th>
+                <td>{{ucfirst(strtolower($classroom->relations->course->name_course ?? 'No asignado'))}}</td>
+            </tr>
+            @if($classroom->relations->id_program !== null)
             <tr>
                 <th>PROGRAMA</th>
                 <td>{{ucfirst(strtolower($classroom->relations->program->name_program ?? 'No asignado'))}}</td>
             </tr>
             @endif
-            -->
-            <tr>
-                <th>NOMBRE DEL CURSO</th>
-                <td>{{ucfirst(strtolower($classroom->relations->course->name_course ?? 'No asignado'))}}</td>
-            </tr>
             <tr>
                 <th>SEMESTRE</th>
                 <td>{{ucfirst(strtolower($classroom->relations->course->semester->name_semester ?? 'No asignado'))}}
@@ -208,6 +212,11 @@
             </tr>
             -->
             @if($classroom->relations->course->component !== null)
+            <tr>
+                <th>CAMPO</th>
+                <td>{{ ucfirst(strtolower($classroom->relations->course->component->studyField->name_study_field ?? 'No asignado')) }}
+                </td>
+            </tr>
             <tr>
                 <th>COMPONENTE</th>
                 <td>{{ ucfirst(strtolower($classroom->relations->course->component->name_component ?? 'No asignado')) }}
@@ -237,38 +246,6 @@
                 <td style="text-align: center;">0</td>
             </tr>
         </table>
-        
-        <!--
-        <table class="table">
-            <tr>
-                <th colspan="2" class="section-title">PERFIL DEL DOCENTE GENÉRICO</th>
-            </tr>
-            <tr>
-                <th>PROFESION</th>
-                @if(!empty($atributesUser))
-                <td>{{ ucfirst(strtolower($atributesUser->profession ?? 'No asignado'))}}</td>
-                @else
-                <td>No asignado</td>
-                @endif
-            </tr>
-            <tr>
-                <th>ESTUDIOS DE POSTGRADO</th>
-                @if(!empty($atributesUser))
-                <td>{{ ucfirst(strtolower($atributesUser->postgraduate_studies ?? 'No asignado'))}}</td>
-                @else
-                <td>No asignado</td>
-                @endif
-            </tr>
-            <tr>
-                <th>COMPETENCIAS ESPECÍFICAS</th>
-                @if(!empty($atributesUser))
-                <td>{{ ucfirst(strtolower($atributesUser->specific_competences ?? 'No asignado'))}}</td>
-                @else
-                <td>No asignado</td>
-                @endif
-            </tr>
-        </table>
-        --->
         
         <table class="table">
             <tr>

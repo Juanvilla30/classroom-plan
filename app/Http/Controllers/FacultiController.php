@@ -65,44 +65,27 @@ class FacultiController extends Controller
     {
         try {
 
-
             $classroomPlans = ClassroomPlan::where('id', $id)
                 ->with([
                     'relations.course.component.studyField',
                     'relations.course.semester',
                     'relations.course.courseType',
                     'relations.program.faculty',
-                    'relations.user',
                     'learningResult.competence',
                     'generalObjective',
                 ])
                 ->orderBy('id')
                 ->get();
 
-                
-
-            $classromRelationId = $classroomPlans->pluck('id_relations');
-
-            $userId = ProgramCourseRelationship::where('id', $classromRelationId)
-                ->pluck('id_user');
-
-            if($userId !== null){
-                $atributesUserInfo = UserAttributes::where('id_user', $userId)
-                ->orderBy('id')
-                ->get();
-            }
-
-            // dd($userId);
-            
             $evaluationsId = AssignmentEvaluation::where('id_classroom_plan', $id)
                 ->with('evaluation', 'percentage')
                 ->orderBy('id_percentage')
                 ->get();
-            
+
             $referencesId = Reference::where('id_classroom_plan', $id)
                 ->orderBy('id')
                 ->get();
-            
+
             $specifics = SpecificObjective::where('id_classroom_plan', $id)
                 ->orderBy('id')
                 ->get();
@@ -122,13 +105,11 @@ class FacultiController extends Controller
             $dompdf = new Dompdf($options);
 
             $html = view('documents.exportPdf', [
-                'classroom' => $classroomPlans->first(),  
+                'classroom' => $classroomPlans->first(),
                 'evaluations' => $evaluationsId,
                 'references' => $referencesId,
                 'specifics' => $specificsArray,
                 'topics' => $topicsId,
-                'user' => $userId,
-                'atributesUser' => $atributesUserInfo->first(),
             ])->render();
 
             $dompdf->LoadHtml($html); //renderisa el html a pdf
@@ -164,7 +145,6 @@ class FacultiController extends Controller
                     'relations.course.semester',
                     'relations.course.courseType',
                     'relations.program.faculty',
-                    'relations.user',
                     'learningResult.competence',
                     'generalObjective',
                 ])
@@ -213,7 +193,4 @@ class FacultiController extends Controller
             Log::error('Error en export: ' . $th->getMessage());
         }
     }
-
-
-    
 }

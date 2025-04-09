@@ -1,13 +1,37 @@
-//Create
-document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("addRowButton").addEventListener("click", function () {
+// Configurar el token CSRF para todas las solicitudes AJAX
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+
+/*
+    *
+    * VARIABLES
+    *
+*/
+
+// IDS
+let rolId;
+let programId;
+let userId;
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    /*
+        *
+        * FUNCIONES
+        *
+    */
+
+    function validation(programId) {
         const name = document.getElementById("addName").value.trim();
         const last_name = document.getElementById("addLastName").value.trim();
         const email = document.getElementById("addEmail").value.trim();
         const password = document.getElementById("addPassword").value.trim();
         const phone = document.getElementById("addPhone").value.trim();
         const idRol = document.getElementById("addRole").value.trim();
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+        programId = document.getElementById("selectProgram").value.trim();
 
         // Validación de campos vacíos
         let missingFields = [];
@@ -17,34 +41,84 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!password) missingFields.push("Contraseña");
         if (!phone) missingFields.push("Teléfono");
         if (!idRol) missingFields.push("Rol");
-
+        
         if (missingFields.length > 0) {
             Swal.fire({
                 icon: "error",
                 title: "Campos requeridos",
-                text: "Faltan los siguientes campos: " + missingFields.join(", "),
+                text: "Faltan los siguientes campos por llenar: " + missingFields.join(", "),
                 confirmButtonColor: "#3085d6",
                 confirmButtonText: "Entendido",
             });
             return; // Detener ejecución si faltan campos
         }
 
-        fetch("/user/create", {
-            method: "POST",
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": csrfToken,
+        if (idRol == 2) {
+            programId = null;
+        }
+
+        create(name, last_name, email, password, phone, idRol, programId);
+    }
+
+    function read(userId) {
+        $.ajax({
+            url: '/user/show',
+            method: 'GET',
+            data: {
+                userId: userId,
             },
-            body: JSON.stringify({ name, last_name, email, password, phone, id_role: idRol }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.success) {
+            success: function (response) {
+                let user = response.userInfo
+                // Asignación de valores de los campos
+                document.getElementById("updateName").value = user.name;
+                document.getElementById("updateLastName").value = user.last_name;
+                document.getElementById("updateEmail").value = user.email;
+                document.getElementById("updatePassword").value = user.password;
+                document.getElementById("updatePhone").value = user.phone;
+                document.getElementById("updateRole").value = user.id_role;
+                document.getElementById("updateProgram").value = user.id_program;
+
+                if (user.id_program != null) {
+                    updateProgram.value = user.id_program;
+                } else {
+                    updateProgram.value = ""; // Restablecer a la opción por defecto si existe
+                }
+
+                if (user.id_role == 3 || user.id_role == 4) {
+                    document.getElementById('programShowUpdate').classList.remove('d-none');
+                } else {
+                    document.getElementById('programShowUpdate').classList.add('d-none');
+                    programId = null;
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error al eliminar el grupo:', xhr);
+                console.error('Estado:', status);
+                console.error('Error:', error);
+                console.error('Respuesta del servidor:', xhr.responseText);
+            }
+        });
+    }
+
+    function create(name, last_name, email, password, phone, idRol, programId) {
+        $.ajax({
+            url: '/user/create',
+            method: 'POST',
+            data: {
+                name: name,
+                last_name: last_name,
+                email: email,
+                password: password,
+                phone: phone.toString(),
+                idRol: idRol,
+                programId: programId,
+            },
+            success: function (response) {
+                if (response.check == true) {
                     Swal.fire({
                         icon: "success",
-                        title: "Éxito",
-                        text: "Se ha creado un nuevo usuario",
+                        title: "Actualización exitosa",
+                        text: "El usuario ha sido actualizado correctamente.",
                         confirmButtonColor: "#3085d6",
                         confirmButtonText: "Entendido",
                     }).then(() => {
@@ -54,197 +128,178 @@ document.addEventListener("DOMContentLoaded", function () {
                     Swal.fire({
                         icon: "error",
                         title: "Error",
-                        text: "No se ha podido crear el usuario. " + (data.errors ? Object.values(data.errors).join(", ") : ""),
+                        text: "No se ha podido crear el usuario. " + (response.errors ? Object.values(response.errors).join(", ") : ""),
                         confirmButtonColor: "#3085d6",
                         confirmButtonText: "Entendido",
                     });
                 }
-            })
-            .catch((error) => {
-                console.error("Error:", error);
+            },
+            error: function (xhr, status, error) {
+                console.error('Error al eliminar el grupo:', xhr);
+                console.error('Estado:', status);
+                console.error('Error:', error);
+                console.error('Respuesta del servidor:', xhr.responseText);
+            }
+        });
+    }
+
+    function update(userId) {
+        let updateName = document.getElementById("updateName").value;
+        let updateLastName = document.getElementById("updateLastName").value;
+        let updatePhone = document.getElementById("updatePhone").value;
+        let updateEmail = document.getElementById("updateEmail").value;
+        let updatePassword = document.getElementById("updatePassword").value;
+        let updateRole = document.getElementById("updateRole").value;
+        let updateProgram = document.getElementById("updateProgram").value;
+
+        if (updateName && updateLastName && updatePhone && updateEmail && updatePassword && updateRole) {
+            if (updatePhone > 0) {
+                if (updateRole == 1 || updateRole == 2) {
+                    updateProgram = null;
+                }
+                $.ajax({
+                    url: '/user/update',
+                    method: 'PUT',
+                    data: {
+                        userId: userId,
+                        updateName: updateName,
+                        updateLastName: updateLastName,
+                        updatePhone: updatePhone,
+                        updateEmail: updateEmail,
+                        updatePassword: updatePassword,
+                        updateRole: updateRole,
+                        updateProgram: updateProgram,
+                    },
+                    success: function (response) {
+                        if (response.check === true) {
+                            Swal.fire({
+                                icon: "success",
+                                title: "Actualización exitosa",
+                                text: "El usuario ha sido actualizado correctamente.",
+                                confirmButtonColor: "#3085d6",
+                                confirmButtonText: "Entendido",
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: "warning",
+                                title: "Advertencia",
+                                text: response.message, // Se usa el mensaje del backend
+                                confirmButtonColor: "#3085d6",
+                                confirmButtonText: "Entendido",
+                            });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error al actualizar el usuario:', xhr);
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: "Hubo un problema al actualizar el usuario. Inténtelo nuevamente.",
+                            confirmButtonColor: "#d33",
+                            confirmButtonText: "Cerrar",
+                        });
+                    }
+                });
+            } else {
                 Swal.fire({
-                    icon: "error",
-                    title: "Error de red",
-                    text: "Error al procesar la solicitud: " + error.message,
+                    icon: "warning",
+                    title: "Advertencia",
+                    text: "El número de teléfono ingresado no es válido. Verifique el formato e intente nuevamente.",
                     confirmButtonColor: "#3085d6",
                     confirmButtonText: "Entendido",
                 });
-            });
-    });
-});
-
-
-//Capture
-$(document).ready(function () {
-    // Usar delegación de eventos para capturar los clicks en .detalle-user
-    $(document).on("click", ".detalle-user", function () {
-        // Capturar el valor del atributo data-user-id
-        var userId = $(this).data("user-id");
-        console.log("ID del usuario: ", userId);
-    });
-});
-
-// show data to modal
-async function reloadModal(id) {
-    try {
-        const response = await fetch(`/user/${id}`);
-
-        // Verifica si la respuesta es correcta
-        if (!response.ok) {
-            throw new Error(`Error en la solicitud: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log("Datos recibidos:", data); // Agregar para depuración
-
-        const user = data.user;
-
-        // Asignación de valores de los campos
-        document.getElementById("updateName").value = user.name;
-        document.getElementById("updateLastName").value = user.last_name;
-        document.getElementById("updateEmail").value = user.email;
-        document.getElementById("updatePassword").value = user.password;
-        document.getElementById("updatePhone").value = user.phone;
-        document.getElementById("updateRole").value = user.id_role;
-        console.log("rol", user.id_role);
-
-        // Mostrar el modal
-        document.getElementById("ModalUpdate").style.display = "block";
-    } catch (error) {
-        console.error("Error al cargar los datos del usuario:", error);
-    }
-}
-
-//delete
-let userIdToDelete = null;
-
-// Función para asignar el ID del usuario al hacer clic en el botón de eliminación
-function setUserId(id) {
-    userIdToDelete = id; // Guardamos el ID del usuario en una variable
-}
-
-// Al hacer clic en el botón de confirmación del modal
-document.getElementById("btnDelete").addEventListener("click", function () {
-    if (userIdToDelete) {
-        deleteUser(userIdToDelete); // Llamamos a la función deleteUser con el ID almacenado
-        $("#exampleModalCenter").modal("hide"); // Cerramos el modal después de eliminar
-    }
-});
-
-// Función para eliminar el usuario mediante una solicitud HTTP DELETE
-async function deleteUser(id) {
-    try {
-        const response = await fetch(`/user/${id}`, {
-            method: "DELETE", // Método DELETE para eliminar
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": document
-                    .querySelector('meta[name="csrf-token"]')
-                    .getAttribute("content"),
-            },
-        });
-
-        // Maneja la respuesta en función del código de estado
-        if (response.ok) {
-            console.log("Usuario eliminado con éxito");
-
+            }
+        } else {
             Swal.fire({
-                icon: "success",
-                title: "Eliminación exitosa",
-                text: "El usuario ha sido eliminado correctamente.",
+                icon: "warning",
+                title: "Advertencia",
+                text: "Todos los campos son obligatorios. Por favor, complete la información requerida.",
                 confirmButtonColor: "#3085d6",
                 confirmButtonText: "Entendido",
-            }).then(() => {
-                location.reload(); // Recarga la página después de la confirmación
             });
-        } else {
-            const data = await response.json();
-            throw new Error(`Error: ${data.message || "Error desconocido"}`);
         }
-    } catch (error) {
-        console.error("Error al eliminar el usuario:", error);
-        Swal.fire({
-            icon: "error",
-            title: "Advertencia",
-            text: "No se ha podido eliminar el usuario",
-            confirmButtonColor: "#3085d6",
-            confirmButtonText: "Entendido",
-        }).then(() => {
-            location.reload();
-        });
     }
-}
-//end delete
 
-//update
-document;
-document.addEventListener("DOMContentLoaded", function () {
-    document
-        .getElementById("btn-update")
-        ?.addEventListener("click", async function () {
-            const id = this.getAttribute("data-user-id");
-
-            if (!id) {
-                console.log("El ID no puede ser nulo", id);
-                return;
-            }
-
-            try {
-                const response = await fetch(`/user/${id}`, {
-                    method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": document
-                            .querySelector('meta[name="csrf-token"]')
-                            .getAttribute("content"),
-                    },
-                    body: JSON.stringify({
-                        name: document.getElementById("updateName").value,
-                        last_name:
-                            document.getElementById("updateLastName").value,
-                        phone: document.getElementById("updatePhone").value,
-                        email: document.getElementById("updateEmail").value,
-                        password:
-                            document.getElementById("updatePassword").value,
-                        id_role: document.getElementById("updateRole").value,
-                    }),
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json(); // Obtener JSON de errores
-                    let errorMessage = "No se ha podido actualizar el usuario.";
-
-                    if (errorData.errors) {
-                        // Obtener los mensajes de error detallados
-                        errorMessage += "\n" + Object.values(errorData.errors).join("\n");
-                    }
-
+    function destroy(userId) {
+        $.ajax({
+            url: '/user/destroy',
+            method: 'DELETE',
+            data: {
+                userId: userId,
+            },
+            success: function (response) {
+                if (response.check == true) {
                     Swal.fire({
-                        icon: "error",
-                        title: "Error en la actualización",
-                        text: errorMessage,
+                        icon: "success",
+                        title: "Actualización exitosa",
+                        text: "El usuario ha sido eliminado correctamente.",
                         confirmButtonColor: "#3085d6",
                         confirmButtonText: "Entendido",
+                    }).then(() => {
+                        location.reload();
                     });
-
-                    throw new Error(errorMessage);
                 }
-
-                const data = await response.json();
-                console.log("Datos actualizados", data);
-
-                Swal.fire({
-                    icon: "success",
-                    title: "Actualización exitosa",
-                    text: "El usuario ha sido actualizado correctamente.",
-                    confirmButtonColor: "#3085d6",
-                    confirmButtonText: "Entendido",
-                }).then(() => {
-                    location.reload();
-                });
-
-            } catch (error) {
-                console.error("Error:", error);
+            },
+            error: function (xhr, status, error) {
+                console.error('Error al eliminar el grupo:', xhr);
+                console.error('Estado:', status);
+                console.error('Error:', error);
+                console.error('Respuesta del servidor:', xhr.responseText);
             }
         });
+    }
+
+    /*
+        *
+        * Event Listener
+        *
+    */
+
+    document.getElementById('addRowButton').addEventListener('click', function () {
+        validation(programId)
+    });
+
+    document.getElementById('addRole').addEventListener('change', function () {
+        rolId = this.value;
+        if (rolId == 3 || rolId == 4) {
+            document.getElementById('programShow').classList.remove('d-none');
+        } else {
+            document.getElementById('programShow').classList.add('d-none');
+            programId = null;
+        }
+    });
+
+    document.querySelectorAll('[id="btn_update"]').forEach(button => {
+        button.addEventListener('click', function () {
+            userId = this.getAttribute('data-user-id');
+            programId = null;
+            read(userId);
+        });
+    });
+
+    document.getElementById('btnUpdate').addEventListener('click', function () {
+        update(userId)
+    });
+
+    document.getElementById('updateRole').addEventListener('change', function () {
+        rolId = this.value;
+        if (rolId == 3 || rolId == 4) {
+            document.getElementById('programShowUpdate').classList.remove('d-none');
+        } else {
+            document.getElementById('programShowUpdate').classList.add('d-none');
+            programId = null;
+        }
+    });
+
+    document.querySelectorAll('[id="btn_delete"]').forEach(button => {
+        button.addEventListener('click', function () {
+            userId = this.getAttribute('data-user-id');
+        });
+    });
+
+    document.getElementById('btnDelete').addEventListener('click', function () {
+        destroy(userId);
+    });
 });

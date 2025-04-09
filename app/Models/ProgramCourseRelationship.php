@@ -14,7 +14,6 @@ class ProgramCourseRelationship extends Model
     protected $fillable = [
         'id_program',
         'id_course',
-        'id_user',
     ];
 
     public function program()
@@ -27,8 +26,4 @@ class ProgramCourseRelationship extends Model
         return $this->belongsTo(Course::class, 'id_course');
     }
 
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'id_user');
-    }
 }

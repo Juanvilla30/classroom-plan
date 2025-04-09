@@ -111,9 +111,9 @@ Route::middleware('auth')->group(function () {
     // Rutas user
     Route::get('/user', [UserController::class, 'index'])->name('user');
     Route::post('/user/create', [UserController::class, 'store']);
-    Route::get('/user/{id}', [UserController::class, 'show']);
-    Route::delete('/user/{id}', [UserController::class, 'destroy']);
-    Route::patch('/user/{id}', [UserController::class, 'update']);
+    Route::get('/user/show', [UserController::class, 'show']);
+    Route::delete('/user/destroy', [UserController::class, 'destroy']);
+    Route::put('/user/update', [UserController::class, 'update']);
     Route::get('/ListUsers', [ListUsersController::class, 'index'])->name('ListUsers');
 
     //Rutas para reporte de plan de aula
