@@ -143,16 +143,6 @@ class DatabaseSeeder extends Seeder
         ]); //9
 
         User::create([
-            'name' => 'coordinación',
-            'last_name' => 'Derecho',
-            'phone' => '0',
-            'email' => 'coordinacion.derecho@uniautonoma.edu.co',
-            'password' => 'coordinacion',
-            'id_role' => '3',
-            'id_program' => '6',
-        ]); //6
-
-        User::create([
             'name' => 'Carlos Antonio',
             'last_name' => 'Flores Arias',
             'phone' => '0',
@@ -373,6 +363,16 @@ class DatabaseSeeder extends Seeder
             'id_program' => '6',
         ]); //32
 
+        User::create([
+            'name' => 'coordinación',
+            'last_name' => 'Derecho',
+            'phone' => '0',
+            'email' => 'coordinacion.derecho@uniautonoma.edu.co',
+            'password' => 'coordinacion',
+            'id_role' => '3',
+            'id_program' => '6',
+        ]);
+
         // Atributos usuario
         DB::table('user_attributes')->insert([
             ['id' => 1, 'profession' => 'Ingeniero de sistemas', 'postgraduate_studies' => 'Esp. Ingeniería del software, Esp. Gestión de proyectos, MBA Dirección proyectos', 'specific_competences' => 'Desarrollo de software - Programación modular', 'id_user' => 6],
@@ -421,6 +421,8 @@ class DatabaseSeeder extends Seeder
             ['id' => 20, 'name_component' => 'laboral', 'id_study_field' => 3],
             ['id' => 21, 'name_component' => 'penal', 'id_study_field' => 3],
             ['id' => 22, 'name_component' => 'practicas en entidades', 'id_study_field' => 3],
+            ['id' => 23, 'name_component' => 'especifico', 'id_study_field' => 3],
+
         ]);
 
         // Semestres
@@ -596,6 +598,19 @@ class DatabaseSeeder extends Seeder
             ['id' => 125, 'name_course' => 'Cátedra Autónoma II', 'credit' => 1, 'id_modality' => 1, 'id_component' => 5, 'id_semester' => 9, 'id_course_type' => 1, 'course_code' => '0'],
             ['id' => 126, 'name_course' => 'Electiva I (Socio Humanistica CC)', 'credit' => 2, 'id_modality' => 1, 'id_component' => 5, 'id_semester' => 3, 'id_course_type' => 1, 'course_code' => '0'],
             ['id' => 127, 'name_course' => 'Electiva II (Socio Humanistica CC)', 'credit' => 2, 'id_modality' => 1, 'id_component' => 5, 'id_semester' => 7, 'id_course_type' => 1, 'course_code' => '0'],
+
+            ['id' => 128, 'name_course' => 'Bases constitucionales y legales del derecho médico', 'credit' => 2, 'id_modality' => 1, 'id_component' => 17, 'id_semester' => 1, 'id_course_type' => 1, 'course_code' => '0'],
+            ['id' => 129, 'name_course' => 'Normativa de la Seguridad social en salud', 'credit' => 2, 'id_modality' => 1, 'id_component' => 17, 'id_semester' => 1, 'id_course_type' => 1, 'course_code' => '0'],
+            ['id' => 130, 'name_course' => 'Acto médico y la investigación en salud', 'credit' => 2, 'id_modality' => 1, 'id_component' => 17, 'id_semester' => 1, 'id_course_type' => 1, 'course_code' => '0'],
+            ['id' => 131, 'name_course' => 'Responsabilidad civil médica', 'credit' => 3, 'id_modality' => 1, 'id_component' => 23, 'id_semester' => 1, 'id_course_type' => 1, 'course_code' => '0'],
+            ['id' => 132, 'name_course' => 'Electiva I', 'credit' => 2, 'id_modality' => 1, 'id_component' => 17, 'id_semester' => 1, 'id_course_type' => 1, 'course_code' => '0'],
+
+            ['id' => 133, 'name_course' => 'Bioética', 'credit' => 2, 'id_modality' => 1, 'id_component' => 17, 'id_semester' => 2, 'id_course_type' => 1, 'course_code' => '0'],
+            ['id' => 134, 'name_course' => 'Derecho laboral en salud', 'credit' => 2, 'id_modality' => 1, 'id_component' => 23, 'id_semester' => 2, 'id_course_type' => 1, 'course_code' => '0'],
+            ['id' => 135, 'name_course' => 'Responsabilidad penal médica', 'credit' => 3, 'id_modality' => 1, 'id_component' => 23, 'id_semester' => 2, 'id_course_type' => 1, 'course_code' => '0'],
+            ['id' => 136, 'name_course' => 'Responsabilidad ética médica', 'credit' => 2, 'id_modality' => 1, 'id_component' => 23, 'id_semester' => 2, 'id_course_type' => 1, 'course_code' => '0'],
+            ['id' => 137, 'name_course' => 'Electiva II', 'credit' => 2, 'id_modality' => 1, 'id_component' => 23, 'id_semester' => 2, 'id_course_type' => 1, 'course_code' => '0'],
+
         ]);
 
         //Relations programs and courses
@@ -736,6 +751,17 @@ class DatabaseSeeder extends Seeder
             ['id' => 125, 'id_program' => null, 'id_course' => 125],
             ['id' => 126, 'id_program' => null, 'id_course' => 126],
             ['id' => 127, 'id_program' => null, 'id_course' => 127],
+
+            ['id' => 128, 'id_program' => 6, 'id_course' => 128],
+            ['id' => 129, 'id_program' => 6, 'id_course' => 129],
+            ['id' => 130, 'id_program' => 6, 'id_course' => 130],
+            ['id' => 131, 'id_program' => 6, 'id_course' => 131],
+            ['id' => 132, 'id_program' => 6, 'id_course' => 132],
+            ['id' => 133, 'id_program' => 6, 'id_course' => 133],
+            ['id' => 134, 'id_program' => 6, 'id_course' => 134],
+            ['id' => 135, 'id_program' => 6, 'id_course' => 135],
+            ['id' => 136, 'id_program' => 6, 'id_course' => 136],
+            ['id' => 137, 'id_program' => 6, 'id_course' => 137],
 
         ]);
 
@@ -1143,6 +1169,62 @@ class DatabaseSeeder extends Seeder
             ['id_relation' => 125, 'id_user' => 30],
             ['id_relation' => 126, 'id_user' => 30],
             ['id_relation' => 127, 'id_user' => 30],
+
+            // REGISTROS V2
+            ['id_relation' => 128, 'id_user' => 26],
+            ['id_relation' => 129, 'id_user' => 26],
+            ['id_relation' => 130, 'id_user' => 26],
+            ['id_relation' => 131, 'id_user' => 26],
+            ['id_relation' => 132, 'id_user' => 26],
+            ['id_relation' => 133, 'id_user' => 26],
+            ['id_relation' => 134, 'id_user' => 26],
+            ['id_relation' => 135, 'id_user' => 26],
+            ['id_relation' => 136, 'id_user' => 26],
+            ['id_relation' => 137, 'id_user' => 26],
+
+            ['id_relation' => 128, 'id_user' => 27],
+            ['id_relation' => 129, 'id_user' => 27],
+            ['id_relation' => 130, 'id_user' => 27],
+            ['id_relation' => 131, 'id_user' => 27],
+            ['id_relation' => 132, 'id_user' => 27],
+            ['id_relation' => 133, 'id_user' => 27],
+            ['id_relation' => 134, 'id_user' => 27],
+            ['id_relation' => 135, 'id_user' => 27],
+            ['id_relation' => 136, 'id_user' => 27],
+            ['id_relation' => 137, 'id_user' => 27],
+
+            ['id_relation' => 128, 'id_user' => 28],
+            ['id_relation' => 129, 'id_user' => 28],
+            ['id_relation' => 130, 'id_user' => 28],
+            ['id_relation' => 131, 'id_user' => 28],
+            ['id_relation' => 132, 'id_user' => 28],
+            ['id_relation' => 133, 'id_user' => 28],
+            ['id_relation' => 134, 'id_user' => 28],
+            ['id_relation' => 135, 'id_user' => 28],
+            ['id_relation' => 136, 'id_user' => 28],
+            ['id_relation' => 137, 'id_user' => 28],
+
+            ['id_relation' => 128, 'id_user' => 29],
+            ['id_relation' => 129, 'id_user' => 29],
+            ['id_relation' => 130, 'id_user' => 29],
+            ['id_relation' => 131, 'id_user' => 29],
+            ['id_relation' => 132, 'id_user' => 29],
+            ['id_relation' => 133, 'id_user' => 29],
+            ['id_relation' => 134, 'id_user' => 29],
+            ['id_relation' => 135, 'id_user' => 29],
+            ['id_relation' => 136, 'id_user' => 29],
+            ['id_relation' => 137, 'id_user' => 29],
+
+            ['id_relation' => 128, 'id_user' => 30],
+            ['id_relation' => 129, 'id_user' => 30],
+            ['id_relation' => 130, 'id_user' => 30],
+            ['id_relation' => 131, 'id_user' => 30],
+            ['id_relation' => 132, 'id_user' => 30],
+            ['id_relation' => 133, 'id_user' => 30],
+            ['id_relation' => 134, 'id_user' => 30],
+            ['id_relation' => 135, 'id_user' => 30],
+            ['id_relation' => 136, 'id_user' => 30],
+            ['id_relation' => 137, 'id_user' => 30],
 
         ]);
 

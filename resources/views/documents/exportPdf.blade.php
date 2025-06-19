@@ -276,7 +276,7 @@
             </tr>
             <tr>
                 <td colspan="2">
-                    {{ucfirst(strtolower($classroom->generalObjective->name_general_objective ?? 'No
+                    {{ucfirst(strtolower($classroom->generalObjective->description_general_objective ?? 'No
                     asignado'))}}
                 </td>
             </tr>

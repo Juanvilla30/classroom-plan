@@ -76,35 +76,30 @@ class ClassroomPlanController extends Controller
             $programId = $request->input('programId');
             $userId = $request->input('userId');
 
-            $query1 = RelationUser::where('id_user', $userId)->pluck('id_relation');
+            // Obtener todas las relaciones asignadas al usuario
+            $idRelations = RelationUser::where('id_user', $userId)->pluck('id_relation');
 
-            // Consulta base
-            $query = ProgramCourseRelationship::where('id_program', $programId)
-                ->with([
-                    'program.faculty',
-                    'program.educationLevel',
-                    'course.component.studyField',
-                    'course.semester',
-                    'course.courseType',
-                ])->orderBy('id');
+            $query = ProgramCourseRelationship::with([
+                'program.faculty',
+                'program.educationLevel',
+                'course.component.studyField',
+                'course.semester',
+                'course.courseType',
+            ])
+                ->where('id_program', $programId);
 
-            // Filtrar por usuario si se envía un userId
-            if ($userId != null) {
-                $query->whereIn('id', $query1);
-            }            
-
-            // Obtener los datos sin duplicados y sin valores null
+            // Ejecutar la consulta y ordenar en PHP por semestre
             $relationInfo = $query->get()
-                ->unique('course.id') // Mantener solo un curso por ID
-                ->filter(function ($item) {
-                    return $item->course !== null; // Evitar valores null
-                })->values(); // Resetear los índices
+                ->filter(fn($item) => $item->course !== null)
+                ->unique(fn($item) => $item->course->id)
+                ->sortBy(fn($item) => $item->course->semester->id ?? 0)
+                ->values(); // resetear los índices
 
             // Obtener el nivel educativo sin valores null
             $educationId = Program::where('id', $programId)
                 ->whereNotNull('id_education_level')
                 ->pluck('id_education_level');
-            
+
             return response()->json([
                 'check' => true,
                 'relationInfo' => $relationInfo,
