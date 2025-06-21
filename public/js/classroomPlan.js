@@ -78,7 +78,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     location.reload();
                 } else {
                     location.reload();
-                    console.log('Eliminacion cancelada por el usuario'); // Mensaje en consola si el usuario cancela la acción
                 }
             });
         }
@@ -584,7 +583,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         viewSelectPensum(response)
                         typeClassroomId = 2
                     } else {
-                        viewSelectSpecialization(response);
+                        viewSelectSpecialization(response)
                         typeClassroomId = 3
                     }
                 }
@@ -618,7 +617,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     educationId: educationId,
                 },
                 success: function (response) {
-                    console.log("Cantidad de cursos obtenidos:", response.relationInfo.length);
 
                     if (programId == null) {
                         viewSelectCampoComun(response)
@@ -657,6 +655,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     realtionId: realtionId,
                 },
                 success: function (response) {
+                    let program = response.relationInfo[0].id_program
                     if (typeClassroomId == null) {
                         viewInfoCampoComun(response);
                         componentId = response.relationInfo[0].course.id_component;
@@ -667,7 +666,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         viewInfoSpecialization(response);
                         componentId = null;
                     }
-                    resolve(componentId);
+
+                    resolve({ componentId, program });
                 },
                 error: function (xhr, status, error) {
                     console.error('Error al obtener:', xhr);
@@ -784,7 +784,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 classroomId: classroomId,
             },
             success: function (response) {
-                console.log(response)
                 viewAllInfo(response)
             },
             error: function (xhr, status, error) {
@@ -905,11 +904,15 @@ document.addEventListener('DOMContentLoaded', function () {
         let bodyCampoComun = $('#bodyCampoComun');
         bodyCampoComun.empty();
 
-        let arrayContent = response.relationInfo;
+        let groupedData = response.relationInfo;
 
-        if (arrayContent.length > 0) {
-            arrayContent.forEach(function (array) {
-                let row = `
+        if (Object.keys(groupedData).length > 0) {
+            Object.entries(groupedData).forEach(([programId, courses]) => {
+                let programName = capitalizeOrDefault(courses[0]?.program?.name_program || 'Campo Común');
+                bodyCampoComun.append(`<tr class="table-primary"><td colspan="7"><strong>${programName}</strong></td></tr>`);
+
+                courses.forEach(array => {
+                    let row = `
                     <tr>
                         <td class="text-center">
                             <button type="button" class="btn btn-primary btn-sm campoComunSelect" 
@@ -925,12 +928,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         <td>${capitalizeOrDefault(array.course.course_type?.name_course_type)}</td>
                     </tr>
                 `;
-                bodyCampoComun.append(row);
+                    bodyCampoComun.append(row);
+                });
             });
-
         } else {
-            // Mostrar un mensaje si no se encontraron cursos
-            bodyCampoComun.append('<tr><td colspan="6">No se encontraron.</td></tr>');
+            bodyCampoComun.append('<tr><td colspan="7">No se encontraron.</td></tr>');
         }
     }
 
@@ -942,37 +944,40 @@ document.addEventListener('DOMContentLoaded', function () {
         let bodyPensum = $('#bodyPensum');
         bodyPensum.empty();
 
-        let arrayContent = response.relationInfo;
+        let groupedData = response.relationInfo;
 
-        if (arrayContent.length > 0) {
-            arrayContent.forEach(function (array) {
-                let row = `
-                        <tr>
-                            <td class="text-center">
-                                <button type="button" class="btn btn-primary btn-sm pensumSelect" 
-                                    data-id="${array.id}">
-                                    <i class="fas fa-check-circle"></i>
-                                </button>
-                            </td>
-                            <td>${capitalizeOrDefault(array.program?.faculty?.name_faculty)}</td>
-                            <td>${capitalizeOrDefault(array.program?.name_program)}</td>
-                            <td>${capitalizeOrDefault(array.course?.component?.study_field?.name_study_field)}</td>
-                            <td>${capitalizeOrDefault(array.course?.component?.name_component)}</td>
-                            <td>${capitalizeOrDefault(array.course?.name_course)}</td>
-                            <td>${capitalizeOrDefault(array.course?.semester?.name_semester)}</td>
-                            <td align="center">${array.course?.credit || 'sin asignación'}</td>
-                            <td>${capitalizeOrDefault(array.course?.course_type?.name_course_type)}</td>
-                        </tr>
-                    `;
-                bodyPensum.append(row);
+        if (Object.keys(groupedData).length > 0) {
+            Object.entries(groupedData).forEach(([programId, courses]) => {
+                let programName = capitalizeOrDefault(courses[0]?.program?.name_program || 'Campo Comun');
+                bodyPensum.append(`<tr class="table-primary"><td colspan="9"><strong>${programName}</strong></td></tr>`);
+
+                courses.forEach(array => {
+                    let row = `
+                    <tr>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-primary btn-sm pensumSelect" 
+                                data-id="${array.id}">
+                                <i class="fas fa-check-circle"></i>
+                            </button>
+                        </td>
+                        <td>${capitalizeOrDefault(array.program?.faculty?.name_faculty || 'Campo Comun')}</td>
+                        <td>${capitalizeOrDefault(array.program?.name_program || 'Campo Comun')}</td>
+                        <td>${capitalizeOrDefault(array.course?.component?.study_field?.name_study_field)}</td>
+                        <td>${capitalizeOrDefault(array.course?.component?.name_component)}</td>
+                        <td>${capitalizeOrDefault(array.course?.name_course)}</td>
+                        <td>${capitalizeOrDefault(array.course?.semester?.name_semester)}</td>
+                        <td align="center">${array.course?.credit || 'sin asignación'}</td>
+                        <td>${capitalizeOrDefault(array.course?.course_type?.name_course_type)}</td>
+                    </tr>
+                `;
+                    bodyPensum.append(row);
+                });
             });
-
         } else {
-            // Mostrar un mensaje si no se encontraron cursos
-            bodyPensum.append('<tr><td colspan="6">No se encontraron.</td></tr>');
+            bodyPensum.append('<tr><td colspan="9">No se encontraron.</td></tr>');
         }
-
     }
+
 
     function viewSelectSpecialization(response) {
         document.getElementById('specializationContainer').classList.remove('d-none');
@@ -982,33 +987,36 @@ document.addEventListener('DOMContentLoaded', function () {
         let bodySpecialization = $('#bodySpecialization');
         bodySpecialization.empty();
 
-        let arrayContent = response.relationInfo;
+        let groupedData = response.relationInfo;
 
-        if (arrayContent && arrayContent.length > 0) {
-            arrayContent.forEach(function (array) {
-                let row = `
-                        <tr>
-                            <td class="text-center">
-                                <button type="button" class="btn btn-primary btn-sm specializationSelect" 
-                                    data-id="${array.id}">
-                                    <i class="fas fa-check-circle"></i>
-                                </button>
-                            </td>
-                            <td>${capitalizeOrDefault(array.program?.faculty?.name_faculty)}</td>
-                            <td>${capitalizeOrDefault(array.program?.name_program)}</td>
-                            <td>${capitalizeOrDefault(array.course?.name_course)}</td>
-                            <td>${capitalizeOrDefault(array.course?.semester?.name_semester)}</td>
-                            <td align="center">${array.course?.credit || 'sin asignación'}</td>
-                            <td>${capitalizeOrDefault(array.course?.course_type?.name_course_type)}</td>
-                        </tr>
-                    `;
-                bodySpecialization.append(row);
+        if (Object.keys(groupedData).length > 0) {
+            Object.entries(groupedData).forEach(([programId, courses]) => {
+                let programName = capitalizeOrDefault(courses[0]?.program?.name_program || 'Especialización');
+                bodySpecialization.append(`<tr class="table-primary"><td colspan="7"><strong>${programName}</strong></td></tr>`);
+
+                courses.forEach(array => {
+                    let row = `
+                    <tr>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-primary btn-sm specializationSelect" 
+                                data-id="${array.id}">
+                                <i class="fas fa-check-circle"></i>
+                            </button>
+                        </td>
+                        <td>${capitalizeOrDefault(array.program?.faculty?.name_faculty)}</td>
+                        <td>${capitalizeOrDefault(array.program?.name_program)}</td>
+                        <td>${capitalizeOrDefault(array.course?.name_course)}</td>
+                        <td>${capitalizeOrDefault(array.course?.semester?.name_semester)}</td>
+                        <td align="center">${array.course?.credit || 'sin asignación'}</td>
+                        <td>${capitalizeOrDefault(array.course?.course_type?.name_course_type)}</td>
+                    </tr>
+                `;
+                    bodySpecialization.append(row);
+                });
             });
-
         } else {
-            bodySpecialization.append('<tr><td colspan="6">No se encontraron.</td></tr>');
+            bodySpecialization.append('<tr><td colspan="7">No se encontraron.</td></tr>');
         }
-
     }
 
     function viewInfoCampoComun(response) {
@@ -1060,12 +1068,12 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        $('#nameFaculty').text(capitalizeOrDefault(relation.program.faculty.name_faculty));
-        $('#nameProgram').text(capitalizeOrDefault(relation.program.name_program));
+        $('#nameFaculty').text(capitalizeOrDefault(relation.program?.faculty?.name_faculty || 'Campo Comun'));
+        $('#nameProgram').text(capitalizeOrDefault(relation.program?.name_program || 'Campo Comun'));
         $('#nameSemester').text(capitalizeOrDefault(relation.course.semester.name_semester));
         $('#codeCourse').text(relation.course.course_code || 'sin asignación');
         $('#nameCourse').text(capitalizeOrDefault(relation.course.name_course));
-        $('#educationLevel').text(capitalizeOrDefault(relation.program.education_level.name_education_level));
+        $('#educationLevel').text(capitalizeOrDefault(relation.program?.education_level?.name_education_level || 'Pregrado'));
         $('#nameField').text(capitalizeOrDefault(relation.course.component.study_field.name_study_field));
         $('#nameComponent').text(capitalizeOrDefault(relation.course.component.name_component));
         $('#nameCredits').text(relation.course.credit || 'sin asignación');
@@ -1828,17 +1836,25 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('tablePensum').addEventListener('click', async function (event) {
         if (event.target.classList.contains('pensumSelect')) {
             realtionId = event.target.dataset.id;
-            console.log(realtionId)
             await resetForm();
-            await searchInfoCourse(realtionId, typeClassroomId).then(response => {
-                componentId = response;
-            }).catch(error => {
+
+            let componentId = null;
+            let programId = null;
+
+            try {
+                const { componentId: compId, program } = await searchInfoCourse(realtionId, typeClassroomId);
+                componentId = compId;
+                programId = program;
+            } catch (error) {
                 console.error("Error en la solicitud AJAX:", error);
-            });
+                return;
+            }
+
             await searchComponent(2, componentId, programId);
             await searchClassroomPlan(realtionId, programId);
         }
     });
+
 
     document.getElementById('tableSpecialization').addEventListener('click', async function (event) {
         if (event.target.classList.contains('specializationSelect')) {
@@ -1875,6 +1891,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     document.getElementById('confirm-button').addEventListener('click', function () {
+
         confirmButton(dataConfirmation, learningId, realtionId, savesEvaluation1, savesEvaluation2, savesEvaluation3);
         unlockAttributes(confirmDataId);
     });

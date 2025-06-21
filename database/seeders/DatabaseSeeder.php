@@ -58,6 +58,8 @@ class DatabaseSeeder extends Seeder
             ['id' => 15, 'code_program' => '00001', 'name_program' => 'especialización en promoción y defensa de los derechos humanos', 'anio' => '2024', 'id_education_level' => 2, 'degree_type' => 'profesional', 'id_faculty' => 2],
             ['id' => 16, 'code_program' => '00001', 'name_program' => 'especialización en proyectos de desarrollo', 'anio' => '2024', 'id_education_level' => 2, 'degree_type' => 'profesional', 'id_faculty' => 3],
             ['id' => 17, 'code_program' => '00001', 'name_program' => 'especialización gestión del riesgo', 'anio' => '2024', 'id_education_level' => 2, 'degree_type' => 'profesional', 'id_faculty' => 1],
+            ['id' => 18, 'code_program' => '00001', 'name_program' => 'especialización en derecho médico', 'anio' => '2025', 'id_education_level' => 2, 'degree_type' => 'profesional', 'id_faculty' => 2],
+        
         ]);
 
         // Usuarios
@@ -752,16 +754,16 @@ class DatabaseSeeder extends Seeder
             ['id' => 126, 'id_program' => null, 'id_course' => 126],
             ['id' => 127, 'id_program' => null, 'id_course' => 127],
 
-            ['id' => 128, 'id_program' => 6, 'id_course' => 128],
-            ['id' => 129, 'id_program' => 6, 'id_course' => 129],
-            ['id' => 130, 'id_program' => 6, 'id_course' => 130],
-            ['id' => 131, 'id_program' => 6, 'id_course' => 131],
-            ['id' => 132, 'id_program' => 6, 'id_course' => 132],
-            ['id' => 133, 'id_program' => 6, 'id_course' => 133],
-            ['id' => 134, 'id_program' => 6, 'id_course' => 134],
-            ['id' => 135, 'id_program' => 6, 'id_course' => 135],
-            ['id' => 136, 'id_program' => 6, 'id_course' => 136],
-            ['id' => 137, 'id_program' => 6, 'id_course' => 137],
+            ['id' => 128, 'id_program' => 18, 'id_course' => 128],
+            ['id' => 129, 'id_program' => 18, 'id_course' => 129],
+            ['id' => 130, 'id_program' => 18, 'id_course' => 130],
+            ['id' => 131, 'id_program' => 18, 'id_course' => 131],
+            ['id' => 132, 'id_program' => 18, 'id_course' => 132],
+            ['id' => 133, 'id_program' => 18, 'id_course' => 133],
+            ['id' => 134, 'id_program' => 18, 'id_course' => 134],
+            ['id' => 135, 'id_program' => 18, 'id_course' => 135],
+            ['id' => 136, 'id_program' => 18, 'id_course' => 136],
+            ['id' => 137, 'id_program' => 18, 'id_course' => 137],
 
         ]);
 

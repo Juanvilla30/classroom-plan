@@ -79,21 +79,33 @@ class ClassroomPlanController extends Controller
             // Obtener todas las relaciones asignadas al usuario
             $idRelations = RelationUser::where('id_user', $userId)->pluck('id_relation');
 
-            $query = ProgramCourseRelationship::with([
-                'program.faculty',
-                'program.educationLevel',
-                'course.component.studyField',
-                'course.semester',
-                'course.courseType',
-            ])
-                ->where('id_program', $programId);
+            if ($userId != null) {
+                $query = ProgramCourseRelationship::with([
+                    'program.faculty',
+                    'program.educationLevel',
+                    'course.component.studyField',
+                    'course.semester',
+                    'course.courseType',
+                ])
+                    ->whereIn('id', $idRelations);
+            } else {
+                $query = ProgramCourseRelationship::with([
+                    'program.faculty',
+                    'program.educationLevel',
+                    'course.component.studyField',
+                    'course.semester',
+                    'course.courseType',
+                ])
+                    ->where('id_program', $programId);
+            }
 
-            // Ejecutar la consulta y ordenar en PHP por semestre
             $relationInfo = $query->get()
                 ->filter(fn($item) => $item->course !== null)
                 ->unique(fn($item) => $item->course->id)
-                ->sortBy(fn($item) => $item->course->semester->id ?? 0)
-                ->values(); // resetear los índices
+                ->groupBy(fn($item) => $item->program->id ?? 'sin_programa')
+                ->map(function ($group) {
+                    return $group->sortBy(fn($item) => $item->course->semester->id ?? 0)->values();
+                });
 
             // Obtener el nivel educativo sin valores null
             $educationId = Program::where('id', $programId)
@@ -102,7 +114,7 @@ class ClassroomPlanController extends Controller
 
             return response()->json([
                 'check' => true,
-                'relationInfo' => $relationInfo,
+                'relationInfo' => $relationInfo->toArray(),
                 'educationId' => $educationId,
             ]);
         } catch (\Exception $e) {
