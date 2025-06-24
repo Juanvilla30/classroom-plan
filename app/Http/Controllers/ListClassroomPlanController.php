@@ -139,8 +139,7 @@ class ListClassroomPlanController extends Controller
             } else {
                 $query1 = RelationUser::where('id_user', $userId)->pluck('id_relation');
 
-                $relationId = ProgramCourseRelationship::where('id_program', $programId)
-                    ->whereIn('id', $query1)
+                $relationId = ProgramCourseRelationship::whereIn('id', $query1)
                     ->orderBy('id')->pluck('id');
             }
             $classroomInfo = ClassroomPlan::whereIn('id_relations', $relationId)
